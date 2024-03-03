@@ -51,8 +51,8 @@ namespace CoreApplication.Controllers
         {
             try
             {
-                await _accountService.GetAccountInfo(accountId);
-                return Ok();
+               var accountInfo = await _accountService.GetAccountInfo(accountId);
+                return Ok(accountInfo);
             }
             catch (ArgumentException ex)
             {

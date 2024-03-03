@@ -7,9 +7,13 @@ namespace CoreApplication.Models
     {
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Operation> Operations { get; set; }
-        protected override void OnModelCreating(ModelBuilder builder)
+        public CoreDbContext(DbContextOptions<CoreDbContext> options) : base(options){ }
+
+        protected override void OnModelCreating(ModelBuilder builder) 
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Account>().HasMany(m=>m.Operations).WithOne(t=>t.Account).HasForeignKey(t=>t.AccountId);
         }
 
         public override int SaveChanges()

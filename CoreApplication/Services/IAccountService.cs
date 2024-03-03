@@ -31,7 +31,7 @@ namespace CoreApplication.Services
 
         public async Task<AccountDTO> GetAccountInfo(Guid accountId)
         {
-            var account = await _dbContext.Accounts.Include(x => x.OperationsHistory).FirstOrDefaultAsync(x => x.Id == accountId);
+            var account = await _dbContext.Accounts.Include(x => x.Operations).FirstOrDefaultAsync(x => x.Id == accountId);
             if(account == null)
             {
                 throw new ArgumentException("There is no account with this Id!");
@@ -40,7 +40,7 @@ namespace CoreApplication.Services
             {
                 Id = accountId,
                 MoneyAmount = account.MoneyAmount,
-                OperationsHistory = account.OperationsHistory.Select(x => new OperationDTO { AccountId = accountId, Id = x.Id, MoneyAmmount = x.MoneyAmmount, OperationType = x.OperationType }).ToList(),
+                OperationsHistory = account.Operations.Select(x => new OperationDTO { AccountId = accountId, Id = x.Id, MoneyAmmount = x.MoneyAmmount, OperationType = x.OperationType }).ToList(),
                 UserId = account.UserId,
             };
             return accountDTO;

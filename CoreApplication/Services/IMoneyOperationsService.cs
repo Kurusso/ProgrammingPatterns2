@@ -18,7 +18,7 @@ namespace CoreApplication.Services
         }
         public async Task Deposit(int amount, Guid accountId)
         {
-           var account = await _dbContext.Accounts.Include(x=>x.OperationsHistory).FirstOrDefaultAsync(x => x.Id == accountId);
+           var account = await _dbContext.Accounts.Include(x=>x.Operations).FirstOrDefaultAsync(x => x.Id == accountId);
             if (account == null)
             {
                 throw new ArgumentException("There is no account with this Id!");
@@ -28,17 +28,18 @@ namespace CoreApplication.Services
             {
                 Id = Guid.NewGuid(),
                 OperationType = OperationType.Deposit,
-                AccountId = accountId
+                AccountId = accountId,
+                MoneyAmmount = amount,
             };
-            account.OperationsHistory.Add(operation);
-
-            account.MoneyAmount = CountAccountBalance(account);
+            await _dbContext.Operations.AddAsync(operation);
+            int balance = await CountAccountBalance(account);
+            account.MoneyAmount = balance;
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task Withdraw(int amount, Guid accountId)
         {
-            var account = await _dbContext.Accounts.Include(x => x.OperationsHistory).FirstOrDefaultAsync(x => x.Id == accountId);
+            var account = await _dbContext.Accounts.Include(x => x.Operations).FirstOrDefaultAsync(x => x.Id == accountId);
             if (account == null)
             {
                 throw new ArgumentException("There is no account with this Id!");
@@ -48,10 +49,11 @@ namespace CoreApplication.Services
             {
                 Id = Guid.NewGuid(),
                 OperationType = OperationType.Withdraw,
-                AccountId = accountId
+                AccountId = accountId,
+                MoneyAmmount = amount
             };
-            account.OperationsHistory.Add(operation);
-            int balance = CountAccountBalance(account);
+            await _dbContext.Operations.AddAsync(operation);
+            int balance = await CountAccountBalance(account);
             if(balance < 0)
             {
                 throw new InvalidOperationException("You haven't got enough money on your account!");
@@ -60,10 +62,10 @@ namespace CoreApplication.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        private int CountAccountBalance(Account account)
+        private async Task<int> CountAccountBalance(Account account)
         {
             int balance = 0;
-            foreach (var currentOperation in account.OperationsHistory)
+            foreach (var currentOperation in account.Operations)
             {
                 if (currentOperation.OperationType == OperationType.Deposit)
                 {
