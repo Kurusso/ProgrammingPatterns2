@@ -397,6 +397,75 @@
           "buildTransitive/net6.0/_._": {}
         }
       },
+      "Microsoft.Extensions.Diagnostics.HealthChecks/6.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Hosting.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Options": "6.0.0"
+        },
+        "compile": {
+          "lib/net6.0/Microsoft.Extensions.Diagnostics.HealthChecks.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Microsoft.Extensions.Diagnostics.HealthChecks.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions/6.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Extensions.FileProviders.Abstractions/6.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "6.0.0"
+        },
+        "compile": {
+          "lib/net6.0/Microsoft.Extensions.FileProviders.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Microsoft.Extensions.FileProviders.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/netcoreapp3.1/_._": {}
+        }
+      },
+      "Microsoft.Extensions.Hosting.Abstractions/6.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "6.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
+          "Microsoft.Extensions.FileProviders.Abstractions": "6.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.1/Microsoft.Extensions.Hosting.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.1/Microsoft.Extensions.Hosting.Abstractions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.Extensions.Logging/7.0.0": {
         "type": "package",
         "dependencies": {
@@ -651,7 +720,7 @@
       "Microsoft.Win32.SystemEvents/6.0.0": {
         "type": "package",
         "compile": {
-          "lib/net6.0/_._": {
+          "lib/net6.0/Microsoft.Win32.SystemEvents.dll": {
             "related": ".xml"
           }
         },
@@ -680,6 +749,77 @@
         },
         "runtime": {
           "lib/netstandard2.0/Mono.TextTemplating.dll": {}
+        }
+      },
+      "Quartz/3.8.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "2.1.1",
+          "System.Configuration.ConfigurationManager": "6.0.1"
+        },
+        "compile": {
+          "lib/net6.0/Quartz.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Quartz.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Quartz.AspNetCore/3.8.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Diagnostics.HealthChecks": "6.0.0",
+          "Quartz.Extensions.Hosting": "3.8.1"
+        },
+        "compile": {
+          "lib/net6.0/Quartz.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Quartz.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Quartz.Extensions.DependencyInjection/3.8.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "6.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Options": "6.0.0",
+          "Quartz": "3.8.1"
+        },
+        "compile": {
+          "lib/net6.0/Quartz.Extensions.DependencyInjection.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Quartz.Extensions.DependencyInjection.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Quartz.Extensions.Hosting/3.8.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Hosting.Abstractions": "6.0.0",
+          "Quartz.Extensions.DependencyInjection": "3.8.1"
+        },
+        "compile": {
+          "lib/net6.0/Quartz.Extensions.Hosting.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Quartz.Extensions.Hosting.dll": {
+            "related": ".xml"
+          }
         }
       },
       "Swashbuckle.AspNetCore/6.5.0": {
@@ -763,7 +903,7 @@
           "System.Security.Permissions": "6.0.0"
         },
         "compile": {
-          "lib/net6.0/_._": {
+          "lib/net6.0/System.Configuration.ConfigurationManager.dll": {
             "related": ".xml"
           }
         },
@@ -801,7 +941,7 @@
           "Microsoft.Win32.SystemEvents": "6.0.0"
         },
         "compile": {
-          "lib/net6.0/_._": {
+          "lib/net6.0/System.Drawing.Common.dll": {
             "related": ".xml"
           }
         },
@@ -1038,7 +1178,7 @@
           "System.Windows.Extensions": "6.0.0"
         },
         "compile": {
-          "lib/net6.0/_._": {
+          "lib/net6.0/System.Security.Permissions.dll": {
             "related": ".xml"
           }
         },
@@ -1168,7 +1308,7 @@
           "System.Drawing.Common": "6.0.0"
         },
         "compile": {
-          "lib/net6.0/_._": {
+          "lib/net6.0/System.Windows.Extensions.dll": {
             "related": ".xml"
           }
         },
@@ -1941,6 +2081,88 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "Microsoft.Extensions.Diagnostics.HealthChecks/6.0.0": {
+      "sha512": "ktOGFY2uJ6QqZbLgLZgYg6qWuOnwKEIYbpgGDR/1QY8E+8NhnL75dJZ+WDl88h7Q4JkIFeTkFBUGF5QmNcfUEg==",
+      "type": "package",
+      "path": "microsoft.extensions.diagnostics.healthchecks/6.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/Microsoft.Extensions.Diagnostics.HealthChecks.dll",
+        "lib/net461/Microsoft.Extensions.Diagnostics.HealthChecks.xml",
+        "lib/net6.0/Microsoft.Extensions.Diagnostics.HealthChecks.dll",
+        "lib/net6.0/Microsoft.Extensions.Diagnostics.HealthChecks.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.Diagnostics.HealthChecks.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Diagnostics.HealthChecks.xml",
+        "microsoft.extensions.diagnostics.healthchecks.6.0.0.nupkg.sha512",
+        "microsoft.extensions.diagnostics.healthchecks.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions/6.0.0": {
+      "sha512": "6C9uhsA7GwT1qlXF+1JgOktilrWBSMLNVcwIjg63UvFaDVizg8fYTv826MC58dznvvT9yG31gGwsN1cFfg+yZQ==",
+      "type": "package",
+      "path": "microsoft.extensions.diagnostics.healthchecks.abstractions/6.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll",
+        "lib/net461/Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.xml",
+        "lib/net6.0/Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll",
+        "lib/net6.0/Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.xml",
+        "microsoft.extensions.diagnostics.healthchecks.abstractions.6.0.0.nupkg.sha512",
+        "microsoft.extensions.diagnostics.healthchecks.abstractions.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.FileProviders.Abstractions/6.0.0": {
+      "sha512": "0pd4/fho0gC12rQswaGQxbU34jOS1TPS8lZPpkFCH68ppQjHNHYle9iRuHeev1LhrJ94YPvzcRd8UmIuFk23Qw==",
+      "type": "package",
+      "path": "microsoft.extensions.fileproviders.abstractions/6.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "buildTransitive/netcoreapp2.0/Microsoft.Extensions.FileProviders.Abstractions.targets",
+        "buildTransitive/netcoreapp3.1/_._",
+        "lib/net461/Microsoft.Extensions.FileProviders.Abstractions.dll",
+        "lib/net461/Microsoft.Extensions.FileProviders.Abstractions.xml",
+        "lib/net6.0/Microsoft.Extensions.FileProviders.Abstractions.dll",
+        "lib/net6.0/Microsoft.Extensions.FileProviders.Abstractions.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.FileProviders.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.FileProviders.Abstractions.xml",
+        "microsoft.extensions.fileproviders.abstractions.6.0.0.nupkg.sha512",
+        "microsoft.extensions.fileproviders.abstractions.nuspec",
+        "useSharedDesignerContext.txt"
+      ]
+    },
+    "Microsoft.Extensions.Hosting.Abstractions/6.0.0": {
+      "sha512": "GcT5l2CYXL6Sa27KCSh0TixsRfADUgth+ojQSD5EkzisZxmGFh7CwzkcYuGwvmXLjr27uWRNrJ2vuuEjMhU05Q==",
+      "type": "package",
+      "path": "microsoft.extensions.hosting.abstractions/6.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/Microsoft.Extensions.Hosting.Abstractions.dll",
+        "lib/net461/Microsoft.Extensions.Hosting.Abstractions.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.Hosting.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Hosting.Abstractions.xml",
+        "lib/netstandard2.1/Microsoft.Extensions.Hosting.Abstractions.dll",
+        "lib/netstandard2.1/Microsoft.Extensions.Hosting.Abstractions.xml",
+        "microsoft.extensions.hosting.abstractions.6.0.0.nupkg.sha512",
+        "microsoft.extensions.hosting.abstractions.nuspec",
+        "useSharedDesignerContext.txt"
+      ]
+    },
     "Microsoft.Extensions.Logging/7.0.0": {
       "sha512": "Nw2muoNrOG5U5qa2ZekXwudUn2BJcD41e65zwmDHb1fQegTX66UokLWZkJRpqSSHXDOWZ5V0iqhbxOEky91atA==",
       "type": "package",
@@ -2373,6 +2595,90 @@
         "lib/netstandard2.0/Mono.TextTemplating.dll",
         "mono.texttemplating.2.2.1.nupkg.sha512",
         "mono.texttemplating.nuspec"
+      ]
+    },
+    "Quartz/3.8.1": {
+      "sha512": "HlKm+43iG8LmXfejL1kIijO107x8ozEShLT2PFIkOWNSHUj7O7yTl6icFrn6DocPvigudQ90a6h2gdFShOwyXw==",
+      "type": "package",
+      "path": "quartz/3.8.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net462/Quartz.dll",
+        "lib/net462/Quartz.xml",
+        "lib/net472/Quartz.dll",
+        "lib/net472/Quartz.xml",
+        "lib/net6.0/Quartz.dll",
+        "lib/net6.0/Quartz.xml",
+        "lib/netstandard2.0/Quartz.dll",
+        "lib/netstandard2.0/Quartz.xml",
+        "quartz-logo-small.png",
+        "quartz.3.8.1.nupkg.sha512",
+        "quartz.nuspec",
+        "quick-start.md"
+      ]
+    },
+    "Quartz.AspNetCore/3.8.1": {
+      "sha512": "5CBq1JFQUREBhK0mdGui41S8vylMZHJYf50BNy4C3fhtnAGj9AgrqPQT/QAVr2cc/+lIF8IsJTY51H69Nm9+WQ==",
+      "type": "package",
+      "path": "quartz.aspnetcore/3.8.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "aspnet-core-integration.md",
+        "lib/net6.0/Quartz.AspNetCore.dll",
+        "lib/net6.0/Quartz.AspNetCore.xml",
+        "lib/net8.0/Quartz.AspNetCore.dll",
+        "lib/net8.0/Quartz.AspNetCore.xml",
+        "lib/netcoreapp3.1/Quartz.AspNetCore.dll",
+        "lib/netcoreapp3.1/Quartz.AspNetCore.xml",
+        "lib/netstandard2.0/Quartz.AspNetCore.dll",
+        "lib/netstandard2.0/Quartz.AspNetCore.xml",
+        "quartz-logo-small.png",
+        "quartz.aspnetcore.3.8.1.nupkg.sha512",
+        "quartz.aspnetcore.nuspec"
+      ]
+    },
+    "Quartz.Extensions.DependencyInjection/3.8.1": {
+      "sha512": "wXHLkm9fTFsIfaR8JHp4ttYYZB6fRjH7ZEgbhPtiiMp6V4LposWLC0UpG5ZLWjjIFk2LTr/N9fK983W+lJAo7w==",
+      "type": "package",
+      "path": "quartz.extensions.dependencyinjection/3.8.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net6.0/Quartz.Extensions.DependencyInjection.dll",
+        "lib/net6.0/Quartz.Extensions.DependencyInjection.xml",
+        "lib/net8.0/Quartz.Extensions.DependencyInjection.dll",
+        "lib/net8.0/Quartz.Extensions.DependencyInjection.xml",
+        "lib/netcoreapp3.1/Quartz.Extensions.DependencyInjection.dll",
+        "lib/netcoreapp3.1/Quartz.Extensions.DependencyInjection.xml",
+        "lib/netstandard2.0/Quartz.Extensions.DependencyInjection.dll",
+        "lib/netstandard2.0/Quartz.Extensions.DependencyInjection.xml",
+        "microsoft-di-integration.md",
+        "quartz-logo-small.png",
+        "quartz.extensions.dependencyinjection.3.8.1.nupkg.sha512",
+        "quartz.extensions.dependencyinjection.nuspec"
+      ]
+    },
+    "Quartz.Extensions.Hosting/3.8.1": {
+      "sha512": "pgxrlRNF8b0kFLduCknTxoQ8zhB+HB6i8NrTD6LxS8aw4ByRSl1Gb9hsgWff7YGAeJ/OK92p7tptQhSDWn8G4Q==",
+      "type": "package",
+      "path": "quartz.extensions.hosting/3.8.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "hosted-services-integration.md",
+        "lib/net6.0/Quartz.Extensions.Hosting.dll",
+        "lib/net6.0/Quartz.Extensions.Hosting.xml",
+        "lib/net8.0/Quartz.Extensions.Hosting.dll",
+        "lib/net8.0/Quartz.Extensions.Hosting.xml",
+        "lib/netcoreapp3.1/Quartz.Extensions.Hosting.dll",
+        "lib/netcoreapp3.1/Quartz.Extensions.Hosting.xml",
+        "lib/netstandard2.0/Quartz.Extensions.Hosting.dll",
+        "lib/netstandard2.0/Quartz.Extensions.Hosting.xml",
+        "quartz-logo-small.png",
+        "quartz.extensions.hosting.3.8.1.nupkg.sha512",
+        "quartz.extensions.hosting.nuspec"
       ]
     },
     "Swashbuckle.AspNetCore/6.5.0": {
@@ -3408,6 +3714,8 @@
       "Microsoft.EntityFrameworkCore.Design >= 7.0.16",
       "Microsoft.EntityFrameworkCore.SqlServer >= 7.0.16",
       "Microsoft.EntityFrameworkCore.Tools >= 7.0.16",
+      "Quartz >= 3.8.1",
+      "Quartz.AspNetCore >= 3.8.1",
       "Swashbuckle.AspNetCore >= 6.5.0"
     ]
   },
@@ -3479,6 +3787,14 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[7.0.16, )"
+          },
+          "Quartz": {
+            "target": "Package",
+            "version": "[3.8.1, )"
+          },
+          "Quartz.AspNetCore": {
+            "target": "Package",
+            "version": "[3.8.1, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

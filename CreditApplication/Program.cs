@@ -1,4 +1,5 @@
 using CreditApplication.Models;
+using CreditApplication.Quartz;
 using CreditApplication.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var services = builder.Services;
 var configuration = builder.Configuration;
+builder.RegisterBackgroundJobs(configuration);
 services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddScoped<ICreditService, CreditService>();

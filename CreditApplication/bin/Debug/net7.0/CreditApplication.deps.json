@@ -13,6 +13,8 @@
           "Microsoft.EntityFrameworkCore.Design": "7.0.16",
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.16",
           "Microsoft.EntityFrameworkCore.Tools": "7.0.16",
+          "Quartz": "3.8.1",
+          "Quartz.AspNetCore": "3.8.1",
           "Swashbuckle.AspNetCore": "6.5.0"
         },
         "runtime": {
@@ -247,6 +249,27 @@
           }
         }
       },
+      "Microsoft.Extensions.Diagnostics.HealthChecks/6.0.0": {
+        "dependencies": {
+          "Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Hosting.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Options": "7.0.0"
+        }
+      },
+      "Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions/6.0.0": {},
+      "Microsoft.Extensions.FileProviders.Abstractions/6.0.0": {
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "7.0.0"
+        }
+      },
+      "Microsoft.Extensions.Hosting.Abstractions/6.0.0": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "7.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.FileProviders.Abstractions": "6.0.0"
+        }
+      },
       "Microsoft.Extensions.Logging/7.0.0": {
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection": "7.0.0",
@@ -398,6 +421,57 @@
           "lib/netstandard2.0/Mono.TextTemplating.dll": {
             "assemblyVersion": "2.2.0.0",
             "fileVersion": "2.2.1.1"
+          }
+        }
+      },
+      "Quartz/3.8.1": {
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.0",
+          "System.Configuration.ConfigurationManager": "6.0.1"
+        },
+        "runtime": {
+          "lib/net6.0/Quartz.dll": {
+            "assemblyVersion": "3.8.1.0",
+            "fileVersion": "3.8.1.0"
+          }
+        }
+      },
+      "Quartz.AspNetCore/3.8.1": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Diagnostics.HealthChecks": "6.0.0",
+          "Quartz.Extensions.Hosting": "3.8.1"
+        },
+        "runtime": {
+          "lib/net6.0/Quartz.AspNetCore.dll": {
+            "assemblyVersion": "3.8.1.0",
+            "fileVersion": "3.8.1.0"
+          }
+        }
+      },
+      "Quartz.Extensions.DependencyInjection/3.8.1": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "7.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Options": "7.0.0",
+          "Quartz": "3.8.1"
+        },
+        "runtime": {
+          "lib/net6.0/Quartz.Extensions.DependencyInjection.dll": {
+            "assemblyVersion": "3.8.1.0",
+            "fileVersion": "3.8.1.0"
+          }
+        }
+      },
+      "Quartz.Extensions.Hosting/3.8.1": {
+        "dependencies": {
+          "Microsoft.Extensions.Hosting.Abstractions": "6.0.0",
+          "Quartz.Extensions.DependencyInjection": "3.8.1"
+        },
+        "runtime": {
+          "lib/net6.0/Quartz.Extensions.Hosting.dll": {
+            "assemblyVersion": "3.8.1.0",
+            "fileVersion": "3.8.1.0"
           }
         }
       },
@@ -783,6 +857,34 @@
       "path": "microsoft.extensions.dependencymodel/7.0.0",
       "hashPath": "microsoft.extensions.dependencymodel.7.0.0.nupkg.sha512"
     },
+    "Microsoft.Extensions.Diagnostics.HealthChecks/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ktOGFY2uJ6QqZbLgLZgYg6qWuOnwKEIYbpgGDR/1QY8E+8NhnL75dJZ+WDl88h7Q4JkIFeTkFBUGF5QmNcfUEg==",
+      "path": "microsoft.extensions.diagnostics.healthchecks/6.0.0",
+      "hashPath": "microsoft.extensions.diagnostics.healthchecks.6.0.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6C9uhsA7GwT1qlXF+1JgOktilrWBSMLNVcwIjg63UvFaDVizg8fYTv826MC58dznvvT9yG31gGwsN1cFfg+yZQ==",
+      "path": "microsoft.extensions.diagnostics.healthchecks.abstractions/6.0.0",
+      "hashPath": "microsoft.extensions.diagnostics.healthchecks.abstractions.6.0.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.FileProviders.Abstractions/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0pd4/fho0gC12rQswaGQxbU34jOS1TPS8lZPpkFCH68ppQjHNHYle9iRuHeev1LhrJ94YPvzcRd8UmIuFk23Qw==",
+      "path": "microsoft.extensions.fileproviders.abstractions/6.0.0",
+      "hashPath": "microsoft.extensions.fileproviders.abstractions.6.0.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Hosting.Abstractions/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GcT5l2CYXL6Sa27KCSh0TixsRfADUgth+ojQSD5EkzisZxmGFh7CwzkcYuGwvmXLjr27uWRNrJ2vuuEjMhU05Q==",
+      "path": "microsoft.extensions.hosting.abstractions/6.0.0",
+      "hashPath": "microsoft.extensions.hosting.abstractions.6.0.0.nupkg.sha512"
+    },
     "Microsoft.Extensions.Logging/7.0.0": {
       "type": "package",
       "serviceable": true,
@@ -908,6 +1010,34 @@
       "sha512": "sha512-KZYeKBET/2Z0gY1WlTAK7+RHTl7GSbtvTLDXEZZojUdAPqpQNDL6tHv7VUpqfX5VEOh+uRGKaZXkuD253nEOBQ==",
       "path": "mono.texttemplating/2.2.1",
       "hashPath": "mono.texttemplating.2.2.1.nupkg.sha512"
+    },
+    "Quartz/3.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-HlKm+43iG8LmXfejL1kIijO107x8ozEShLT2PFIkOWNSHUj7O7yTl6icFrn6DocPvigudQ90a6h2gdFShOwyXw==",
+      "path": "quartz/3.8.1",
+      "hashPath": "quartz.3.8.1.nupkg.sha512"
+    },
+    "Quartz.AspNetCore/3.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5CBq1JFQUREBhK0mdGui41S8vylMZHJYf50BNy4C3fhtnAGj9AgrqPQT/QAVr2cc/+lIF8IsJTY51H69Nm9+WQ==",
+      "path": "quartz.aspnetcore/3.8.1",
+      "hashPath": "quartz.aspnetcore.3.8.1.nupkg.sha512"
+    },
+    "Quartz.Extensions.DependencyInjection/3.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wXHLkm9fTFsIfaR8JHp4ttYYZB6fRjH7ZEgbhPtiiMp6V4LposWLC0UpG5ZLWjjIFk2LTr/N9fK983W+lJAo7w==",
+      "path": "quartz.extensions.dependencyinjection/3.8.1",
+      "hashPath": "quartz.extensions.dependencyinjection.3.8.1.nupkg.sha512"
+    },
+    "Quartz.Extensions.Hosting/3.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pgxrlRNF8b0kFLduCknTxoQ8zhB+HB6i8NrTD6LxS8aw4ByRSl1Gb9hsgWff7YGAeJ/OK92p7tptQhSDWn8G4Q==",
+      "path": "quartz.extensions.hosting/3.8.1",
+      "hashPath": "quartz.extensions.hosting.3.8.1.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/6.5.0": {
       "type": "package",

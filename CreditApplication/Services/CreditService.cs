@@ -8,7 +8,8 @@ namespace CreditApplication.Services
     {
         public Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId);
         public Task<CreditDTO> GetCreditInfo(Guid id, Guid userId);
-        public Task RepayCredit(Guid id, Guid userId, int moneyAmmount, Guid? accountId);
+        public Task RepayCredit(Guid id, Guid userId, int moneyAmmount, Guid? accountId, bool monthPay = false);
+        public Task UpdateCredits();
     }
     public class CreditService : ICreditService
     {
@@ -47,7 +48,7 @@ namespace CreditApplication.Services
             };
         }
 
-        public async Task RepayCredit(Guid id, Guid userId, int moneyAmmount, Guid? accountId) //TODO : исключить случаи списания денег без изменения данных по кредиту
+        public async Task RepayCredit(Guid id, Guid userId, int moneyAmmount, Guid? accountId, bool monthPay=false) 
         {
             var credit = await _context.Credits.Include(x => x.CreditRate).FirstOrDefaultAsync(x => x.UserId == userId && x.Id == id);
             if (credit == null)
@@ -57,14 +58,16 @@ namespace CreditApplication.Services
             var notNullAccountId = accountId ?? credit.PayingAccountId;
             if (credit.RemainingDebt < moneyAmmount)
             {
-                throw new ArgumentException($"You can't pay for credit more then remains on it!"); //TODO: заменить на пернос лишних денег на счёт
+                moneyAmmount = credit.RemainingDebt;
             }
 
             var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&money=" + moneyAmmount, null);
             response.EnsureSuccessStatusCode();
             credit.RemainingDebt -= moneyAmmount;
-            credit.UnpaidDebt = Math.Max(credit.UnpaidDebt - moneyAmmount, 0);
-
+            if (!monthPay)
+            {
+                credit.UnpaidDebt = Math.Max(credit.UnpaidDebt - moneyAmmount, 0);
+            }
             await _context.SaveChangesAsync();          
         }
 
@@ -86,6 +89,23 @@ namespace CreditApplication.Services
             };
             await _context.Credits.AddAsync(credit);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateCredits()
+        {
+           var credits = await _context.Credits.Include(x=>x.CreditRate).ToListAsync();
+            foreach (var credit in credits) { 
+                try
+                {
+                    await RepayCredit(credit.Id, credit.UserId, credit.CreditRate.MonthPayAmount, null, true);
+                }
+                catch
+                {
+                    credit.UnpaidDebt += credit.CreditRate.MonthPayAmount;
+                }
+                credit.RemainingDebt = (int)(credit.RemainingDebt * (credit.CreditRate.MonthPercent + 1));
+            };
+           await _context.SaveChangesAsync();
         }
     }
 }

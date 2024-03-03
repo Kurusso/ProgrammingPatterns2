@@ -74,3 +74,7 @@ C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\o
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\CreditApplication.pdb
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\CreditApplication.genruntimeconfig.cache
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\ref\CreditApplication.dll
+C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\bin\Debug\net7.0\Quartz.dll
+C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\bin\Debug\net7.0\Quartz.AspNetCore.dll
+C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\bin\Debug\net7.0\Quartz.Extensions.DependencyInjection.dll
+C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\bin\Debug\net7.0\Quartz.Extensions.Hosting.dll
