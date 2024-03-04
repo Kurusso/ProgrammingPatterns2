@@ -1,4 +1,5 @@
 ﻿using CoreApplication.Models.Enumeration;
+using Microsoft.Identity.Client;
 
 namespace CoreApplication.Models.DTO
 {
@@ -8,5 +9,14 @@ namespace CoreApplication.Models.DTO
         public Guid AccountId { get; set; }
         public OperationType OperationType { get; set; }
         public int MoneyAmmount { get; set; }
+
+        public OperationDTO() { }
+        public OperationDTO(Operation operation) 
+        {
+            AccountId = operation.AccountId;
+            Id = operation.Id;
+            MoneyAmmount = operation.MoneyAmmount;
+            OperationType = operation.OperationType;
+        }
     }
 }

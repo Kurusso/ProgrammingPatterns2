@@ -6,10 +6,11 @@ namespace CreditApplication.Services
 {
     public interface ICreditService
     {
-        public Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId);
+        public Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId, int moneyAmount, int monthPay);
         public Task<CreditDTO> GetCreditInfo(Guid id, Guid userId);
         public Task RepayCredit(Guid id, Guid userId, int moneyAmmount, Guid? accountId, bool monthPay = false);
         public Task UpdateCredits();
+        public Task<List<CreditDTO>> GetUserCredits(Guid userId);
     }
     public class CreditService : ICreditService
     {
@@ -31,21 +32,14 @@ namespace CreditApplication.Services
             {
                 throw new KeyNotFoundException($"User with {userId} haven't got credit with {id} id!");
             }
-            return new CreditDTO
-            {
-                Id = credit.Id,
-                UnpaidDebt = credit.UnpaidDebt,
-                RemainingDebt = credit.RemainingDebt,
-                UserId = userId,
-                PayingAccountId = credit.PayingAccountId,
-                CreditRate = new CreditRateDTO
-                {
-                    Id = credit.CreditRate.Id,
-                    MoneyAmount = credit.CreditRate.MoneyAmount,
-                    MonthPayAmount = credit.CreditRate.MonthPayAmount,
-                    MonthPercent = credit.CreditRate.MonthPercent
-                }
-            };
+            return new CreditDTO(credit);
+        }
+
+        public async Task<List<CreditDTO>> GetUserCredits(Guid userId)
+        {
+            var credits = await _context.Credits.Where(x=>x.UserId==userId).Include(x=>x.CreditRate).Select(x=>new CreditDTO(x)).ToListAsync();
+            return credits;
+
         }
 
         public async Task RepayCredit(Guid id, Guid userId, int moneyAmmount, Guid? accountId, bool monthPay=false) 
@@ -71,7 +65,7 @@ namespace CreditApplication.Services
             await _context.SaveChangesAsync();          
         }
 
-        public async Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId)
+        public async Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId, int moneyAmount, int monthPay)
         {
             var creditRate = await _context.CreditRates.FirstOrDefaultAsync(x => x.Id == creditRateId);
             if (creditRate == null)
@@ -84,7 +78,9 @@ namespace CreditApplication.Services
                 CreditRateId = creditRateId,
                 UserId = userId,
                 PayingAccountId = accountId,
-                RemainingDebt = creditRate.MoneyAmount,
+                RemainingDebt = moneyAmount,
+                FullMoneyAmount = moneyAmount,
+                MonthPayAmount = monthPay,
                 UnpaidDebt = 0,
             };
             await _context.Credits.AddAsync(credit);
@@ -97,11 +93,11 @@ namespace CreditApplication.Services
             foreach (var credit in credits) { 
                 try
                 {
-                    await RepayCredit(credit.Id, credit.UserId, credit.CreditRate.MonthPayAmount, null, true);
+                    await RepayCredit(credit.Id, credit.UserId, credit.MonthPayAmount, null, true);
                 }
                 catch
                 {
-                    credit.UnpaidDebt += credit.CreditRate.MonthPayAmount;
+                    credit.UnpaidDebt += credit.MonthPayAmount;
                 }
                 credit.RemainingDebt = (int)(credit.RemainingDebt * (credit.CreditRate.MonthPercent + 1));
             };

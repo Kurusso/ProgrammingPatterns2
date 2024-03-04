@@ -19,11 +19,11 @@ namespace CreditApplication.Controllers
 
         [HttpPost]
         [Route("Take")]
-        public async Task <IActionResult> TakeCredit(Guid creditRateId, Guid userId, Guid accountId)
+        public async Task <IActionResult> TakeCredit(Guid creditRateId, Guid userId, Guid accountId, int moneyAmount,int monthPay)
         {
             try
             {
-                await _creditService.TakeCredit(creditRateId, userId, accountId);
+                await _creditService.TakeCredit(creditRateId, userId, accountId, moneyAmount, monthPay);
             }
             catch (KeyNotFoundException ex)
             {
@@ -34,8 +34,23 @@ namespace CreditApplication.Controllers
                 return Problem(statusCode: 500, detail: ex.Message);
             }
             return Ok();
-        }          
-        
+        }
+
+        [HttpGet]
+        [Route("GetUserCredits")]
+        public async Task<IActionResult> GetUserCredits(Guid userId)
+        {
+            try
+            {
+                var credits = await _creditService.GetUserCredits(userId);
+                return Ok(credits);
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: 500, detail: ex.Message);
+            }
+        }
+
 
         [HttpGet]
         [Route("GetInfo")]

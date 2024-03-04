@@ -3,8 +3,16 @@
     public class CreditRateDTO
     {
         public Guid Id { get; set; }
+
+        public string Name { get; set; }
         public float MonthPercent { get; set; }
-        public int MoneyAmount { get; set; }
-        public int MonthPayAmount { get; set; }
+
+        public CreditRateDTO() { }
+        public CreditRateDTO(CreditRate creditRate)
+        {
+            Id = creditRate.Id;
+            Name = creditRate.Name;
+            MonthPercent = creditRate.MonthPercent;
+        }
     }
 }

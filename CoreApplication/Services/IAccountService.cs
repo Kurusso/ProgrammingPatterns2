@@ -8,6 +8,7 @@ namespace CoreApplication.Services
     {
         public Task<AccountDTO> GetAccountInfo(Guid accountId);
         public Task OpenAccount(Guid userId);
+        public Task<List<AccountDTO>> GetUserAccounts(Guid userId);
         public Task DeleteAccount(Guid userId, Guid accountId);
     }
     public class AccountService: IAccountService
@@ -36,14 +37,14 @@ namespace CoreApplication.Services
             {
                 throw new ArgumentException("There is no account with this Id!");
             }
-            var accountDTO =new AccountDTO
-            {
-                Id = accountId,
-                MoneyAmount = account.MoneyAmount,
-                OperationsHistory = account.Operations.Select(x => new OperationDTO { AccountId = accountId, Id = x.Id, MoneyAmmount = x.MoneyAmmount, OperationType = x.OperationType }).ToList(),
-                UserId = account.UserId,
-            };
+            var accountDTO = new AccountDTO(account);
             return accountDTO;
+        }
+
+        public async Task<List<AccountDTO>> GetUserAccounts(Guid userId)
+        {
+            var accounts = await _dbContext.Accounts.Where(x=>x.UserId==userId).Select(x=>new AccountDTO(x)).ToListAsync();
+            return accounts;
         }
 
         public async Task OpenAccount(Guid userId)

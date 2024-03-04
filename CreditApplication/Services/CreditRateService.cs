@@ -20,16 +20,11 @@ namespace CreditApplication.Services
 
         public async Task CreateCreditRate(CreditRateDTO creditRate)
         {
-            if (creditRate.MonthPayAmount > creditRate.MoneyAmount * (1+creditRate.MonthPercent))
-            {
-                throw new ArgumentException("MonthPayAmount can't be more than MoneyAmount*MonthPercent");
-            }
             var creditRateModel = new CreditRate
             {
                 Id = Guid.NewGuid(),
-                MoneyAmount = creditRate.MoneyAmount,
-                MonthPercent = creditRate.MonthPercent,
-                MonthPayAmount = creditRate.MonthPayAmount
+                Name = creditRate.Name,
+                MonthPercent = creditRate.MonthPercent
             };
             await _context.CreditRates.AddAsync(creditRateModel);
             await _context.SaveChangesAsync();
@@ -37,13 +32,7 @@ namespace CreditApplication.Services
 
         public async Task<List<CreditRateDTO>> GetAllCreditRates()
         {
-           var rates = await _context.CreditRates.Select(x=> new CreditRateDTO
-           {
-               Id=x.Id,
-               MoneyAmount=x.MoneyAmount,
-               MonthPercent=x.MonthPercent,
-               MonthPayAmount = x.MonthPayAmount
-           }).ToListAsync();
+           var rates = await _context.CreditRates.Select(x=> new CreditRateDTO(x)).ToListAsync();
             return rates;
         }
     }

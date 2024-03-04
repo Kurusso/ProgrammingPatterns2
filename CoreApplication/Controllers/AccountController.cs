@@ -15,6 +15,7 @@ namespace CoreApplication.Controllers
         }
 
         [HttpPost]
+        [Route("Create")]
         public async Task<IActionResult> CreateAccount(Guid userId)
         {
             try
@@ -29,6 +30,7 @@ namespace CoreApplication.Controllers
         }
 
         [HttpDelete]
+        [Route("Close")]
         public async Task<IActionResult> CloseAccount(Guid userId, Guid accountId)
         {
             try
@@ -47,6 +49,7 @@ namespace CoreApplication.Controllers
         }
 
         [HttpGet]
+        [Route("GetInfo/{accountId}")]
         public async Task<IActionResult> GetAccountInfo(Guid accountId)
         {
             try
@@ -57,6 +60,21 @@ namespace CoreApplication.Controllers
             catch (ArgumentException ex)
             {
                 return Problem(statusCode: 404, detail: ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: 500, detail: "Something goes wrong!");
+            }
+        }
+
+        [HttpGet]
+        [Route("User/{userId}")]
+        public async Task<IActionResult> GetUserAccounts(Guid userId)
+        {
+            try
+            {
+                var accountInfo = await _accountService.GetUserAccounts(userId);
+                return Ok(accountInfo);
             }
             catch (Exception ex)
             {
