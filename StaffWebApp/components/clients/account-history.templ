@@ -1,0 +1,71 @@
+package clients
+
+import "staff-web-app/models"
+import "fmt"
+import "staff-web-app/components/common"
+
+const operationsTbodyId = "operationsBody"
+const operationsHeaderId = "operationsHeader"
+
+//TODO: убрать currency
+templ OperationList(operations []models.Operation, currency models.CurrencyType) {
+	for _, operation := range operations {
+		<tr
+			class={ templ.KV("table-success", operation.Type == models.Deposit),
+					templ.KV("table-danger", operation.Type == models.Withdraw) }
+		>
+			<td>{ operation.Date } </td>
+			<td>{ fmt.Sprintf("%d", operation.CurrencyAmount) + currency.ToIcon() } </td>
+			<td>
+				switch operation.Type {
+					case models.Deposit:
+						{ "Пополнение" }
+					case models.Withdraw:
+						{ "Снятие" }
+				}
+			</td>
+		</tr>
+	}
+}
+
+script OperationsModalOpenHandler(headerId string, accountId string) {
+	const header = document.getElementById(headerId)
+	header.innerText =  accountId
+}
+
+
+templ AccountHistoryModal() {
+	// @operationsModalOpenHandler(operationsHeaderId)
+	<div class="modal" id={ accountHistoryModalId } tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5>История операций по счету 
+					<strong id={ operationsHeaderId }></strong>
+					</h5>
+					
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Дата</th>
+								<th scope="col">Количество</th>
+								<th scope="col">Тип операции</th>
+							</tr>
+						</thead>
+						<tbody id={ operationsTbodyId }>
+							//OperationList will be loaded here
+							<tr>
+								<td colspan="3" class="text-center">
+									@common.Loading()
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+}

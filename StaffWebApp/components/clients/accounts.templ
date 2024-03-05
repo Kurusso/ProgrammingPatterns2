@@ -1,0 +1,29 @@
+package clients
+
+import "staff-web-app/models"
+import "fmt"
+
+
+templ AccountList(accounts []models.Account) {
+	<div class="list-group p-4">
+		for _, account := range accounts {
+			<button 
+                class="list-group-item list-group-item-action" 
+                data-bs-toggle="modal"
+                data-bs-target={ "#" + accountHistoryModalId }
+                hx-get={ "/api/accounts/" + account.Id + "/operations" }
+                hx-target={ "#" + operationsTbodyId }
+                onclick={ OperationsModalOpenHandler(operationsHeaderId, account.Id) }
+            >
+            <div class="d-flex flex-row">
+                <div >
+				    { account.Id  }
+                </div>
+                <div class="flex-grow-1 text-end">
+                    { fmt.Sprintf("%d", account.CurrencyAmount) + account.Currency.ToIcon() }
+                </div>
+            </div>
+			</button>
+		}
+	</div>
+}
