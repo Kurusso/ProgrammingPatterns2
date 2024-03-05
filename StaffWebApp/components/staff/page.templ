@@ -11,7 +11,7 @@ type StaffViewModel struct {
 templ staffList(staff []StaffViewModel) {
 	<ul class="list-group">
 		for _, user := range staff {
-			<li class="d-flex list-group-item row">
+			<li class="d-flex list-group-item row mx-0">
 				<div class="align-self-center col">{ user.Name } </div>
 				<div class="col-auto me-3">
 					<button type="button" class="btn btn-danger">Заблокировать</button>
