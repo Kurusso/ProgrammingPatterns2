@@ -2,6 +2,7 @@ package clients
 
 import "staff-web-app/components/common"
 
+//TODO: убрать в model
 type ClientViewModel struct {
 	Name string
 	Id   string
@@ -9,23 +10,13 @@ type ClientViewModel struct {
 
 const accountHistoryModalId = "historyModal"
 
-templ clientsSearch() {
-	<div class="input-group">
-		<input type="text" class="form-control" placeholder="Имя пользователя"/>
-		<button type="button" class="btn btn-outline-success">Поиск</button>
-	</div>
-}
-
-templ addNewClientButton() {
-	<button type="button" class="btn btn-success">Добавить клиента</button>
-}
 
 templ clientsList(clients []ClientViewModel) {
 	<div class="accordion " id="usersAccordion">
 		for _, client := range clients {
 			<div class="accordion-item p-2">
 				<div class="accordion-header row">
-					<div class="align-middle col-4 ps-3">{ client.Name } </div>
+					<div class="align-self-center col-4 ps-3">{ client.Name } </div>
 					<div class="col-3">
 						<button
 							class="btn btn-outline-info"
@@ -53,19 +44,10 @@ templ clientsList(clients []ClientViewModel) {
 	</div>
 }
 
-templ ClientsView() {
-	<div class="flex-column">
-		<div class="d-flex flex-row">
-			<div class="col-8">
-				@clientsSearch()
-			</div>
-			<div class="d-flex flex-grow-1 flex-row-reverse">
-				@addNewClientButton()
-			</div>
-		</div>
-		<div class="mt-3">
-			@clientsList([]ClientViewModel{{"broforce", "10000"}, {"kubezumie", "9999"}})
-		</div>
-		@AccountHistoryModal()
-	</div>
+templ ClientsPage() {
+	@common.GenericUsersView() {
+		@clientsList([]ClientViewModel{{"broforce", "10000"}, {"kubezumie", "9999"}})
+	}
+
+	@AccountHistoryModal()
 }

@@ -1,0 +1,28 @@
+package staff
+
+import "staff-web-app/components/common"
+
+// TODO: убрать в model
+type StaffViewModel struct {
+	Name string
+	Id   string
+}
+
+templ staffList(staff []StaffViewModel) {
+	<ul class="list-group">
+		for _, user := range staff {
+			<li class="d-flex list-group-item row">
+				<div class="align-self-center col">{ user.Name } </div>
+				<div class="col-auto me-3">
+					<button type="button" class="btn btn-danger">Заблокировать</button>
+				</div>
+			</li>
+		}
+	</ul>
+}
+
+templ StaffPage() {
+	@common.GenericUsersView() {
+		@staffList([]StaffViewModel{{"Sasha Nein", "0"}, {"Milla Vodello", "1"}, {"Coach Oleander", "2"}})
+	}
+}

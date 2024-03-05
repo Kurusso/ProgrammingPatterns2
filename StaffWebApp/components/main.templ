@@ -1,6 +1,17 @@
 package components
 
 import "staff-web-app/components/clients"
+import "staff-web-app/components/staff"
+
+templ navigator(currentTab Tab) {
+	switch currentTab {
+		case Clients:
+			@clients.ClientsPage()
+		case Staff:
+			@staff.StaffPage()
+	}
+
+}
 
 templ MainPage(currentTab Tab) {
 	<!DOCTYPE html>
@@ -16,7 +27,7 @@ templ MainPage(currentTab Tab) {
 		<body data-bs-theme="dark">
 			@navbar(currentTab)
             <div class="container mt-5">
-			    @clients.ClientsView()
+			    @navigator(currentTab)
             </div>
 		</body>
 	</html>
