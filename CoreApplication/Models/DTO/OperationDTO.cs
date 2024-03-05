@@ -8,8 +8,8 @@ namespace CoreApplication.Models.DTO
         public Guid Id{ get; set; }
         public Guid AccountId { get; set; }
         public OperationType OperationType { get; set; }
-        public int MoneyAmmount { get; set; }
-
+        public Money MoneyAmmount { get; set; }
+        public decimal MoneyAmmountInAccountCurrency { get; set; }
         public OperationDTO() { }
         public OperationDTO(Operation operation) 
         {
@@ -17,6 +17,7 @@ namespace CoreApplication.Models.DTO
             Id = operation.Id;
             MoneyAmmount = operation.MoneyAmmount;
             OperationType = operation.OperationType;
+            MoneyAmmountInAccountCurrency = operation.MoneyAmmountInAccountCurrency;
         }
     }
 }

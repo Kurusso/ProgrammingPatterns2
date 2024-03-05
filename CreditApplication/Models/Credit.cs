@@ -10,11 +10,11 @@ namespace CreditApplication.Models
         public Guid UserId {  get; set; }
         public Guid PayingAccountId { get; set; }
 
-        public int FullMoneyAmount { get; set; }
-        public int MonthPayAmount { get; set; }
+        public Money FullMoneyAmount { get; set; }
+        public Money MonthPayAmount { get; set; }
 
-        public int RemainingDebt { get; set; }
+        public Money RemainingDebt { get; set; }
 
-        public int UnpaidDebt { get; set; }
+        public Money UnpaidDebt { get; set; }
     }
 }

@@ -1,5 +1,7 @@
-﻿using CoreApplication.Helpers;
+﻿using CoreApplication.Extensions;
+using CoreApplication.Helpers;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace CoreApplication.Models
 {
@@ -12,7 +14,7 @@ namespace CoreApplication.Models
         protected override void OnModelCreating(ModelBuilder builder) 
         {
             base.OnModelCreating(builder);
-
+            builder.ApplyMoneyValueConverter();
             builder.Entity<Account>().HasMany(m=>m.Operations).WithOne(t=>t.Account).HasForeignKey(t=>t.AccountId);
         }
 

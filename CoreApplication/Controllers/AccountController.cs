@@ -1,4 +1,5 @@
-﻿using CoreApplication.Services;
+﻿using CoreApplication.Models.Enumeration;
+using CoreApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +17,11 @@ namespace CoreApplication.Controllers
 
         [HttpPost]
         [Route("Create")]
-        public async Task<IActionResult> CreateAccount(Guid userId)
+        public async Task<IActionResult> CreateAccount(Guid userId, Currency currency)
         {
             try
             {
-                await _accountService.OpenAccount(userId);
+                await _accountService.OpenAccount(userId, currency);
                 return Ok();
             }
             catch (Exception ex)

@@ -9,6 +9,8 @@ namespace CoreApplication.Models
         public Account Account { get; set; }
 
         public OperationType OperationType { get; set; }
-        public int MoneyAmmount { get; set; }
+        public Money MoneyAmmount { get; set; }
+
+        public decimal MoneyAmmountInAccountCurrency { get; set; }
     }
 }

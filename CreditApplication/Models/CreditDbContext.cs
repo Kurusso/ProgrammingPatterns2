@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
 using CreditApplication.Helpers;
 using CreditApplication.Models.Dtos;
+using CreditApplication.Extensions;
 
 namespace CreditApplication.Models
 {
@@ -16,6 +17,7 @@ namespace CreditApplication.Models
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.ApplyMoneyValueConverter();
         }
 
         public override int SaveChanges()

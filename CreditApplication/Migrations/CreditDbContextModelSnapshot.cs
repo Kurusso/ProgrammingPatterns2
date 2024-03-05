@@ -37,23 +37,27 @@ namespace CreditApplication.Migrations
                     b.Property<DateTime?>("DeleteDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("FullMoneyAmount")
-                        .HasColumnType("int");
+                    b.Property<string>("FullMoneyAmount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ModifyDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MonthPayAmount")
-                        .HasColumnType("int");
+                    b.Property<string>("MonthPayAmount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("PayingAccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("RemainingDebt")
-                        .HasColumnType("int");
+                    b.Property<string>("RemainingDebt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UnpaidDebt")
-                        .HasColumnType("int");
+                    b.Property<string>("UnpaidDebt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -80,8 +84,8 @@ namespace CreditApplication.Migrations
                     b.Property<DateTime>("ModifyDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<float>("MonthPercent")
-                        .HasColumnType("real");
+                    b.Property<decimal>("MonthPercent")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -37,15 +37,16 @@ namespace CoreApplication.Migrations
                     b.Property<DateTime>("ModifyDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MoneyAmount")
-                        .HasColumnType("int");
+                    b.Property<string>("Money")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("CoreApplication.Models.Operation", b =>
@@ -66,8 +67,12 @@ namespace CoreApplication.Migrations
                     b.Property<DateTime>("ModifyDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MoneyAmmount")
-                        .HasColumnType("int");
+                    b.Property<string>("MoneyAmmount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("MoneyAmmountInAccountCurrency")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("OperationType")
                         .HasColumnType("int");
@@ -76,21 +81,23 @@ namespace CoreApplication.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Operations", (string)null);
+                    b.ToTable("Operations");
                 });
 
             modelBuilder.Entity("CoreApplication.Models.Operation", b =>
                 {
-                    b.HasOne("CoreApplication.Models.Account", null)
-                        .WithMany("OperationsHistory")
+                    b.HasOne("CoreApplication.Models.Account", "Account")
+                        .WithMany("Operations")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("CoreApplication.Models.Account", b =>
                 {
-                    b.Navigation("OperationsHistory");
+                    b.Navigation("Operations");
                 });
 #pragma warning restore 612, 618
         }

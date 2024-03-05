@@ -5,7 +5,7 @@
         public Guid Id { get; set; }
 
         public string Name { get; set; }
-        public float MonthPercent { get; set; }
+        public decimal MonthPercent { get; set; }
 
         public CreditRateDTO() { }
         public CreditRateDTO(CreditRate creditRate)

@@ -1,14 +1,15 @@
 ﻿using CreditApplication.Models;
 using CreditApplication.Models.Dtos;
+using CreditApplication.Models.Enumeration;
 using Microsoft.EntityFrameworkCore;
 
 namespace CreditApplication.Services
 {
     public interface ICreditService
     {
-        public Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId, int moneyAmount, int monthPay);
+        public Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId, decimal moneyAmount, decimal monthPay, Currency currency);
         public Task<CreditDTO> GetCreditInfo(Guid id, Guid userId);
-        public Task RepayCredit(Guid id, Guid userId, int moneyAmmount, Guid? accountId, bool monthPay = false);
+        public Task RepayCredit(Guid id, Guid userId, decimal moneyAmmount, Guid? accountId, Currency currency, bool monthPay = false);
         public Task UpdateCredits();
         public Task<List<CreditDTO>> GetUserCredits(Guid userId);
     }
@@ -42,7 +43,7 @@ namespace CreditApplication.Services
 
         }
 
-        public async Task RepayCredit(Guid id, Guid userId, int moneyAmmount, Guid? accountId, bool monthPay=false) 
+        public async Task RepayCredit(Guid id, Guid userId, decimal moneyAmmount, Guid? accountId, Currency currency, bool monthPay=false) 
         {
             var credit = await _context.Credits.Include(x => x.CreditRate).FirstOrDefaultAsync(x => x.UserId == userId && x.Id == id);
             if (credit == null)
@@ -50,24 +51,26 @@ namespace CreditApplication.Services
                 throw new KeyNotFoundException($"User with {userId} haven't got credit with {id} id!");
             }
             var notNullAccountId = accountId ?? credit.PayingAccountId;
-            if (credit.RemainingDebt < moneyAmmount)
+            var money = new Money(moneyAmmount, currency);
+            if (credit.RemainingDebt < money)
             {
-                moneyAmmount = credit.RemainingDebt;
+                money = credit.RemainingDebt;
             }
 
-            var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&money=" + moneyAmmount, null);
+            var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&money=" + moneyAmmount + "&currency=" + currency, null);
             response.EnsureSuccessStatusCode();
-            credit.RemainingDebt -= moneyAmmount;
+            credit.RemainingDebt = credit.RemainingDebt - money;
             if (!monthPay)
             {
-                credit.UnpaidDebt = Math.Max(credit.UnpaidDebt - moneyAmmount, 0);
+                credit.UnpaidDebt = new Money(Math.Max((credit.UnpaidDebt - money).Amount, 0), credit.UnpaidDebt.Currency);
             }
             await _context.SaveChangesAsync();          
         }
 
-        public async Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId, int moneyAmount, int monthPay)
+        public async Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId, decimal moneyAmount, decimal monthPay, Currency currency)
         {
             var creditRate = await _context.CreditRates.FirstOrDefaultAsync(x => x.Id == creditRateId);
+            var money = new Money(moneyAmount, currency);
             if (creditRate == null)
             {
                 throw new KeyNotFoundException($"There is no CreditRate with this {creditRateId} id!");
@@ -78,10 +81,10 @@ namespace CreditApplication.Services
                 CreditRateId = creditRateId,
                 UserId = userId,
                 PayingAccountId = accountId,
-                RemainingDebt = moneyAmount,
-                FullMoneyAmount = moneyAmount,
-                MonthPayAmount = monthPay,
-                UnpaidDebt = 0,
+                RemainingDebt = money,
+                FullMoneyAmount = money,
+                MonthPayAmount = money,
+                UnpaidDebt = new Money { Amount=0, Currency=currency},
             };
             await _context.Credits.AddAsync(credit);
             await _context.SaveChangesAsync();
@@ -93,13 +96,13 @@ namespace CreditApplication.Services
             foreach (var credit in credits) { 
                 try
                 {
-                    await RepayCredit(credit.Id, credit.UserId, credit.MonthPayAmount, null, true);
+                    await RepayCredit(credit.Id, credit.UserId, credit.MonthPayAmount.Amount, null, credit.MonthPayAmount.Currency, true);
                 }
                 catch
                 {
                     credit.UnpaidDebt += credit.MonthPayAmount;
                 }
-                credit.RemainingDebt = (int)(credit.RemainingDebt * (credit.CreditRate.MonthPercent + 1));
+                credit.RemainingDebt.Amount =  (credit.RemainingDebt.Amount * (credit.CreditRate.MonthPercent + 1));
             };
            await _context.SaveChangesAsync();
         }

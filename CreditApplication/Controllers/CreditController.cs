@@ -1,4 +1,5 @@
 ﻿using CreditApplication.Models;
+using CreditApplication.Models.Enumeration;
 using CreditApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,11 @@ namespace CreditApplication.Controllers
 
         [HttpPost]
         [Route("Take")]
-        public async Task <IActionResult> TakeCredit(Guid creditRateId, Guid userId, Guid accountId, int moneyAmount,int monthPay)
+        public async Task <IActionResult> TakeCredit(Guid creditRateId, Guid userId, Guid accountId, Currency currency, int moneyAmount,int monthPay)
         {
             try
             {
-                await _creditService.TakeCredit(creditRateId, userId, accountId, moneyAmount, monthPay);
+                await _creditService.TakeCredit(creditRateId, userId, accountId, moneyAmount, monthPay, currency);
             }
             catch (KeyNotFoundException ex)
             {
@@ -73,11 +74,11 @@ namespace CreditApplication.Controllers
 
         [HttpPost]
         [Route("Repay")]
-        public async Task<IActionResult> RepayCredit(Guid id, Guid userId, int moneyAmmount, Guid? accountId=null)
+        public async Task<IActionResult> RepayCredit(Guid id, Guid userId, int moneyAmmount, Currency currency, Guid? accountId=null)
         {
             try
             {
-                await _creditService.RepayCredit(id, userId, moneyAmmount, accountId);
+                await _creditService.RepayCredit(id, userId, moneyAmmount, accountId, currency);
                 return Ok();
             }
             catch (KeyNotFoundException ex)

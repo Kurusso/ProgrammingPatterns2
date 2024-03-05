@@ -1,5 +1,7 @@
-﻿using CoreApplication.Models;
+﻿using CoreApplication.Helpers;
+using CoreApplication.Models;
 using CoreApplication.Models.DTO;
+using CoreApplication.Models.Enumeration;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreApplication.Services
@@ -7,7 +9,7 @@ namespace CoreApplication.Services
     public interface IAccountService
     {
         public Task<AccountDTO> GetAccountInfo(Guid accountId);
-        public Task OpenAccount(Guid userId);
+        public Task OpenAccount(Guid userId, Currency currency);
         public Task<List<AccountDTO>> GetUserAccounts(Guid userId);
         public Task DeleteAccount(Guid userId, Guid accountId);
     }
@@ -21,7 +23,7 @@ namespace CoreApplication.Services
 
         public async Task DeleteAccount(Guid userId, Guid accountId)
         {
-            var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accountId && x.UserId == userId);
+            var account = await _dbContext.Accounts.GetUndeleted().FirstOrDefaultAsync(x => x.Id == accountId && x.UserId == userId);
             if (account == null)
             {
                 throw new ArgumentException("There is no account with this combination of Id and user id!");
@@ -32,7 +34,7 @@ namespace CoreApplication.Services
 
         public async Task<AccountDTO> GetAccountInfo(Guid accountId)
         {
-            var account = await _dbContext.Accounts.Include(x => x.Operations).FirstOrDefaultAsync(x => x.Id == accountId);
+            var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().FirstOrDefaultAsync(x => x.Id == accountId);
             if(account == null)
             {
                 throw new ArgumentException("There is no account with this Id!");
@@ -43,17 +45,17 @@ namespace CoreApplication.Services
 
         public async Task<List<AccountDTO>> GetUserAccounts(Guid userId)
         {
-            var accounts = await _dbContext.Accounts.Where(x=>x.UserId==userId).Select(x=>new AccountDTO(x)).ToListAsync();
+            var accounts = await _dbContext.Accounts.Where(x=>x.UserId==userId).Include(x=>x.Operations).GetUndeleted().Select(x=>new AccountDTO(x)).ToListAsync();
             return accounts;
         }
 
-        public async Task OpenAccount(Guid userId)
+        public async Task OpenAccount(Guid userId, Currency currency)
         {
-            var account = new Account 
-            { 
-                Id=Guid.NewGuid(),
+            var account = new Account
+            {
+                Id = Guid.NewGuid(),
                 UserId = userId,
-                MoneyAmount = 0,
+                Money = new Money(0, currency)
             };
             await _dbContext.Accounts.AddAsync(account);
             await _dbContext.SaveChangesAsync();

@@ -6,6 +6,6 @@ namespace CoreApplication.Models
     {
         public Guid UserId { get; set; }
         public List<Operation> Operations { get; set; }
-        public int MoneyAmount { get; set; }
+        public Money Money { get; set; }
     }
 }
