@@ -21,7 +21,7 @@ namespace CoreApplication.Extensions
                     var propertyBuilder = entityBuilder.Property(property.PropertyType, property.Name);
 
                     propertyBuilder.HasConversion(new MoneyValueConverter())
-                                   .HasColumnType("nvarchar(max)");
+                                   .HasColumnType("varchar");
                 }
             }
         }

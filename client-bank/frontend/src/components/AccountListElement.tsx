@@ -22,3 +22,13 @@ export const AccountListElement:React.FC<AccountListElementProps> = ({ AccountId
         </div>
     );
 };
+
+
+
+//CloseAccount
+
+//CreateAccount
+
+
+//Withdraw- Account
+//Deposit - Account

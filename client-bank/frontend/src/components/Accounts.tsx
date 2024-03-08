@@ -1,10 +1,11 @@
 import {useEffect, useState} from "react";
 import {AccountData, getAccounts} from "../api/account";
 import {AccountListElement, AccountListElementProps} from "./AccountListElement";
+import {useAccounts} from "../contexts/AccountContext";
 
 export const Accounts = () => {
 
-    const [accountElements,setAccountElements] = useState<AccountListElementProps[]>([]);
+    const { accountElements, setAccountElements } = useAccounts();
 
     useEffect(() => {
         console.log('Component did mount');
@@ -14,8 +15,7 @@ export const Accounts = () => {
                 const parsedToken = (storedToken ? JSON.parse(storedToken) : null).token;
 
                 const accounts = await getAccounts(parsedToken);
-                let AccountsElementsData=mapAccountDataToElementProps(accounts);
-                console.log(AccountsElementsData);
+                let AccountsElementsData = mapAccountDataToElementProps(accounts);
                 setAccountElements(AccountsElementsData);
 
 
@@ -49,7 +49,7 @@ export const Accounts = () => {
     );
 };
 
-function mapAccountDataToElementProps(accountDataArray: AccountData[]): AccountListElementProps[]{
+export function mapAccountDataToElementProps(accountDataArray: AccountData[]): AccountListElementProps[]{
     return accountDataArray.map(accountData => {
         const { id, money } = accountData;
         const { amount, currency } = money;
