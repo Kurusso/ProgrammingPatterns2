@@ -19,6 +19,8 @@ func main() {
 
 	router.GET("/api/clients/:id/accounts", controllers.ListUserAccounts)
 	router.GET("/api/accounts/:id/operations", controllers.ListAccountOperations)
+	router.GET("/api/clients/:id/credits", controllers.ListUserCredits)
+
 	err := http.ListenAndServe(":8080", router)
 	if err != nil {
 		fmt.Printf("failed to start server on 0.0.0.0:8080: %v", err)

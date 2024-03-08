@@ -41,3 +41,30 @@ func ListAccountOperations(w http.ResponseWriter, r *http.Request, ps httprouter
 		}, models.Dollar,
 	).Render(r.Context(), w)
 }
+
+func ListUserCredits(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	id := ps.ByName("id")
+	if id == "" {
+		fmt.Println("can't find Id")
+		//TODO: error handling
+	}
+
+	clients.CreditsList([]models.Credit{
+		{
+			Rate:          models.CreditRate{Id: "1234", Name: "Mortgage"},
+			Id:            "28475",
+			MoneyTaken:    5000,
+			MonthlyPay:    100,
+			RemainingDebt: 2000,
+			UnpaidDebt:    3000,
+		},
+		{
+			Rate:          models.CreditRate{Id: "5463", Name: "Car loan"},
+			Id:            "83746",
+			MoneyTaken:    15000,
+			MonthlyPay:    1000,
+			RemainingDebt: 3000,
+			UnpaidDebt:    1300,
+		},
+	}).Render(r.Context(), w)
+}

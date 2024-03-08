@@ -27,3 +27,27 @@ templ AccountList(accounts []models.Account) {
 		}
 	</div>
 }
+
+templ CreditsList(credits []models.Credit) {
+    	<div class="list-group p-4">
+		for _, credit := range credits {
+			<button 
+                class="list-group-item list-group-item-action" 
+                data-bs-toggle="modal"
+                data-bs-target={ "#" + accountHistoryModalId }
+                hx-get={ "/api/accounts/" + credit.Id + "/operations" }
+                hx-target={ "#" + operationsTbodyId }
+                onclick={ OperationsModalOpenHandler(operationsHeaderId, credit.Id) }
+            >
+            <div class="d-flex flex-row">
+                <div >
+				    { credit.Rate.Name  }
+                </div>
+                <div class="flex-grow-1 text-end">
+                    { fmt.Sprintf("%d/%d", credit.RemainingDebt, credit.MoneyTaken) }
+                </div>
+            </div>
+			</button>
+		}
+	</div>
+}

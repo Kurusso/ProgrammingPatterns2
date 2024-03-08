@@ -2,14 +2,13 @@ package clients
 
 import "staff-web-app/components/common"
 
-//TODO: убрать в model
+// TODO: убрать в model
 type ClientViewModel struct {
 	Name string
 	Id   string
 }
 
 const accountHistoryModalId = "historyModal"
-
 
 templ clientsList(clients []ClientViewModel) {
 	<div class="accordion " id="usersAccordion">
@@ -28,6 +27,17 @@ templ clientsList(clients []ClientViewModel) {
 							hx-trigger="click once"
 						>
 							Счета
+						</button>
+						<button
+							class="btn btn-outline-info ms-4"
+							data-bs-toggle="collapse"
+							data-bs-target={ "#accordion-" + client.Id }
+							hx-get={ "/api/clients/"+client.Id+"/credits", }
+							hx-target={ "#accordion-" + client.Id }
+							hx-swap="innerHTML"
+							hx-trigger="click once"
+						>
+							Кредиты
 						</button>
 					</div>
 					<div class="d-flex col-auto flex-grow-1 flex-row-reverse me-3">
@@ -48,6 +58,5 @@ templ ClientsPage() {
 	@common.GenericUsersView() {
 		@clientsList([]ClientViewModel{{"broforce", "10000"}, {"kubezumie", "9999"}})
 	}
-
 	@AccountHistoryModal()
 }
