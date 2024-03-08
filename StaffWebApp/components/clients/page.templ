@@ -10,35 +10,74 @@ type ClientViewModel struct {
 
 const accountHistoryModalId = "historyModal"
 
+script accordionCollapseHandler() {
+
+
+	// for (const button of )
+}
+
+templ infoButton(clientId, listLoadUrl string) {
+	<button
+		class="btn btn-outline-info ms-3"
+		data-bs-toggle="collapse"
+		data-bs-target={ "#accordion-" + clientId  }
+		hx-get={ listLoadUrl }
+		hx-target={ "#accordion-" + clientId }
+		hx-swap="innerHTML"
+		hx-trigger="click[shouldMakeHtmxRequest(event)]"
+		onclick="accordionCollapseHandler(event)"
+	>
+		{ children... }
+	</button>
+}
+
 templ clientsList(clients []ClientViewModel) {
+	<script>
+		var unrolledElements = new Map()
+		function accordionCollapseHandler(event) {
+			console.log("in collapse handler")
+			const target = event.target
+			let accordionId = target.getAttribute("data-bs-target")
+			let strategy = ""
+			if (unrolledElements.get(accordionId) && target.getAttribute("data-bs-toggle")) {
+				unrolledElements.set(accordionId, false)
+				strategy = "collapse"
+			} else {
+				unrolledElements.set(accordionId, true)
+				strategy = ""
+			}
+
+			let elem = event.target.parentNode.firstChild
+			do {
+				if (elem === target || elem.tagName !== "BUTTON") {
+					continue
+				}
+				elem.setAttribute("data-bs-toggle", strategy)
+
+			} while (elem = elem.nextSibling)
+
+			target.setAttribute("data-bs-toggle", "collapse")
+			console.log("out collapse handler")
+		}
+
+		function shouldMakeHtmxRequest(event) {
+			return unrolledElements.get(event.target.getAttribute("data-bs-target"))
+		}
+
+	</script>
+
 	<div class="accordion " id="usersAccordion">
 		for _, client := range clients {
 			<div class="accordion-item p-2">
 				<div class="accordion-header row">
-					<div class="align-self-center col-4 ps-3">{ client.Name } </div>
-					<div class="col-3">
-						<button
-							class="btn btn-outline-info"
-							data-bs-toggle="collapse"
-							data-bs-target={ "#accordion-" + client.Id }
-							hx-get={ "/api/clients/"+client.Id+"/accounts", }
-							hx-target={ "#accordion-" + client.Id }
-							hx-swap="innerHTML"
-							hx-trigger="click once"
-						>
+					<div class="align-self-center col ps-3">{ client.Name } </div>
+					<div class="col d-flex">
+						@infoButton(client.Id, "/api/clients/"+client.Id+"/accounts") {
 							Счета
-						</button>
-						<button
-							class="btn btn-outline-info ms-4"
-							data-bs-toggle="collapse"
-							data-bs-target={ "#accordion-" + client.Id }
-							hx-get={ "/api/clients/"+client.Id+"/credits", }
-							hx-target={ "#accordion-" + client.Id }
-							hx-swap="innerHTML"
-							hx-trigger="click once"
-						>
+						}
+						@infoButton(client.Id, "/api/clients/"+client.Id+"/credits") {
 							Кредиты
-						</button>
+						}
 					</div>
 					<div class="d-flex col-auto flex-grow-1 flex-row-reverse me-3">
 						<button type="button" class="btn btn-danger">Заблокировать</button>

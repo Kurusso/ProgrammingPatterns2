@@ -1,8 +1,9 @@
 package models
 
 type CreditRate struct {
-	Id   string
-	Name string
+	Id      string
+	Name    string
+	Percent float64
 }
 
 type Credit struct {

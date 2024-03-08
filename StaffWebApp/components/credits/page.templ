@@ -1,0 +1,31 @@
+package credits
+
+import "staff-web-app/models"
+
+templ createCreaditRateForm() {
+	<form action="">
+		<div class="row border border-1 p-3 rounded m-0">
+			<div class="col-md-5">
+				<label for="newCreditRateName" class="form-label">Название кредитного тарифа</label>
+				<input type="text" placeholder="" id="newCreditRateName" class="form-control"/>
+			</div>
+			<div class="col-md-5">
+				<label for="newCreditRatePercent" class="form-label">Процентная ставка</label>
+				<div class="input-group">
+					<span class="input-group-text">%</span>
+					<input type="number" name="" id="newCreditRatePercent" class="form-control" max="100" min="0"/>
+				</div>
+			</div>
+			<button class="btn btn-success col-md-2 mt-4 mt-md-0">
+				Создать
+			</button>
+		</div>
+	</form>
+}
+
+templ CreditsPage() {
+	@createCreaditRateForm()
+	<div class="mt-3">
+		@creditRatesList([]models.CreditRate{{Id: "123456534", Name: "Mortgage", Percent: 23.534}})
+	</div>
+}

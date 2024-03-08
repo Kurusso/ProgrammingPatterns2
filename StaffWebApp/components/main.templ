@@ -2,6 +2,7 @@ package components
 
 import "staff-web-app/components/clients"
 import "staff-web-app/components/staff"
+import "staff-web-app/components/credits"
 
 templ navigator(currentTab Tab) {
 	switch currentTab {
@@ -9,6 +10,8 @@ templ navigator(currentTab Tab) {
 			@clients.ClientsPage()
 		case Staff:
 			@staff.StaffPage()
+		case Credits:
+			@credits.CreditsPage()
 	}
 
 }
