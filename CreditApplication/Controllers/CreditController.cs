@@ -1,4 +1,5 @@
 ﻿using CreditApplication.Models;
+using CreditApplication.Models.DTOs;
 using CreditApplication.Models.Enumeration;
 using CreditApplication.Services;
 using Microsoft.AspNetCore.Http;
@@ -20,11 +21,15 @@ namespace CreditApplication.Controllers
 
         [HttpPost]
         [Route("Take")]
-        public async Task <IActionResult> TakeCredit(Guid creditRateId, Guid userId, Guid accountId, Currency currency, int moneyAmount,int monthPay)
+        public async Task <IActionResult> TakeCredit(TakeCreditDTO credit)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             try
             {
-                await _creditService.TakeCredit(creditRateId, userId, accountId, moneyAmount, monthPay, currency);
+                await _creditService.TakeCredit(credit);
             }
             catch (KeyNotFoundException ex)
             {
