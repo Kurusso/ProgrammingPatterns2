@@ -14,9 +14,10 @@ services.AddEndpointsApiExplorer();
 services.AddScoped<ICreditService, CreditService>();
 services.AddScoped<ICreditRateService, CreditRateService>();
 services.AddSwaggerGen();
-services.AddDbContext<CreditDbContext>(options =>
-                options.UseSqlServer(
-                    configuration.GetConnectionString("DefaultConnection")));
+services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
+        configuration.GetConnectionString("DefaultConnection")
+    )
+);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
