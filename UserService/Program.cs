@@ -10,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ClientService, ClientService>();
+builder.Services.AddScoped<StaffService, StaffService>();
 
 builder.AddDB<MainDbContext>("DbConnection");
 var app = builder.Build();
