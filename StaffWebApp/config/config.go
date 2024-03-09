@@ -11,6 +11,7 @@ var Default ApplicationConfig
 type ApplicationConfig struct {
 	CreditsApiUrl string
 	CoreApiUrl    string
+	UserApiUrl    string
 }
 
 func ReadConfig(path string) error {

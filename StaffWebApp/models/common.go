@@ -15,3 +15,13 @@ type Money struct {
 func (m *Money) String() string {
 	return fmt.Sprintf("%g%s", m.Amount, m.Currency.ToIcon())
 }
+
+type PageInfo struct {
+	CurrentPage int `json:"currentPage"`
+	PagesTotal  int `json:"pagesTotal"`
+}
+
+type Page[T any] struct {
+	PageInfo PageInfo `json:"pageInfo"`
+	Items    []T      `json:"items"`
+}

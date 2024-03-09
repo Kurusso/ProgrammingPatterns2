@@ -1,7 +1,28 @@
 package common
 
+import "staff-web-app/models"
+import "fmt"
+
 templ Loading() {
-    <div class="spinner-border" role="status">
-        <span class="visually-hidden">Загрузка...</span>
-    </div>
+	<div class="spinner-border" role="status">
+		<span class="visually-hidden">Загрузка...</span>
+	</div>
+}
+
+templ Pagination(pageInfo models.PageInfo) {
+	<nav>
+		<ul class="pagination">
+			<li class={ "page-item", templ.KV("disabled", pageInfo.CurrentPage==1) }>
+				<a class="page-link">
+					<span aria-hidden="true">&laquo;</span>
+				</a>
+			</li>
+			<li class="page-item active" aria-current="page">
+				<a class="page-link" href="#">{ fmt.Sprintf("%d/%d", pageInfo.CurrentPage, pageInfo.PagesTotal) }</a>
+			</li>
+			<li class={ "page-item", templ.KV("disabled", pageInfo.CurrentPage==pageInfo.PagesTotal) }>
+				<a class="page-link" href="#"><span aria-hidden="true">&raquo;</span></a>
+			</li>
+		</ul>
+	</nav>
 }

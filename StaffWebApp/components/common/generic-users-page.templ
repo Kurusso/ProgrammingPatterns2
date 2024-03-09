@@ -3,14 +3,22 @@ package common
 templ userSearch() {
 	<div class="input-group">
 		<span class="input-group-text">Поиск</span>
-		<input type="text" class="form-control" placeholder="Имя пользователя"/>
-		// <button type="button" class="btn btn-outline-success">Поиск</button>
+		<input
+			name="searchTerm"
+			type="text"
+			class="form-control"
+			placeholder="Имя пользователя"
+			hx-get="/api/staff?page=1"
+			hx-trigger="keyup changed delay:500ms"
+			hx-target="#userListContainer"
+		/>
 	</div>
 }
 
 templ addNewUserButton() {
 	<button type="button" class="btn btn-success">Добавить пользователя</button>
 }
+
 
 templ GenericUsersView() {
 	<div class="flex-column">
@@ -22,7 +30,7 @@ templ GenericUsersView() {
 				@addNewUserButton()
 			</div>
 		</div>
-		<div class="mt-3">
+		<div class="mt-3" id="userListContainer">
 			{ children... }
 		</div>
 	</div>

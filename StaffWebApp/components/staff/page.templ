@@ -2,30 +2,40 @@ package staff
 
 import "staff-web-app/components/common"
 import "staff-web-app/components"
+import "staff-web-app/models"
 
-// TODO: убрать в model
-type StaffViewModel struct {
-	Name string
-	Id   string
-}
 
-templ staffList(staff []StaffViewModel) {
+templ StaffList(staffPage *models.Page[models.StaffShort]) {
 	<ul class="list-group">
-		for _, user := range staff {
+		for _, user := range staffPage.Items {
 			<li class="d-flex list-group-item row mx-0">
-				<div class="align-self-center col">{ user.Name } </div>
+				<div class="align-self-center col">{ user.Username } </div>
 				<div class="col-auto me-3">
 					<button type="button" class="btn btn-danger">Заблокировать</button>
 				</div>
 			</li>
 		}
 	</ul>
+
+	<div class="mt-3 d-flex flex-row-reverse">
+		@common.Pagination(staffPage.PageInfo)
+	</div>
+}
+
+templ staffListHxPlaceholder() {
+	<div class="text-center"
+		hx-get="/api/staff?page=1"
+		hx-trigger="load"
+		hx-swap="outerHTML"
+	>
+		@common.Loading()
+	</div>
 }
 
 templ StaffPage() {
 	@components.MainPageWrapper(components.Staff) {
 		@common.GenericUsersView() {
-			@staffList([]StaffViewModel{{"Sasha Nein", "0"}, {"Milla Vodello", "1"}, {"Coach Oleander", "2"}})
+			@staffListHxPlaceholder()
 		}
 	}
 }
