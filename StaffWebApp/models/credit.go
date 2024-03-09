@@ -8,11 +8,15 @@ type CreditRate struct {
 
 type CreditShort struct {
 	Id            string     `json:"id"`
+	UserId        string     `json:"userId"`
 	Rate          CreditRate `json:"creditRate"`
-	RemainingDebt Money      `json:"RemainingDebt"`
-	UnpaidDebt    Money      `json:"UnpaidDebt"`
-	// MoneyTaken    Money      `json:"fullMoneyAmount"`
+	RemainingDebt Money      `json:"remainingDebt"`
+	UnpaidDebt    Money      `json:"unpaidDebt"`
 }
 
 type CreditDetailed struct {
+	CreditShort
+	LinkedAccount  string `json:"payingAccountId"`
+	MoneyTaken     Money  `json:"fullMoneyAmount"`
+	MonthlyPayment Money  `json:"monthPayAmount"`
 }

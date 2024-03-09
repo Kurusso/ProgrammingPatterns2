@@ -28,13 +28,8 @@ templ OperationList(operations []models.Operation, currency models.CurrencyType)
 	}
 }
 
-script OperationsModalOpenHandler(headerId string, accountId string) {
-	const header = document.getElementById(headerId)
-	header.innerText =  accountId
-}
 
-
-templ AccountHistoryModal() {
+templ accountHistoryModal() {
 	<div class="modal" id={ accountHistoryModalId } tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">

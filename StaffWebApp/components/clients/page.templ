@@ -10,6 +10,7 @@ type ClientViewModel struct {
 }
 
 const accountHistoryModalId = "historyModal"
+const creditInfoModalId = "creditInfoModal"
 
 templ infoButton(clientId, listLoadUrl string) {
 	<button
@@ -93,6 +94,7 @@ templ ClientsPage() {
 				{"kubezumie", "fe02a2e2-be63-4e55-b34f-fb24eef93ad2"},
 			})
 		}
-		@AccountHistoryModal()
+		@accountHistoryModal()
+		@detailedCreditInfoModal()
 	}
 }

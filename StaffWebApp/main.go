@@ -34,6 +34,7 @@ func main() {
 	router.GET(controllers.ListUserAccountUrlPattern, controllers.ListUserAccounts)
 	router.GET(controllers.ListAccountOperationsUrlPattern, controllers.ListAccountOperations)
 	router.GET(controllers.ListUserCreditsUrlPattern, controllers.ListUserCredits)
+	router.GET(controllers.DetailedUserInfoUrlPattern, controllers.DetailedCreditInfo)
 
 	err = http.ListenAndServe(":8080", router)
 	if err != nil {

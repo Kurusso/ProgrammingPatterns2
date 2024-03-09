@@ -3,6 +3,11 @@ package clients
 import "staff-web-app/models"
 import "fmt"
 
+script OperationsModalOpenHandler(headerId string, accountId string) {
+	const header = document.getElementById(headerId)
+	header.innerText =  accountId
+}
+
 templ AccountList(accounts []models.Account) {
 	<div class="list-group p-4">
 		for _, account := range accounts {
@@ -27,6 +32,8 @@ templ AccountList(accounts []models.Account) {
 	</div>
 }
 
+
+
 templ CreditsList(credits []models.CreditShort) {
 	<div class="list-group p-4">
 		for _, credit := range credits {
@@ -37,9 +44,9 @@ templ CreditsList(credits []models.CreditShort) {
 					templ.KV("list-group-item-danger", credit.UnpaidDebt.Amount > 0),
 				}
 				data-bs-toggle="modal"
-				data-bs-target={ "#" + accountHistoryModalId }
-				hx-get={ "/api/accounts/" + credit.Id + "/operations" }
-				hx-target={ "#" + operationsTbodyId }
+				data-bs-target={ "#" + creditInfoModalId }
+				hx-get={ "/api/clients/" + credit.UserId + "/credits/" + credit.Id }
+				hx-target={ "#" + creditInfoBodyId }
 				onclick={ OperationsModalOpenHandler(operationsHeaderId, credit.Id) }
 			>
 				<div class="d-flex row m-0">

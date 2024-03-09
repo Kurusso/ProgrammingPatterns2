@@ -1,0 +1,59 @@
+package clients
+
+import "staff-web-app/components/common"
+import "staff-web-app/models"
+import "fmt"
+
+const creditInfoHeaderId = "creditInfoHeader"
+const creditInfoBodyId = "creditInfoBody"
+
+templ DetailedCreditInfo(creditInfo *models.CreditDetailed) {
+	<div>
+		<span>Тариф: </span>
+		<span>
+			{ creditInfo.Rate.Name }
+		</span>
+		<strong>
+			{ fmt.Sprintf("%g%%", creditInfo.Rate.Percent) }
+		</strong>
+	</div>
+	<div>
+		<span>Привязан к счету: </span>
+		<strong>{ creditInfo.LinkedAccount }</strong>
+	</div>
+	<div>
+		<span>Сумма займа: </span>
+		<strong>{ creditInfo.MoneyTaken.String() }</strong>
+	</div>
+	<div>
+		<span>Ежемесячный платёж: </span>
+		<strong>{ creditInfo.MonthlyPayment.String() }</strong>
+	</div>
+	<div>
+		<span>Сумма долга: </span>
+		<strong>{ creditInfo.RemainingDebt.String() }</strong>
+	</div>
+	<div class={templ.KV("text-danger", creditInfo.UnpaidDebt.Amount > 0)}>
+		<span >Сумма просроченных платежей:</span>
+		<strong>{ creditInfo.UnpaidDebt.String() }</strong>
+	</div>
+}
+
+templ detailedCreditInfoModal() {
+	<div class="modal" id={ creditInfoModalId } tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5>
+						Кредит 
+						<strong id={ creditInfoHeaderId }></strong>
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" id={ creditInfoBodyId }>
+					@common.Loading()
+				</div>
+			</div>
+		</div>
+	</div>
+}

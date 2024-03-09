@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"net/http"
 	"staff-web-app/components/clients"
+	"staff-web-app/logger"
 	"staff-web-app/models"
 	"staff-web-app/services"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-const ListUserAccountUrlPattern = "/api/clients/:id/accounts"
+const ListUserAccountUrlPattern = "/api/clients/:userId/accounts"
 
 func ListUserAccounts(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	id := ps.ByName("id")
+	id := ps.ByName("userId")
 	if id == "" {
 		fmt.Println("can't find Id")
 		//TODO: error handling
@@ -28,10 +29,10 @@ func ListUserAccounts(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 
 }
 
-const ListAccountOperationsUrlPattern = "/api/accounts/:id/operations"
+const ListAccountOperationsUrlPattern = "/api/accounts/:userId/operations"
 
 func ListAccountOperations(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	id := ps.ByName("id")
+	id := ps.ByName("userId")
 	if id == "" {
 		fmt.Println("can't find Id")
 		//TODO: error handling
@@ -47,10 +48,10 @@ func ListAccountOperations(w http.ResponseWriter, r *http.Request, ps httprouter
 	).Render(r.Context(), w)
 }
 
-const ListUserCreditsUrlPattern = "/api/clients/:id/credits"
+const ListUserCreditsUrlPattern = "/api/clients/:userId/credits"
 
 func ListUserCredits(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId := ps.ByName("id")
+	userId := ps.ByName("userId")
 	if userId == "" {
 		fmt.Println("can't find Id")
 		//TODO: error handling
@@ -63,6 +64,31 @@ func ListUserCredits(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	}
 
 	clients.CreditsList(credits).Render(r.Context(), w)
+}
+
+const DetailedUserInfoUrlPattern = "/api/clients/:userId/credits/:creditId"
+
+func DetailedCreditInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	userId := ps.ByName("userId")
+	if userId == "" {
+		fmt.Println("can't find userId")
+		//TODO: error handling
+	}
+
+	creditId := ps.ByName("creditId")
+	if creditId == "" {
+		fmt.Println("can't find creditId")
+		//TODO: error handling
+	}
+
+	creditInfo, err := services.LoadCreditDetailedInfo(r.Context(), userId, creditId)
+	if err != nil {
+		logger.Default.Error("failed to load credit info: ", err)
+		//TODO: error handling
+		return
+	}
+
+	clients.DetailedCreditInfo(creditInfo).Render(r.Context(), w)
 }
 
 func RenderClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
