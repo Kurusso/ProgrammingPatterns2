@@ -2,12 +2,12 @@ import {Currency, closeAccount} from "../api/account";
 import React, {useCallback} from 'react';
 import {useNavigate} from "react-router-dom";
 
-export interface AccountListElementProps{
+export interface AccountItemProps {
     AccountId:string,
     Amount:number,
     CurrencyValue:Currency
 }
-export const AccountItem:React.FC<AccountListElementProps> = ({ AccountId, Amount, CurrencyValue }) => {
+export const AccountItem:React.FC<AccountItemProps> = ({ AccountId, Amount, CurrencyValue }) => {
     const navigate = useNavigate();
     const [closed, setClosed] = React.useState(false); // Add this line
 

@@ -7,4 +7,4 @@ export const closeAccountEndpoint=base_url+"/api/Account/Close";
 export const getUserEndpoint=base_url+"/api/Profile/";
 export const depositEndpoint=base_url+"/api/Operations/Deposit";
 export const withdrawEndpoint=base_url+"/api/Operations/Withdraw";
-export const getCreditsEndpoint=base_url+"/api/Operations/Withdraw";
+export const getCreditsEndpoint=base_url+"/api/Credit/GetUserCredits";

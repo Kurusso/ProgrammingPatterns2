@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
-import {AccountListElementProps} from "../components/AccountItem";
+import {AccountItemProps} from "../components/AccountItem";
 
 type AccountContextType = {
-    accountElements: AccountListElementProps[];
-    setAccountElements: React.Dispatch<React.SetStateAction<AccountListElementProps[]>>;
+    accountElements: AccountItemProps[];
+    setAccountElements: React.Dispatch<React.SetStateAction<AccountItemProps[]>>;
 };
 
 const AccountContext = createContext<AccountContextType | undefined>(undefined);
@@ -20,7 +20,8 @@ interface AccountProviderProps{
     children:React.ReactNode
 }
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
-    const [accountElements, setAccountElements] = useState<AccountListElementProps[]>([]);
+    const [accountElements, setAccountElements] = useState<AccountItemProps[]>([]);
+
     return (
         <AccountContext.Provider value={{ accountElements, setAccountElements }}>
             {children}

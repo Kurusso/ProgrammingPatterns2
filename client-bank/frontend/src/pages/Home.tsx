@@ -5,6 +5,7 @@ import {AccountProvider} from "../contexts/AccountContext";
 import {useEffect} from "react";
 import {UsernameDisplay} from "../components/UserameDisplay";
 import {Credits} from "../components/Credits";
+import {CreditProvider} from "../contexts/CreditContext";
 
 export const Home = () => {
 
@@ -25,8 +26,11 @@ export const Home = () => {
             <AccountProvider>
                 <CreateAccount/>
                 <Accounts/>
-                <Credits/>
             </AccountProvider>
+            <CreditProvider>
+                <Credits/>
+            </CreditProvider>
+
         </div>
     );
 };

@@ -13,7 +13,7 @@ export enum OperationType {
     Withdraw
 }
 
-interface Money {
+export interface Money {
     amount: number;
     currency: Currency;
 }
