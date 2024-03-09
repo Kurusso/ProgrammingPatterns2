@@ -24,9 +24,6 @@ func main() {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
 	router := httprouter.New()
-	// router.Handler(http.MethodGet, "/", templ.Handler(components.MainPage(components.Clients)))
-	// router.Handler(http.MethodGet, "/Staff", templ.Handler(components.MainPage(components.Staff)))
-	// router.Handler(http.MethodGet, "/Credits", templ.Handler(components.MainPage(components.Credits)))
 	router.GET("/", controllers.RenderClientsPage)
 	router.GET("/Staff", controllers.RenderStaffPage)
 	router.GET("/Credits", controllers.RenderCreditsPage)
