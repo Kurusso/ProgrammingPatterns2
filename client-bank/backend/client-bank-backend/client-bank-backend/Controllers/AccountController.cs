@@ -85,7 +85,7 @@ public class AccountController:ControllerBase
     {
         try
         {
-            var requestUrl = $"{MagicConstants.DeleteAccountEndpoint}?userId={userId}&accountId={accountId}";
+            var requestUrl = $"{MagicConstants.CloseAccountEndpoint}?userId={userId}&accountId={accountId}";
             var response = await _coreClient.DeleteAsync(requestUrl);
             if (response.IsSuccessStatusCode)
             {
