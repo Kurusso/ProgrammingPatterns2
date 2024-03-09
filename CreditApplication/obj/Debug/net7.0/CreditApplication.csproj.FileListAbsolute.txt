@@ -68,7 +68,6 @@ C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\o
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\staticwebassets.build.json
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\staticwebassets.development.json
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\scopedcss\bundle\CreditApplication.styles.css
-C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\CreditApplication.csproj.CopyComplete
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\CreditApplication.dll
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\refint\CreditApplication.dll
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\CreditApplication.pdb
@@ -78,3 +77,5 @@ C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\b
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\bin\Debug\net7.0\Quartz.AspNetCore.dll
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\bin\Debug\net7.0\Quartz.Extensions.DependencyInjection.dll
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\bin\Debug\net7.0\Quartz.Extensions.Hosting.dll
+C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\CreditApplication.sourcelink.json
+C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CreditApplication\obj\Debug\net7.0\CreditAp.BC72030C.Up2Date

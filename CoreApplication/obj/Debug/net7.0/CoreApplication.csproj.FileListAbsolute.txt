@@ -68,9 +68,10 @@ C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\staticwebassets.build.json
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\staticwebassets.development.json
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\scopedcss\bundle\CoreApplication.styles.css
-C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\CoreApplication.csproj.CopyComplete
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\CoreApplication.dll
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\refint\CoreApplication.dll
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\CoreApplication.pdb
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\CoreApplication.genruntimeconfig.cache
 C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\ref\CoreApplication.dll
+C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\CoreApplication.sourcelink.json
+C:\Users\Алексей\Documents\repos\ProgrammingPatterns2\CoreApplication\obj\Debug\net7.0\CoreAppl.3B7A61D8.Up2Date

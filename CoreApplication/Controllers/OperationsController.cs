@@ -26,6 +26,10 @@ namespace CoreApplication.Controllers
             }
             catch (ArgumentException ex)
             {
+                return Problem(statusCode: 400, detail: ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
                 return Problem(statusCode: 404, detail: ex.Message);
             }
             catch (Exception ex)
@@ -45,9 +49,13 @@ namespace CoreApplication.Controllers
             }
             catch (ArgumentException ex)
             {
+                return Problem(statusCode: 400, detail: ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
                 return Problem(statusCode: 404, detail: ex.Message);
             }
-            catch (InvalidCastException ex)
+            catch (InvalidOperationException ex)
             {
                 return Problem(statusCode: 400, detail: ex.Message);
             }
