@@ -2,6 +2,7 @@ import {ChangeEvent, useEffect, useState} from "react";
 import {createAccount, Currency, getAccounts} from "../api/account";
 import {useAccounts} from "../contexts/AccountContext";
 import {mapAccountDataToElementProps} from "./Accounts";
+import {CurrencySelect} from "./CurrencySelect";
 
 type OptionType = {
     value: string;
@@ -16,21 +17,19 @@ const options: OptionType[] = [
 
 export const CreateAccount = () => {
     const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(null);
-    const { setAccountElements } = useAccounts();
-    useEffect(() => {
-        setSelectedCurrency(Currency.Ruble);
-    }, []);
+    const {setAccountElements} = useAccounts();
+
     const handleChange =
         (event: ChangeEvent<HTMLSelectElement>) => {
-        setSelectedCurrency(event.target.value as unknown as Currency);
-    };
+            setSelectedCurrency(event.target.value as unknown as Currency);
+        };
 
     const storedToken = localStorage.getItem('token');
-    const parsedToken = (storedToken ? JSON.parse(storedToken) : null).token;
+    const parsedToken = storedToken ? JSON.parse(storedToken).token : null;
 
     const handleCreate = async () => {
-        if (!parsedToken) {
-            // Inform the user that they need to log in
+        console.log(`Currency:${selectedCurrency}`)
+        if (!parsedToken || !selectedCurrency) {
             return;
         }
 
@@ -48,14 +47,8 @@ export const CreateAccount = () => {
         <div className={"new-account-from"}>
             <h3>Create Account</h3>
             <button type={"button"} onClick={handleCreate}>Create Account</button>
-            <select value={selectedCurrency || ''} onChange={handleChange}>
-                <option value="">Select...</option>
-                {options.map((option) => (
-                    <option key={option.value} value={option.value}>
-                        {option.label}
-                    </option>
-                ))}
-            </select>
+            <CurrencySelect  selectedCurrency={selectedCurrency}
+                            setSelectedCurrency={setSelectedCurrency}/>
         </div>
     );
 };

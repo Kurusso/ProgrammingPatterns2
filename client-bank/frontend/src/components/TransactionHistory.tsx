@@ -1,18 +1,18 @@
-import {OperationHistory} from "../api/account";
+import {OperationsHistory} from "../api/account";
 import React from "react";
 import {HistoryItem} from "./HistoryItem";
 
 type OperationsHistoryProps = {
-    operations: OperationHistory[]
+    transactions: OperationsHistory[]
 }
-export const OperationsHistory: React.FC<OperationsHistoryProps> = ({operations}) => {
+export const TransactionHistory: React.FC<OperationsHistoryProps> = ({transactions}) => {
 
     return (
         <div>
-            <h3>Operations History</h3>
+            <h3>Transaction History</h3>
             <div>
                 {
-                    operations && operations.map(item => (
+                    transactions && transactions.map(item => (
                         <HistoryItem
                             key={item.id}
                             accountId={item.accountId}

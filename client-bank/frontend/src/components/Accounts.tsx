@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
 import {AccountData, getAccounts} from "../api/account";
-import {AccountListElement, AccountListElementProps} from "./AccountListElement";
+import {AccountItem, AccountListElementProps} from "./AccountItem";
 import {useAccounts} from "../contexts/AccountContext";
+import {CurrencySelect} from "./CurrencySelect";
 
 export const Accounts = () => {
 
@@ -9,26 +10,26 @@ export const Accounts = () => {
 
     useEffect(() => {
         console.log('Component did mount');
-        const fetchData =async () => {
+        const fetchData = async () => {
             try {
                 const storedToken = localStorage.getItem('token');
-                const parsedToken = (storedToken ? JSON.parse(storedToken) : null).token;
-
-                const accounts = await getAccounts(parsedToken);
-                let AccountsElementsData = mapAccountDataToElementProps(accounts);
-                setAccountElements(AccountsElementsData);
-
-
-                console.log('Fetched accounts:', accounts);
+                if (storedToken) {
+                    const parsedToken = JSON.parse(storedToken).token;
+                    if (parsedToken) {
+                        const accounts = await getAccounts(parsedToken);
+                        let AccountsElementsData = mapAccountDataToElementProps(accounts);
+                        setAccountElements(AccountsElementsData);
+                        console.log('Fetched accounts:', accounts);
+                    }
+                } else {
+                    console.log('No token found');
+                }
             } catch (error) {
                 console.error('Error fetching accounts:', error);
             }
-        }
+        };
 
         fetchData()
-
-
-
 
         }, []);
 
@@ -37,7 +38,7 @@ export const Accounts = () => {
         <div><h5>Accounts</h5>
             <div>{
                 accountElements.map(item=>(
-                    <AccountListElement
+                    <AccountItem
                         key={item.AccountId} // Set a unique key
                         AccountId={item.AccountId}
                         Amount={item.Amount}
@@ -51,7 +52,7 @@ export const Accounts = () => {
 
 export function mapAccountDataToElementProps(accountDataArray: AccountData[]): AccountListElementProps[]{
     return accountDataArray.map(accountData => {
-        const { id, money } = accountData;
+        const { id, money, } = accountData;
         const { amount, currency } = money;
 
         return {

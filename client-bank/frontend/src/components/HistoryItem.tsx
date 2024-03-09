@@ -1,6 +1,6 @@
-import {Currency, OperationHistory, OperationType} from "../api/account";
+import {Currency, OperationsHistory, OperationType} from "../api/account";
 
-export const HistoryItem: React.FC<OperationHistory> = ({
+export const HistoryItem: React.FC<OperationsHistory> = ({
                                                             id,
                                                             accountId,
                                                             operationType,

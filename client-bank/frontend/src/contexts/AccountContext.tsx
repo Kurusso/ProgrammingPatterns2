@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import {AccountListElementProps} from "../components/AccountListElement";
+import {AccountListElementProps} from "../components/AccountItem";
 
 type AccountContextType = {
     accountElements: AccountListElementProps[];

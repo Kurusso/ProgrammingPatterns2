@@ -1,4 +1,4 @@
-import {createAccountEndpoint, getAccountEndpoint, getAccountsEndpoint} from "./magicConst";
+import {closeAccountEndpoint, createAccountEndpoint, getAccountEndpoint, getAccountsEndpoint} from "./magicConst";
 import {Simulate} from "react-dom/test-utils";
 import error = Simulate.error;
 
@@ -21,10 +21,10 @@ interface Money {
 export interface AccountData {
     id: string,
     money: Money,
-    operationsHistory: OperationHistory[]
+    operationsHistory: OperationsHistory[]
 }
 
-export interface OperationHistory {
+export interface OperationsHistory {
     accountId: string;
     id: string;
     moneyAmmount: Money;
@@ -62,9 +62,9 @@ export async function getAccount(accountId: string) {
 }
 
 
-export async function createAccount(userId:string,currency:Currency){
+export async function createAccount(userId: string, currency: Currency) {
     try {
-        const response = await  fetch(`${createAccountEndpoint}?userId=${userId}&currency=${currency}`,{
+        const response = await fetch(`${createAccountEndpoint}?userId=${userId}&currency=${currency}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -75,9 +75,23 @@ export async function createAccount(userId:string,currency:Currency){
             throw new Error(`HTTP error! status: ${response.status}, message: ${errorData}`);
         }
 
-    }
-    catch (error){
+    } catch (error) {
         console.error('An error occurred while creating the account')
+        throw error;
+    }
+}
+
+export async function closeAccount(userId: string, accountId: string) {
+    try {
+        const params = new URLSearchParams({userId, accountId});
+        const response = await fetch(`${closeAccountEndpoint}?${params}`, {method: 'DELETE'});
+
+        if (!response.ok) {
+            const errorData = await response.text();
+            throw new Error(`HTTP error! status: ${response.status}, message: ${errorData}`);
+        }
+    } catch (error) {
+        console.error('An error occurred while deleting the account');
         throw error;
     }
 }
