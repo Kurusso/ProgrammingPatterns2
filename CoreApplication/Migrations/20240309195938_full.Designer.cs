@@ -3,17 +3,17 @@ using System;
 using CoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace CoreApplication.Migrations
 {
     [DbContext(typeof(CoreDbContext))]
-    [Migration("20240302122308_init")]
-    partial class init
+    [Migration("20240309195938_full")]
+    partial class full
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,30 +21,31 @@ namespace CoreApplication.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.16")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("CoreApplication.Models.Account", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeleteDateTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("DeleteDateTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("ModifyDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("MoneyAmount")
-                        .HasColumnType("int");
+                    b.Property<string>("Money")
+                        .IsRequired()
+                        .HasColumnType("varchar");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -55,25 +56,29 @@ namespace CoreApplication.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeleteDateTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("DeleteDateTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("ModifyDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("MoneyAmmount")
-                        .HasColumnType("int");
+                    b.Property<string>("MoneyAmmount")
+                        .IsRequired()
+                        .HasColumnType("varchar");
+
+                    b.Property<decimal>("MoneyAmmountInAccountCurrency")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("OperationType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -84,16 +89,18 @@ namespace CoreApplication.Migrations
 
             modelBuilder.Entity("CoreApplication.Models.Operation", b =>
                 {
-                    b.HasOne("CoreApplication.Models.Account", null)
-                        .WithMany("OperationsHistory")
+                    b.HasOne("CoreApplication.Models.Account", "Account")
+                        .WithMany("Operations")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("CoreApplication.Models.Account", b =>
                 {
-                    b.Navigation("OperationsHistory");
+                    b.Navigation("Operations");
                 });
 #pragma warning restore 612, 618
         }

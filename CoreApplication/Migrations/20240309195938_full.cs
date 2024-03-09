@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CoreApplication.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class full : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,12 +15,12 @@ namespace CoreApplication.Migrations
                 name: "Accounts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MoneyAmount = table.Column<int>(type: "int", nullable: false),
-                    CreateDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifyDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeleteDateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Money = table.Column<string>(type: "varchar", nullable: false),
+                    CreateDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifyDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeleteDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -31,13 +31,14 @@ namespace CoreApplication.Migrations
                 name: "Operations",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OperationType = table.Column<int>(type: "int", nullable: false),
-                    MoneyAmmount = table.Column<int>(type: "int", nullable: false),
-                    CreateDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifyDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeleteDateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    AccountId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OperationType = table.Column<int>(type: "integer", nullable: false),
+                    MoneyAmmount = table.Column<string>(type: "varchar", nullable: false),
+                    MoneyAmmountInAccountCurrency = table.Column<decimal>(type: "numeric", nullable: false),
+                    CreateDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifyDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeleteDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
