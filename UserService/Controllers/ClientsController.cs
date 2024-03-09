@@ -14,17 +14,18 @@ public class ClientsController(ClientService cs) : Controller
     private readonly ClientService _clientService = cs;
 
     [HttpPost("register")]
-    public async Task<ActionResult<Guid>> Create([FromBody]UsernamePasswordDTO reginfo) {
-        try 
+    public async Task<ActionResult<Guid>> Create([FromBody] UsernamePasswordDTO reginfo)
+    {
+        try
         {
             var guid = await _clientService.Register(reginfo.Username, reginfo.Password);
             return Ok(guid);
-        } 
-        catch (BackendException be) 
+        }
+        catch (BackendException be)
         {
             return Problem(be.UserMessage, statusCode: be.StatusCode);
         }
-        catch 
+        catch
         {
             return Problem("Unknown server error", statusCode: 500);
         }
@@ -32,54 +33,72 @@ public class ClientsController(ClientService cs) : Controller
 
 
     [HttpPost("login")]
-    public async Task<ActionResult<Guid>> Login([FromBody]UsernamePasswordDTO reginfo) 
+    public async Task<ActionResult<Guid>> Login([FromBody] UsernamePasswordDTO reginfo)
     {
-        try 
+        try
         {
             var guid = await _clientService.Login(reginfo.Username, reginfo.Password);
             return Ok(guid);
-        } 
-        catch (BackendException be) 
+        }
+        catch (BackendException be)
         {
             return Problem(be.UserMessage, statusCode: be.StatusCode);
         }
-        catch 
+        catch
         {
             return Problem("Unknown server error", statusCode: 500);
         }
     }
 
     [HttpGet]
-    public async Task<ActionResult<Page<UserDTO>>> ListClients(string searchPattern, int page = 1) 
+    public async Task<ActionResult<Page<UserDTO>>> ListClients(string searchPattern, int page = 1)
     {
-        try 
+        try
         {
             var users = await _clientService.ListClients(searchPattern, page);
             return Ok(users);
         }
-        catch (BackendException be) 
+        catch (BackendException be)
         {
             return Problem(be.UserMessage, statusCode: be.StatusCode);
         }
-        catch 
+        catch
         {
             return Problem("Unknown server error", statusCode: 500);
         }
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserDTO>> ClientInfo(Guid id) 
+    public async Task<ActionResult<UserDTO>> ClientInfo(Guid id)
     {
-        try 
+        try
         {
             var client = await _clientService.ClientInfo(id);
             return Ok(client);
         }
-        catch (BackendException be) 
+        catch (BackendException be)
         {
             return Problem(be.UserMessage, statusCode: be.StatusCode);
         }
-        catch 
+        catch
+        {
+            return Problem("Unknown server error", statusCode: 500);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> BlockClient(Guid id)
+    {
+        try
+        {
+            await _clientService.BlockClient(id);
+            return Ok();
+        }
+        catch (BackendException be)
+        {
+            return Problem(be.UserMessage, statusCode: be.StatusCode);
+        }
+        catch
         {
             return Problem("Unknown server error", statusCode: 500);
         }

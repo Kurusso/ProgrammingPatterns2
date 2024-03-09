@@ -1,4 +1,3 @@
-using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using UserService.Helpers;
 using UserService.Models;
@@ -13,56 +12,82 @@ public class ClientService(MainDbContext dbc)
 
     public async Task<Guid> Register(string username, string password)
     {
-        var client = new Client{
+        var client = new Client
+        {
             Id = new Guid(),
             Username = username,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(password)
         };
 
         await _dbcontext.Clients.AddAsync(client);
-        await _dbcontext.SaveChangesAsync();
+
+        try
+        {
+            await _dbcontext.SaveChangesAsync();
+        }
+        catch
+        {
+            throw new BackendException(400, "this username is already taken");
+        }
+
         return client.Id;
     }
 
-    public async Task<Guid> Login(string username, string password) 
+    public async Task<Guid> Login(string username, string password)
     {
         var client = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Username == username) ??
             throw new BackendException(401, "wrong username or password");
-        
+
         if (!BCrypt.Net.BCrypt.Verify(password, client.PasswordHash))
             throw new BackendException(401, "wrong username or password");
-        
+
+        if (client.Blocked)
+            throw new BackendException(403, "client blocked");
+
         return client.Id;
     }
 
-    public async Task<Page<UserDTO>> ListClients(string namePattern, int pageNumber) {
+    public async Task<Page<UserDTO>> ListClients(string namePattern, int pageNumber)
+    {
         IQueryable<Client> query;
         if (namePattern == "" || namePattern == null)
-            query = _dbcontext.Clients.AsQueryable();
-        else 
-            query = _dbcontext.Clients.Where(c => c.Username.Contains(namePattern)).AsQueryable();
+            query = _dbcontext.Clients.Where(c => !c.Blocked).AsQueryable();
+        else
+            query = _dbcontext.Clients.Where(c => c.Username.Contains(namePattern) && !c.Blocked).AsQueryable();
 
         var count = await query.CountAsync();
 
-        if (pageNumber < 1) 
+        if (pageNumber < 1)
             throw new BackendException(400, "page number can not be less than 1");
 
-        var clients =  await query.Skip(pageSize * (pageNumber - 1))
+        var clients = await query.Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
-            .Select(x => new UserDTO{Id=x.Id, Username=x.Username})
+            .Select(x => new UserDTO { Id = x.Id, Username = x.Username })
             .ToListAsync();
 
         return new Page<UserDTO>
         {
             Items = clients,
             PageInfo = new PageInfo(pageNumber, count, pageSize)
-        }; 
+        };
     }
 
-    public async Task<UserDTO> ClientInfo(Guid id) {
+    public async Task<UserDTO> ClientInfo(Guid id)
+    {
         var client = await _dbcontext.Clients.FindAsync(id) ??
             throw new BackendException(404, "client with given id does not exist");
 
-        return new UserDTO{Id=client.Id, Username=client.Username};
+        return new UserDTO { Id = client.Id, Username = client.Username };
+    }
+
+    public async Task BlockClient(Guid id)
+    {
+        var client = await _dbcontext.Clients.FindAsync(id) ??
+            throw new BackendException(404, "client with given id does not exist");
+
+        client.Blocked = true;
+        //TODO: requests to another microservices;
+
+        await _dbcontext.SaveChangesAsync();
     }
 }
