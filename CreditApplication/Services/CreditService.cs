@@ -1,5 +1,6 @@
 ﻿using CreditApplication.Models;
 using CreditApplication.Models.Dtos;
+using CreditApplication.Models.DTOs;
 using CreditApplication.Models.Enumeration;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,7 @@ namespace CreditApplication.Services
 {
     public interface ICreditService
     {
-        public Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId, decimal moneyAmount, decimal monthPay, Currency currency);
+        public Task TakeCredit(TakeCreditDTO creditDTO);
         public Task<CreditDTO> GetCreditInfo(Guid id, Guid userId);
         public Task RepayCredit(Guid id, Guid userId, decimal moneyAmmount, Guid? accountId, Currency currency, bool monthPay = false);
         public Task UpdateCredits();
@@ -67,24 +68,24 @@ namespace CreditApplication.Services
             await _context.SaveChangesAsync();          
         }
 
-        public async Task TakeCredit(Guid creditRateId, Guid userId, Guid accountId, decimal moneyAmount, decimal monthPay, Currency currency)
+        public async Task TakeCredit(TakeCreditDTO creditDTO)
         {
-            var creditRate = await _context.CreditRates.FirstOrDefaultAsync(x => x.Id == creditRateId);
-            var money = new Money(moneyAmount, currency);
+            var creditRate = await _context.CreditRates.FirstOrDefaultAsync(x => x.Id == creditDTO.CreditRateId);
+            var money = new Money(creditDTO.MoneyAmount, creditDTO.Currency);
             if (creditRate == null)
             {
-                throw new KeyNotFoundException($"There is no CreditRate with this {creditRateId} id!");
+                throw new KeyNotFoundException($"There is no CreditRate with this {creditDTO.CreditRateId} id!");
             }
             var credit = new Credit
             {
                 Id = Guid.NewGuid(),
-                CreditRateId = creditRateId,
-                UserId = userId,
-                PayingAccountId = accountId,
+                CreditRateId = creditDTO.CreditRateId,
+                UserId = creditDTO.UserId,
+                PayingAccountId = creditDTO.AccountId,
                 RemainingDebt = money,
                 FullMoneyAmount = money,
                 MonthPayAmount = money,
-                UnpaidDebt = new Money { Amount=0, Currency=currency},
+                UnpaidDebt = new Money { Amount=0, Currency= creditDTO.Currency },
             };
             await _context.Credits.AddAsync(credit);
             await _context.SaveChangesAsync();

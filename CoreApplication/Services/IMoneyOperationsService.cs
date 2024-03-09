@@ -7,8 +7,8 @@ namespace CoreApplication.Services
 {
     public interface IMoneyOperationsService
     {
-        public Task Deposit(int amount, Currency currency, Guid accountId);
-        public Task Withdraw(int amount, Currency currency, Guid accountId);
+        public Task Deposit(decimal amount, Currency currency, Guid accountId);
+        public Task Withdraw(decimal amount, Currency currency, Guid accountId);
     }
     public class MoneyOperationsService : IMoneyOperationsService
     {
@@ -17,54 +17,64 @@ namespace CoreApplication.Services
         {
             _dbContext = dbContext;
         }
-        public async Task Deposit(int amount,Currency currency, Guid accountId)
+        public async Task Deposit(decimal amount,Currency currency, Guid accountId)
         {
-           var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().FirstOrDefaultAsync(x => x.Id == accountId);
-            if (account == null)
+            try
             {
-                throw new ArgumentException("There is no account with this Id!");
+                var result = await CreateOperation(amount, currency, accountId, OperationType.Deposit);
+                result.Item1.Money = result.Item2;
+
+                await _dbContext.SaveChangesAsync();
             }
-            var money = new Money(amount, currency);
-            var operation = new Operation
+            catch
             {
-                Id = Guid.NewGuid(),
-                OperationType = OperationType.Deposit,
-                AccountId = accountId,
-                MoneyAmmount = money,
-                MoneyAmmountInAccountCurrency = MoneyConverter.ConvertMoneyFromDollarValue(MoneyConverter.ConvertMoneyToDollarValue(money), account.Money.Currency).Amount
-            };
-            await _dbContext.Operations.AddAsync(operation);
-            Money balance = await CountAccountBalance(account);
-            account.Money = balance;
-            await _dbContext.SaveChangesAsync();
+                throw;
+            }
         }
 
-        public async Task Withdraw(int amount, Currency currency, Guid accountId)
+        public async Task Withdraw(decimal amount, Currency currency, Guid accountId)
         {
+            try
+            {
+                var result = await CreateOperation(amount, currency, accountId, OperationType.Withdraw);
+                if (result.Item2.Amount < 0)
+                {
+                    throw new InvalidOperationException("You haven't got enough money on your account!");
+                }
+                result.Item1.Money = result.Item2;
+                await _dbContext.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
+                
+        }
+
+        private async Task<Tuple<Account,Money>> CreateOperation(decimal amount, Currency currency, Guid accountId, OperationType type)
+        {
+            if (amount < 0)
+            {
+                throw new ArgumentException($"You can't use monneyAmount below 0!");
+            }
             var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().FirstOrDefaultAsync(x => x.Id == accountId);
             if (account == null)
             {
-                throw new ArgumentException("There is no account with this Id!");
+                throw new KeyNotFoundException("There is no account with this Id!");
             }
             var money = new Money(amount, currency);
             var operation = new Operation
             {
                 Id = Guid.NewGuid(),
-                OperationType = OperationType.Withdraw,
+                OperationType = type,
                 AccountId = accountId,
                 MoneyAmmount = money,
                 MoneyAmmountInAccountCurrency = MoneyConverter.ConvertMoneyFromDollarValue(MoneyConverter.ConvertMoneyToDollarValue(money), currency).Amount
             };
             await _dbContext.Operations.AddAsync(operation);
             Money balance = await CountAccountBalance(account);
-            if(balance.Amount < 0)
-            {
-                throw new InvalidOperationException("You haven't got enough money on your account!");
-            }
-            account.Money = balance;
-            await _dbContext.SaveChangesAsync();
+            return new Tuple<Account,Money>(account, balance);
         }
-
         private async Task<Money> CountAccountBalance(Account account)
         {
             Money balance = new Money(0,account.Money.Currency);
