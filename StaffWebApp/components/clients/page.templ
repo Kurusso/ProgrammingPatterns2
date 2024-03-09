@@ -1,6 +1,7 @@
 package clients
 
 import "staff-web-app/components/common"
+import "staff-web-app/components"
 
 // TODO: убрать в model
 type ClientViewModel struct {
@@ -10,17 +11,11 @@ type ClientViewModel struct {
 
 const accountHistoryModalId = "historyModal"
 
-script accordionCollapseHandler() {
-
-
-	// for (const button of )
-}
-
 templ infoButton(clientId, listLoadUrl string) {
 	<button
 		class="btn btn-outline-info ms-3"
 		data-bs-toggle="collapse"
-		data-bs-target={ "#accordion-" + clientId  }
+		data-bs-target={ "#accordion-" + clientId }
 		hx-get={ listLoadUrl }
 		hx-target={ "#accordion-" + clientId }
 		hx-swap="innerHTML"
@@ -35,7 +30,6 @@ templ clientsList(clients []ClientViewModel) {
 	<script>
 		var unrolledElements = new Map()
 		function accordionCollapseHandler(event) {
-			console.log("in collapse handler")
 			const target = event.target
 			let accordionId = target.getAttribute("data-bs-target")
 			let strategy = ""
@@ -57,7 +51,6 @@ templ clientsList(clients []ClientViewModel) {
 			} while (elem = elem.nextSibling)
 
 			target.setAttribute("data-bs-toggle", "collapse")
-			console.log("out collapse handler")
 		}
 
 		function shouldMakeHtmxRequest(event) {
@@ -65,7 +58,6 @@ templ clientsList(clients []ClientViewModel) {
 		}
 
 	</script>
-
 	<div class="accordion " id="usersAccordion">
 		for _, client := range clients {
 			<div class="accordion-item p-2">
@@ -94,8 +86,13 @@ templ clientsList(clients []ClientViewModel) {
 }
 
 templ ClientsPage() {
-	@common.GenericUsersView() {
-		@clientsList([]ClientViewModel{{"broforce", "10000"}, {"kubezumie", "9999"}})
+	@components.MainPageWrapper(components.Clients) {
+		@common.GenericUsersView() {
+			@clientsList([]ClientViewModel{
+				{"broforce", "c1bedfd5-592e-41fc-8e0b-cd8d3bb9fbf3"},
+				{"kubezumie", "fe02a2e2-be63-4e55-b34f-fb24eef93ad2"},
+			})
+		}
+		@AccountHistoryModal()
 	}
-	@AccountHistoryModal()
 }

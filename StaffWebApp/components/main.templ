@@ -1,22 +1,28 @@
 package components
 
-import "staff-web-app/components/clients"
-import "staff-web-app/components/staff"
-import "staff-web-app/components/credits"
+type Tab int
+const (
+	Clients Tab = iota
+	Staff
+	Credits
+)
 
-templ navigator(currentTab Tab) {
-	switch currentTab {
-		case Clients:
-			@clients.ClientsPage()
-		case Staff:
-			@staff.StaffPage()
-		case Credits:
-			@credits.CreditsPage()
-	}
-
+templ navbar(currentTab Tab) {
+	<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a class={ "nav-link", templ.KV("active", currentTab==Clients) } aria-current="page" href="/">Clients</a>
+		</li>
+		<li class="nav-item">
+			<a class={ "nav-link", templ.KV("active", currentTab==Staff) } href="/Staff">Staff</a>
+		</li>
+		<li class="nav-item">
+			<a class={ "nav-link", templ.KV("active", currentTab==Credits) } href="/Credits">Credits</a>
+		</li>
+	</ul>
 }
 
-templ MainPage(currentTab Tab) {
+
+templ MainPageWrapper(currentTab Tab) {
 	<!DOCTYPE html>
 	<html>
 		<head>
@@ -30,7 +36,7 @@ templ MainPage(currentTab Tab) {
 		<body data-bs-theme="dark">
 			@navbar(currentTab)
             <div class="container mt-5">
-			    @navigator(currentTab)
+				{ children... }
             </div>
 		</body>
 	</html>

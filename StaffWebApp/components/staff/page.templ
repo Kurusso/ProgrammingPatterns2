@@ -1,6 +1,7 @@
 package staff
 
 import "staff-web-app/components/common"
+import "staff-web-app/components"
 
 // TODO: убрать в model
 type StaffViewModel struct {
@@ -22,7 +23,9 @@ templ staffList(staff []StaffViewModel) {
 }
 
 templ StaffPage() {
-	@common.GenericUsersView() {
-		@staffList([]StaffViewModel{{"Sasha Nein", "0"}, {"Milla Vodello", "1"}, {"Coach Oleander", "2"}})
+	@components.MainPageWrapper(components.Staff) {
+		@common.GenericUsersView() {
+			@staffList([]StaffViewModel{{"Sasha Nein", "0"}, {"Milla Vodello", "1"}, {"Coach Oleander", "2"}})
+		}
 	}
 }

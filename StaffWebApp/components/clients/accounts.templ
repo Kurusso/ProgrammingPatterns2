@@ -3,50 +3,58 @@ package clients
 import "staff-web-app/models"
 import "fmt"
 
-
 templ AccountList(accounts []models.Account) {
 	<div class="list-group p-4">
 		for _, account := range accounts {
-			<button 
-                class="list-group-item list-group-item-action" 
-                data-bs-toggle="modal"
-                data-bs-target={ "#" + accountHistoryModalId }
-                hx-get={ "/api/accounts/" + account.Id + "/operations" }
-                hx-target={ "#" + operationsTbodyId }
-                onclick={ OperationsModalOpenHandler(operationsHeaderId, account.Id) }
-            >
-            <div class="d-flex flex-row">
-                <div >
-				    { account.Id  }
-                </div>
-                <div class="flex-grow-1 text-end">
-                    { fmt.Sprintf("%d", account.CurrencyAmount) + account.Currency.ToIcon() }
-                </div>
-            </div>
+			<button
+				class="list-group-item list-group-item-action"
+				data-bs-toggle="modal"
+				data-bs-target={ "#" + accountHistoryModalId }
+				hx-get={ "/api/accounts/" + account.Id + "/operations" }
+				hx-target={ "#" + operationsTbodyId }
+				onclick={ OperationsModalOpenHandler(operationsHeaderId, account.Id) }
+			>
+				<div class="d-flex flex-row">
+					<div>
+						{ account.Id }
+					</div>
+					<div class="flex-grow-1 text-end">
+						{ fmt.Sprintf("%d", account.CurrencyAmount) + account.Currency.ToIcon() }
+					</div>
+				</div>
 			</button>
 		}
 	</div>
 }
 
-templ CreditsList(credits []models.Credit) {
-    	<div class="list-group p-4">
+templ CreditsList(credits []models.CreditShort) {
+	<div class="list-group p-4">
 		for _, credit := range credits {
-			<button 
-                class="list-group-item list-group-item-action" 
-                data-bs-toggle="modal"
-                data-bs-target={ "#" + accountHistoryModalId }
-                hx-get={ "/api/accounts/" + credit.Id + "/operations" }
-                hx-target={ "#" + operationsTbodyId }
-                onclick={ OperationsModalOpenHandler(operationsHeaderId, credit.Id) }
-            >
-            <div class="d-flex flex-row">
-                <div >
-				    { credit.Rate.Name  }
-                </div>
-                <div class="flex-grow-1 text-end">
-                    { fmt.Sprintf("%d/%d", credit.RemainingDebt, credit.MoneyTaken) }
-                </div>
-            </div>
+			<button
+				class={
+					"list-group-item",
+					"list-group-item-action",
+					templ.KV("list-group-item-danger", credit.UnpaidDebt.Amount > 0),
+				}
+				data-bs-toggle="modal"
+				data-bs-target={ "#" + accountHistoryModalId }
+				hx-get={ "/api/accounts/" + credit.Id + "/operations" }
+				hx-target={ "#" + operationsTbodyId }
+				onclick={ OperationsModalOpenHandler(operationsHeaderId, credit.Id) }
+			>
+				<div class="d-flex row m-0">
+					<div class="col">
+						{ credit.Rate.Name }
+					</div>
+					if credit.UnpaidDebt.Amount > 0 {
+						<div class="col-auto">
+							{ "Сумма просроченных платежей: "+ credit.UnpaidDebt.String() }
+						</div>
+					}
+					<div class="col text-end">
+						{ "Долг: " + credit.RemainingDebt.String() }
+					</div>
+				</div>
 			</button>
 		}
 	</div>

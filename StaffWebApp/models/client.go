@@ -7,12 +7,12 @@ const (
 	Withdraw OperationType = "withdraw"
 )
 
-type CurrencyType string
+type CurrencyType int
 
 const (
-	Ruble  CurrencyType = "ruble"
-	Dollar CurrencyType = "dollar"
-	Euro   CurrencyType = "euro"
+	Ruble CurrencyType = iota
+	Dollar
+	Euro
 )
 
 func (c CurrencyType) ToIcon() string {
