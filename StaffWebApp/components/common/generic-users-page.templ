@@ -1,9 +1,12 @@
 package common
 
+const UserSearchInputId = "userSearchBar"
+
 templ userSearch(searchUrl string) {
 	<div class="input-group">
 		<span class="input-group-text">Поиск</span>
 		<input
+			id={ UserSearchInputId }
 			name="searchTerm"
 			type="text"
 			class="form-control"

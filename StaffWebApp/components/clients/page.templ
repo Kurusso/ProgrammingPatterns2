@@ -3,7 +3,7 @@ package clients
 import "staff-web-app/components/common"
 import "staff-web-app/components"
 import "staff-web-app/models"
-
+import "fmt"
 
 const accountHistoryModalId = "historyModal"
 const creditInfoModalId = "creditInfoModal"
@@ -57,7 +57,22 @@ templ infoButton(clientId, listLoadUrl string) {
 	</button>
 }
 
+templ blockButton(id string) {
+	<button
+		type="button"
+		class="btn btn-danger"
+		hx-delete={ fmt.Sprintf("/api/clients/%s?page=1", id) }
+		hx-target="#userListContainer"
+		hx-include="[name='searchTerm']"
+	>
+		Заблокировать
+	</button>
+}
+
 templ ClientsList(clients *models.Page[models.ClientShort]) {
+	<script>
+		unrolledElements = new Map()
+	</script>
 	<div class="accordion " id="usersAccordion">
 		for _, client := range clients.Items {
 			<div class="accordion-item p-2">
@@ -72,7 +87,7 @@ templ ClientsList(clients *models.Page[models.ClientShort]) {
 						}
 					</div>
 					<div class="d-flex col-auto flex-grow-1 flex-row-reverse me-3">
-						<button type="button" class="btn btn-danger">Заблокировать</button>
+						@blockButton(client.Id)
 					</div>
 				</div>
 				<div id={ "accordion-" + client.Id } class="accordion-collapse collapse">

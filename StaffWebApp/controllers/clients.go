@@ -134,6 +134,25 @@ func CreateClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.P
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+const BlockClientProfileUrlPattern = "/api/clients/:userId"
+
+func BlockClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	userId := ps.ByName("userId")
+	if userId == "" {
+		//TODO: error handling
+		return
+	}
+
+	err := services.BlockClientProfile(r.Context(), userId)
+	if err != nil {
+		//TODO: error handling
+		logger.Default.Error(err)
+		return
+	}
+
+	ListClientsPage(w, r, ps)
+}
+
 func RenderClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	clients.ClientsPage().Render(r.Context(), w)
 }

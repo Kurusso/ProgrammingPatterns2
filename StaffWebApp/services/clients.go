@@ -93,3 +93,23 @@ func LoadAccountOperationHistory(ctx context.Context, accountId string) (*models
 	)
 	return &account, err
 }
+
+func BlockClientProfile(ctx context.Context, userId string) error {
+	requestUrl, err := url.JoinPath(config.Default.UserApiUrl, "clients/", userId)
+	if err != nil {
+		return fmt.Errorf("invalid url: %v", err)
+	}
+
+	err = makeRequestParseBody(
+		ctx,
+		http.MethodDelete,
+		requestUrl,
+		nil,
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("block client profile requeset failed: %v", err)
+	}
+
+	return nil
+}

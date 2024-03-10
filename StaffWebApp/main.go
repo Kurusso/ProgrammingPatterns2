@@ -38,7 +38,9 @@ func main() {
 	router.POST(controllers.CreateCreditRateUrlPattern, controllers.CreateCreditRate)
 	router.POST(controllers.CreateStaffProfileUrlPattern, controllers.CreateStaffProfile)
 	router.POST(controllers.CreateClientProfileUrlPattern, controllers.CreateClientProfile)
+
 	router.DELETE(controllers.BlockStaffProfileUrlPattern, controllers.BlockStaffProfile)
+	router.DELETE(controllers.BlockClientProfileUrlPattern, controllers.BlockClientProfile)
 
 	err = http.ListenAndServe(":8080", router)
 	if err != nil {
