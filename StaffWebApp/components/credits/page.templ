@@ -4,20 +4,20 @@ import "staff-web-app/models"
 import "staff-web-app/components"
 
 templ createCreaditRateForm() {
-	<form action="">
+	<form method="post" action="/api/credits/rates">
 		<div class="row border border-1 p-3 rounded m-0">
 			<div class="col-md-5">
 				<label for="newCreditRateName" class="form-label">Название кредитного тарифа</label>
-				<input type="text" placeholder="" id="newCreditRateName" class="form-control"/>
+				<input type="text" required name="creditRateName" id="newCreditRateName" class="form-control"/>
 			</div>
 			<div class="col-md-5">
 				<label for="newCreditRatePercent" class="form-label">Процентная ставка</label>
 				<div class="input-group">
 					<span class="input-group-text">%</span>
-					<input type="number" name="" id="newCreditRatePercent" class="form-control" max="100" min="0"/>
+				<input type="number" required name="creditRatePercent" id="newCreditRatePercent" class="form-control" max="100" min="0"/>
 				</div>
 			</div>
-			<button class="btn btn-success col-md-2 mt-4 mt-md-0">
+			<button type="submit" class="btn btn-success col-md-2 mt-4 mt-md-0">
 				Создать
 			</button>
 		</div>

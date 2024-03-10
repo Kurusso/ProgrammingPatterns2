@@ -2,10 +2,13 @@ package services
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"staff-web-app/config"
 	"staff-web-app/models"
+	"strings"
 )
 
 func LoadCreditRates(ctx context.Context) ([]models.CreditRate, error) {
@@ -50,4 +53,29 @@ func LoadCreditDetailedInfo(ctx context.Context, userId string, creditId string)
 
 	return &creditInfo, err
 
+}
+
+func CreateCreditRate(ctx context.Context, name string, percent int) error {
+	body := make(map[string]any, 2)
+	body["name"] = name
+	body["monthPercent"] = percent
+
+	output, err := json.Marshal(body)
+	if err != nil {
+		return fmt.Errorf("failed to encode body: %v", err)
+	}
+
+	err = makeRequestParseBody(
+		ctx,
+		http.MethodPost,
+		config.Default.CreditsApiUrl+"CreditRates/Create",
+		strings.NewReader(string(output)),
+		nil,
+	)
+
+	if err != nil {
+		return fmt.Errorf("create credit rate request failed: %v", err)
+	}
+
+	return nil
 }

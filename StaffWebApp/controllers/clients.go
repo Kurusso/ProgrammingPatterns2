@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"staff-web-app/components/clients"
 	"staff-web-app/logger"
-	"staff-web-app/models"
 	"staff-web-app/services"
+	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -20,32 +20,37 @@ func ListUserAccounts(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 		//TODO: error handling
 	}
 
-	clients.AccountList([]models.Account{
-		{"12345", 1534, models.Dollar},
-		{"84756", 7584, models.Dollar},
-		{"19385", 1283, models.Euro},
-		{"73453", 9574, models.Ruble},
-	}).Render(r.Context(), w)
+	accounts, err := services.LoadUserAccounts(r.Context(), id)
+	if err != nil {
+		logger.Default.Error("failed to load user accounts: ", err)
+		return
+	}
 
+	clients.AccountList(accounts).Render(r.Context(), w)
 }
 
-const ListAccountOperationsUrlPattern = "/api/accounts/:userId/operations"
+const ListAccountOperationsUrlPattern = "/api/clients/:userId/accounts/:accountId/operations"
 
 func ListAccountOperations(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	id := ps.ByName("userId")
-	if id == "" {
+	userId := ps.ByName("userId")
+	if userId == "" {
 		fmt.Println("can't find Id")
 		//TODO: error handling
 	}
 
-	clients.OperationList(
-		[]models.Operation{
-			{models.Deposit, 700, "17-10-2023"},
-			{models.Withdraw, 100, "18-10-2023"},
-			{models.Withdraw, 350, "19-10-2023"},
-			{models.Deposit, 80, "20-10-2023"},
-		}, models.Dollar,
-	).Render(r.Context(), w)
+	accountId := ps.ByName("accountId")
+	if accountId == "" {
+		fmt.Println("can't find Id")
+		//TODO: error handling
+	}
+
+	account, err := services.LoadAccountOperationHistory(r.Context(), accountId, userId)
+	if err != nil {
+		logger.Default.Error("failed to load account operation history: ", err)
+		return
+	}
+
+	clients.OperationList(account).Render(r.Context(), w)
 }
 
 const ListUserCreditsUrlPattern = "/api/clients/:userId/credits"
@@ -89,6 +94,69 @@ func DetailedCreditInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	}
 
 	clients.DetailedCreditInfo(creditInfo).Render(r.Context(), w)
+}
+
+const ListClientsPageUrlPattern = "/api/clients"
+
+func ListClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	params := r.URL.Query()
+	pageNumber, err := strconv.Atoi(params.Get("page"))
+	if err != nil {
+		//TODO: error handling
+		return
+	}
+	searchTerm := params.Get("searchTerm")
+
+	page, err := services.LoadClientsPage(r.Context(), searchTerm, pageNumber)
+	if err != nil {
+		logger.Default.Error("failed to load clients page: ", err)
+		return
+	}
+
+	clients.ClientsList(page).Render(r.Context(), w)
+}
+
+const CreateClientProfileUrlPattern = "/api/clients"
+
+func CreateClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	if username == "" {
+		//TODO: error handling
+		return
+	}
+	if password == "" {
+		//TODO: error handling
+		return
+	}
+
+	err := services.CreateClientProfile(r.Context(), username, password)
+	if err != nil {
+		logger.Default.Error(err)
+		//TODO: error handling
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+const BlockClientProfileUrlPattern = "/api/clients/:userId"
+
+func BlockClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	userId := ps.ByName("userId")
+	if userId == "" {
+		//TODO: error handling
+		return
+	}
+
+	err := services.BlockClientProfile(r.Context(), userId)
+	if err != nil {
+		//TODO: error handling
+		logger.Default.Error(err)
+		return
+	}
+
+	ListClientsPage(w, r, ps)
 }
 
 func RenderClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

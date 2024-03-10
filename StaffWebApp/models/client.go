@@ -1,10 +1,10 @@
 package models
 
-type OperationType string
+type OperationType int
 
 const (
-	Deposit  OperationType = "deposit"
-	Withdraw OperationType = "withdraw"
+	Deposit OperationType = iota
+	Withdraw
 )
 
 type CurrencyType int
@@ -29,13 +29,24 @@ func (c CurrencyType) ToIcon() string {
 }
 
 type Operation struct {
-	Type           OperationType
-	CurrencyAmount uint64
+	Type           OperationType `json:"operationType"`
+	Money          Money         `json:"moneyAmmount"`
+	ConvertedMoney float64       `json:"moneyAmmountInAccountCurrency"`
 	Date           string
 }
 
-type Account struct {
-	Id             string
-	CurrencyAmount uint64 //TODO: может ли быть счет отрицательным
-	Currency       CurrencyType
+type AccountShort struct {
+	Id     string
+	UserId string
+	Money  Money
+}
+
+type AccountDetailed struct {
+	AccountShort
+	Operations []Operation `json:"operationsHistory"`
+}
+
+type ClientShort struct {
+	Id       string
+	Username string
 }

@@ -1,21 +1,25 @@
 package clients
 
 import "staff-web-app/models"
-import "fmt"
 import "staff-web-app/components/common"
+import "fmt"
 
 const operationsTbodyId = "operationsBody"
 const operationsHeaderId = "operationsHeader"
 
 //TODO: убрать currency
-templ OperationList(operations []models.Operation, currency models.CurrencyType) {
-	for _, operation := range operations {
+templ OperationList(accountInfo *models.AccountDetailed) {
+	if len(accountInfo.Operations) == 0 {
+		<tr ><td colspan="4" class="text-center">Пусто...</td></tr>
+	}
+	for _, operation := range accountInfo.Operations {
 		<tr
 			class={ templ.KV("table-success", operation.Type == models.Deposit),
 					templ.KV("table-danger", operation.Type == models.Withdraw) }
 		>
 			<td>{ operation.Date } </td>
-			<td>{ fmt.Sprintf("%d", operation.CurrencyAmount) + currency.ToIcon() } </td>
+			<td>{ operation.Money.String() } </td>
+			<td>{ fmt.Sprintf("%g%s", operation.ConvertedMoney, accountInfo.Money.Currency.ToIcon()) } </td>
 			<td>
 				switch operation.Type {
 					case models.Deposit:
@@ -45,7 +49,8 @@ templ accountHistoryModal() {
 						<thead>
 							<tr>
 								<th scope="col">Дата</th>
-								<th scope="col">Количество</th>
+								<th scope="col">Сумма</th>
+								<th scope="col">Сумма после конвертации</th>
 								<th scope="col">Тип операции</th>
 							</tr>
 						</thead>

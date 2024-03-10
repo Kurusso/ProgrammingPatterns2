@@ -3,7 +3,7 @@ package staff
 import "staff-web-app/components/common"
 import "staff-web-app/components"
 import "staff-web-app/models"
-
+import "fmt"
 
 templ StaffList(staffPage *models.Page[models.StaffShort]) {
 	<ul class="list-group">
@@ -11,19 +11,32 @@ templ StaffList(staffPage *models.Page[models.StaffShort]) {
 			<li class="d-flex list-group-item row mx-0">
 				<div class="align-self-center col">{ user.Username } </div>
 				<div class="col-auto me-3">
-					<button type="button" class="btn btn-danger">Заблокировать</button>
+					@staffBlockButton(user.Id)
 				</div>
 			</li>
 		}
 	</ul>
-
 	<div class="mt-3 d-flex flex-row-reverse">
-		@common.Pagination(staffPage.PageInfo)
-	</div>
+		@common.Pagination(staffPage.PageInfo,
+			"/api/staff?page=%d",
+			"#userListContainer",H
+}
+
+templ staffBlockButton(id string) {
+	<button
+		type="button"
+		class="btn btn-danger"
+		hx-delete={fmt.Sprintf("/api/staff/%s?page=1", id)}
+		hx-target="#userListContainer"
+		hx-include="[name='searchTerm']"
+	>
+		Заблокировать
+	</button>
 }
 
 templ staffListHxPlaceholder() {
-	<div class="text-center"
+	<div
+		class="text-center"
 		hx-get="/api/staff?page=1"
 		hx-trigger="load"
 		hx-swap="outerHTML"
@@ -34,7 +47,7 @@ templ staffListHxPlaceholder() {
 
 templ StaffPage() {
 	@components.MainPageWrapper(components.Staff) {
-		@common.GenericUsersView() {
+		@common.GenericUsersView(templ.URL("/api/staff?page=1"), templ.URL("/api/staff")) {
 			@staffListHxPlaceholder()
 		}
 	}

@@ -9,11 +9,23 @@ templ Loading() {
 	</div>
 }
 
-templ Pagination(pageInfo models.PageInfo) {
+templ Pagination(
+	pageInfo models.PageInfo,
+	urlPrintfPattern,
+	swapTarget string,
+	additionAttributes templ.Attributes,
+) {
 	<nav>
 		<ul class="pagination">
 			<li class={ "page-item", templ.KV("disabled", pageInfo.CurrentPage==1) }>
-				<a class="page-link">
+				<a
+					class="page-link"
+					if  pageInfo.CurrentPage > 1 {
+						hx-get={ fmt.Sprintf(urlPrintfPattern, pageInfo.CurrentPage-1) }
+						hx-target={ swapTarget }
+						{ additionAttributes... }
+					}
+				>
 					<span aria-hidden="true">&laquo;</span>
 				</a>
 			</li>
@@ -21,7 +33,16 @@ templ Pagination(pageInfo models.PageInfo) {
 				<a class="page-link" href="#">{ fmt.Sprintf("%d/%d", pageInfo.CurrentPage, pageInfo.PagesTotal) }</a>
 			</li>
 			<li class={ "page-item", templ.KV("disabled", pageInfo.CurrentPage==pageInfo.PagesTotal) }>
-				<a class="page-link" href="#"><span aria-hidden="true">&raquo;</span></a>
+				<a
+					class="page-link"
+					if  pageInfo.CurrentPage!=pageInfo.PagesTotal {
+						hx-get={ fmt.Sprintf(urlPrintfPattern, pageInfo.CurrentPage+1) }
+						hx-target={ swapTarget }
+						{ additionAttributes... }
+					}
+				>
+					<span aria-hidden="true">&raquo;</span>
+				</a>
 			</li>
 		</ul>
 	</nav>

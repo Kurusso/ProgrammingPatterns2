@@ -1,14 +1,17 @@
 package common
 
-templ userSearch() {
+const UserSearchInputId = "userSearchBar"
+
+templ userSearch(searchUrl string) {
 	<div class="input-group">
 		<span class="input-group-text">Поиск</span>
 		<input
+			id={ UserSearchInputId }
 			name="searchTerm"
 			type="text"
 			class="form-control"
 			placeholder="Имя пользователя"
-			hx-get="/api/staff?page=1"
+			hx-get={ searchUrl }
 			hx-trigger="keyup changed delay:500ms"
 			hx-target="#userListContainer"
 		/>
@@ -16,15 +19,50 @@ templ userSearch() {
 }
 
 templ addNewUserButton() {
-	<button type="button" class="btn btn-success">Добавить пользователя</button>
+	<button
+		type="button"
+		class="btn btn-success"
+		data-bs-toggle="modal"
+		data-bs-target="#newUserModal"
+	>
+		Добавить пользователя
+	</button>
 }
 
+templ newUserModal(addUserUrl templ.SafeURL) {
+	<div class="modal" id="newUserModal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5>Создание нового пользователя</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form method="post" action={ addUserUrl }>
+						<div class="mb-3">
+							<label for="usernameField" class="form-label">Имя пользователя</label>
+							<input type="text" required name="username" class="form-control" id="usernameField"/>
+						</div>
+						<div class="mb-3">
+							<label for="passwordField" class="form-label">Пароль</label>
+							<input type="password" required name="password" class="form-control" id="passwordField"/>
+						</div>
+						<div class="mb-3 d-flex flex-row-reverse">
+							<button type="submit" class="btn btn-success">Создать</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+}
 
-templ GenericUsersView() {
+templ GenericUsersView(searchUrl templ.SafeURL, addUserUrl templ.SafeURL) {
+	@newUserModal(addUserUrl)
 	<div class="flex-column">
 		<div class="d-flex flex-row">
 			<div class="col-8">
-				@userSearch()
+				@userSearch(string(searchUrl))
 			</div>
 			<div class="d-flex flex-grow-1 flex-row-reverse">
 				@addNewUserButton()

@@ -2,32 +2,13 @@ package clients
 
 import "staff-web-app/components/common"
 import "staff-web-app/components"
-
-// TODO: убрать в model
-type ClientViewModel struct {
-	Name string
-	Id   string
-}
+import "staff-web-app/models"
+import "fmt"
 
 const accountHistoryModalId = "historyModal"
 const creditInfoModalId = "creditInfoModal"
 
-templ infoButton(clientId, listLoadUrl string) {
-	<button
-		class="btn btn-outline-info ms-3"
-		data-bs-toggle="collapse"
-		data-bs-target={ "#accordion-" + clientId }
-		hx-get={ listLoadUrl }
-		hx-target={ "#accordion-" + clientId }
-		hx-swap="innerHTML"
-		hx-trigger="click[shouldMakeHtmxRequest(event)]"
-		onclick="accordionCollapseHandler(event)"
-	>
-		{ children... }
-	</button>
-}
-
-templ clientsList(clients []ClientViewModel) {
+templ modalScripts() {
 	<script>
 		var unrolledElements = new Map()
 		function accordionCollapseHandler(event) {
@@ -59,11 +40,44 @@ templ clientsList(clients []ClientViewModel) {
 		}
 
 	</script>
+}
+
+templ infoButton(clientId, listLoadUrl string) {
+	<button
+		class="btn btn-outline-info ms-3"
+		data-bs-toggle="collapse"
+		data-bs-target={ "#accordion-" + clientId }
+		hx-get={ listLoadUrl }
+		hx-target={ "#accordion-" + clientId }
+		hx-swap="innerHTML"
+		hx-trigger="click[shouldMakeHtmxRequest(event)]"
+		onclick="accordionCollapseHandler(event)"
+	>
+		{ children... }
+	</button>
+}
+
+templ blockButton(id string) {
+	<button
+		type="button"
+		class="btn btn-danger"
+		hx-delete={ fmt.Sprintf("/api/clients/%s?page=1", id) }
+		hx-target="#userListContainer"
+		hx-include="[name='searchTerm']"
+	>
+		Заблокировать
+	</button>
+}
+
+templ ClientsList(clients *models.Page[models.ClientShort]) {
+	<script>
+		unrolledElements = new Map()
+	</script>
 	<div class="accordion " id="usersAccordion">
-		for _, client := range clients {
+		for _, client := range clients.Items {
 			<div class="accordion-item p-2">
 				<div class="accordion-header row">
-					<div class="align-self-center col ps-3">{ client.Name } </div>
+					<div class="align-self-center col ps-3">{ client.Username } </div>
 					<div class="col d-flex">
 						@infoButton(client.Id, "/api/clients/"+client.Id+"/accounts") {
 							Счета
@@ -73,7 +87,7 @@ templ clientsList(clients []ClientViewModel) {
 						}
 					</div>
 					<div class="d-flex col-auto flex-grow-1 flex-row-reverse me-3">
-						<button type="button" class="btn btn-danger">Заблокировать</button>
+						@blockButton(client.Id)
 					</div>
 				</div>
 				<div id={ "accordion-" + client.Id } class="accordion-collapse collapse">
@@ -84,15 +98,30 @@ templ clientsList(clients []ClientViewModel) {
 			</div>
 		}
 	</div>
+	<div class="mt-3 d-flex flex-row-reverse">
+		@common.Pagination(clients.PageInfo,
+			"/api/clients?page=%d",
+			"#userListContainer",
+			templ.Attributes{"hx-include": "[name='searchTerm']"} )
+	</div>
+}
+
+templ clientsListHxPlaceholder() {
+	<div
+		class="text-center"
+		hx-get="/api/clients?page=1"
+		hx-trigger="load"
+		hx-swap="outerHTML"
+	>
+		@common.Loading()
+	</div>
 }
 
 templ ClientsPage() {
+	@modalScripts()
 	@components.MainPageWrapper(components.Clients) {
-		@common.GenericUsersView() {
-			@clientsList([]ClientViewModel{
-				{"broforce", "c1bedfd5-592e-41fc-8e0b-cd8d3bb9fbf3"},
-				{"kubezumie", "fe02a2e2-be63-4e55-b34f-fb24eef93ad2"},
-			})
+		@common.GenericUsersView(templ.URL("/api/clients?page=1"), templ.URL("/api/clients")) {
+			@clientsListHxPlaceholder()
 		}
 		@accountHistoryModal()
 		@detailedCreditInfoModal()
