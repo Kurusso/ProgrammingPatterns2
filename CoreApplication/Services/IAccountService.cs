@@ -10,7 +10,7 @@ namespace CoreApplication.Services
 {
     public interface IAccountService
     {
-        public Task<AccountDTO> GetAccountInfo(Guid accountId);
+        public Task<AccountDTO> GetAccountInfo(Guid userId, Guid accountId);
         public Task OpenAccount(Guid userId, Currency currency);
         public Task<List<AccountDTO>> GetUserAccounts(Guid userId);
         public Task DeleteAccount(Guid userId, Guid accountId);
@@ -37,10 +37,10 @@ namespace CoreApplication.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<AccountDTO> GetAccountInfo(Guid accountId)
+        public async Task<AccountDTO> GetAccountInfo(Guid userId, Guid accountId)
         {
             var blockedUsers = await _userService.GetBlockedUsers();
-            var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().GetUnblocked(blockedUsers).FirstOrDefaultAsync(x => x.Id == accountId);
+            var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().GetUnblocked(blockedUsers).FirstOrDefaultAsync(x => x.Id == accountId && x.UserId==userId);
             if(account == null)
             {
                 throw new ArgumentException("There is no account with this Id!");

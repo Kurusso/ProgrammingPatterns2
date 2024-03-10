@@ -56,11 +56,11 @@ namespace CoreApplication.Controllers
 
         [HttpGet]
         [Route("GetInfo/{accountId}")]
-        public async Task<IActionResult> GetAccountInfo(Guid accountId)
+        public async Task<IActionResult> GetAccountInfo(Guid userId, Guid accountId)
         {
             try
             {
-               var accountInfo = await _accountService.GetAccountInfo(accountId);
+               var accountInfo = await _accountService.GetAccountInfo(userId, accountId);
                 return Ok(accountInfo);
             }
             catch (ArgumentException ex)
