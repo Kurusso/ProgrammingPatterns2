@@ -34,3 +34,27 @@ func ListStaffPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 func RenderStaffPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	staff.StaffPage().Render(r.Context(), w)
 }
+
+const CreateStaffProfileUrlPattern = "/api/staff"
+
+func CreateStaffProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	if username == "" {
+		//TODO: error handling
+		return
+	}
+	if password == "" {
+		//TODO: error handling
+		return
+	}
+
+	err := services.CreateNewStaffProfile(r.Context(), username, password)
+	if err != nil {
+		logger.Default.Error(err)
+		//TODO: error handling
+		return
+	}
+
+	http.Redirect(w, r, "/Staff", http.StatusSeeOther)
+}

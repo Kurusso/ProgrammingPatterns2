@@ -16,11 +16,46 @@ templ userSearch() {
 }
 
 templ addNewUserButton() {
-	<button type="button" class="btn btn-success">Добавить пользователя</button>
+	<button
+		type="button"
+		class="btn btn-success"
+		data-bs-toggle="modal"
+		data-bs-target="#newUserModal"
+	>
+		Добавить пользователя
+	</button>
 }
 
+templ newUserModal() {
+	<div class="modal" id="newUserModal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5>Создание нового пользователя</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form method="post" action="/api/staff">
+						<div class="mb-3">
+							<label for="usernameField" class="form-label">Имя пользователя</label>
+							<input type="text" required name="username" class="form-control" id="usernameField"/>
+						</div>
+						<div class="mb-3">
+							<label for="passwordField" class="form-label">Пароль</label>
+							<input type="password" required name="password" class="form-control" id="passwordField"/>
+						</div>
+						<div class="mb-3 d-flex flex-row-reverse">
+							<button type="submit" class="btn btn-success">Создать</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+}
 
 templ GenericUsersView() {
+	@newUserModal()
 	<div class="flex-column">
 		<div class="d-flex flex-row">
 			<div class="col-8">
