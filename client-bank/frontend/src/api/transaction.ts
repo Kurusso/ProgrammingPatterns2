@@ -19,7 +19,7 @@ export async function performTransaction(accountId: string, money: number, curre
 
     } catch (error) {
         console.error('An error occurred while performing transaction')
-        //throw error;
+        throw error;
     }
 
 

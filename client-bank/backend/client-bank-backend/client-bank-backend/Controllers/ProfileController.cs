@@ -1,19 +1,23 @@
 ﻿using client_bank_backend.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using UserService.Models.DTO;
 
 namespace client_bank_backend.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class ProfileController:ControllerBase
 {
+    private readonly HttpClient _coreClient = new();
     [HttpGet("{accountId}")]
     public async Task<IActionResult> Profile(Guid accountId)
     {
         try
         {
-            string username = "Mike Vazowski";
-            var response = new UsernameDto(username);
-            return Ok(response);
+            var requestUrl = $"{MagicConstants.GetUserProfileEndpoint}/{accountId}";
+            var response = await _coreClient.GetFromJsonAsync<UserDTO>(requestUrl);
+            
+            var modResponse = new UsernameDto(response.Username);
+            return Ok(modResponse);
         }
         catch (Exception e)
         {
@@ -22,3 +26,5 @@ public class ProfileController:ControllerBase
         }
     }
 }
+//https://localhost:7075/api/Profile/691d3f2d-ffd7-4cb9-88bc-f14612b24ce8
+

@@ -17,17 +17,6 @@ public class CreditController : ControllerBase
     [Route("Take")]
     public async Task<IActionResult> TakeCredit(TakeCreditDTO credit)
     {
-        /*
-         *{
-  "creditRateId": "fa9fae7c-1ed3-40ae-bc80-31689bd40524",
-  "userId": "9985d7a3-caeb-40f3-8258-9a27d1548053",
-  "accountId": "72589b07-1c3e-42eb-9615-51ffdee45256",
-  "currency": 1,
-  "moneyAmount": 100,
-  "monthPay": 10
-}
-         * 
-         */
         try
         {
             var requestUrl = $"{MagicConstants.TakeCreditEndpoint}";
