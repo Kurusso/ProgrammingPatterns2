@@ -7,6 +7,7 @@ import (
 	"staff-web-app/logger"
 	"staff-web-app/models"
 	"staff-web-app/services"
+	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -89,6 +90,50 @@ func DetailedCreditInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	}
 
 	clients.DetailedCreditInfo(creditInfo).Render(r.Context(), w)
+}
+
+const ListClientsPageUrlPattern = "/api/clients"
+
+func ListClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	params := r.URL.Query()
+	pageNumber, err := strconv.Atoi(params.Get("page"))
+	if err != nil {
+		//TODO: error handling
+		return
+	}
+	searchTerm := params.Get("searchTerm")
+
+	page, err := services.LoadClientsPage(r.Context(), searchTerm, pageNumber)
+	if err != nil {
+		logger.Default.Error("failed to load clients page: ", err)
+		return
+	}
+
+	clients.ClientsList(page).Render(r.Context(), w)
+}
+
+const CreateClientProfileUrlPattern = "/api/clients"
+
+func CreateClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	if username == "" {
+		//TODO: error handling
+		return
+	}
+	if password == "" {
+		//TODO: error handling
+		return
+	}
+
+	err := services.CreateClientProfile(r.Context(), username, password)
+	if err != nil {
+		logger.Default.Error(err)
+		//TODO: error handling
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func RenderClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

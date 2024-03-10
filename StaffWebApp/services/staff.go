@@ -33,7 +33,7 @@ func LoadStaffPage(ctx context.Context, page int64, searchTerm string) (*models.
 	return &staffPage, err
 }
 
-func CreateNewStaffProfile(ctx context.Context, username, password string) error {
+func CreateStaffProfile(ctx context.Context, username, password string) error {
 	body := map[string]string{
 		"username": username,
 		"password": password,

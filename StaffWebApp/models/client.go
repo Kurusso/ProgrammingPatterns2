@@ -39,3 +39,8 @@ type Account struct {
 	CurrencyAmount uint64 //TODO: может ли быть счет отрицательным
 	Currency       CurrencyType
 }
+
+type ClientShort struct {
+	Id       string
+	Username string
+}

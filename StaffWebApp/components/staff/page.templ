@@ -49,7 +49,7 @@ templ staffListHxPlaceholder() {
 
 templ StaffPage() {
 	@components.MainPageWrapper(components.Staff) {
-		@common.GenericUsersView() {
+		@common.GenericUsersView(templ.URL("/api/staff?page=1"), templ.URL("/api/staff")) {
 			@staffListHxPlaceholder()
 		}
 	}

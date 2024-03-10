@@ -47,7 +47,6 @@ templ CreditsList(credits []models.CreditShort) {
 				data-bs-target={ "#" + creditInfoModalId }
 				hx-get={ "/api/clients/" + credit.UserId + "/credits/" + credit.Id }
 				hx-target={ "#" + creditInfoBodyId }
-				onclick={ OperationsModalOpenHandler(operationsHeaderId, credit.Id) }
 			>
 				<div class="d-flex row m-0">
 					<div class="col">

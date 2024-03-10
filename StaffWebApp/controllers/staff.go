@@ -49,7 +49,7 @@ func CreateStaffProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 		return
 	}
 
-	err := services.CreateNewStaffProfile(r.Context(), username, password)
+	err := services.CreateStaffProfile(r.Context(), username, password)
 	if err != nil {
 		logger.Default.Error(err)
 		//TODO: error handling
