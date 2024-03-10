@@ -55,3 +55,23 @@ func CreateNewStaffProfile(ctx context.Context, username, password string) error
 
 	return nil
 }
+
+func BlockStaffProfile(ctx context.Context, userId string) error {
+	requestUrl, err := url.JoinPath(config.Default.UserApiUrl, "staff/", userId)
+	if err != nil {
+		return fmt.Errorf("invalid url: %v", err)
+	}
+
+	err = makeRequestParseBody(
+		ctx,
+		http.MethodDelete,
+		requestUrl,
+		nil,
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("delete staff profile requeset failed: %v", err)
+	}
+
+	return nil
+}

@@ -35,6 +35,7 @@ func main() {
 	router.GET(controllers.ListStaffPageUrlPattern, controllers.ListStaffPage)
 	router.POST(controllers.CreateCreditRateUrlPattern, controllers.CreateCreditRate)
 	router.POST(controllers.CreateStaffProfileUrlPattern, controllers.CreateStaffProfile)
+	router.DELETE(controllers.BlockStaffProfileUrlPattern, controllers.BlockStaffProfile)
 
 	err = http.ListenAndServe(":8080", router)
 	if err != nil {
