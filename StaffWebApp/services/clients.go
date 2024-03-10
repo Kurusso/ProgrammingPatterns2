@@ -59,3 +59,37 @@ func CreateClientProfile(ctx context.Context, username, password string) error {
 
 	return nil
 }
+
+func LoadUserAccounts(ctx context.Context, userId string) ([]models.AccountShort, error) {
+	requestUrl, err := url.JoinPath(config.Default.CoreApiUrl, "/Account/User/", userId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to make request url: %v", err)
+	}
+
+	var accounts []models.AccountShort
+	err = makeRequestParseBody(
+		ctx,
+		http.MethodGet,
+		requestUrl,
+		nil,
+		&accounts,
+	)
+	return accounts, err
+}
+
+func LoadAccountOperationHistory(ctx context.Context, accountId string) (*models.AccountDetailed, error) {
+	requestUrl, err := url.JoinPath(config.Default.CoreApiUrl, "/Account/GetInfo/", accountId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to make request url: %v", err)
+	}
+
+	var account models.AccountDetailed
+	err = makeRequestParseBody(
+		ctx,
+		http.MethodGet,
+		requestUrl,
+		nil,
+		&account,
+	)
+	return &account, err
+}

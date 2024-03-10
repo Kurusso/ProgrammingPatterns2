@@ -1,15 +1,18 @@
 package clients
 
 import "staff-web-app/models"
-import "fmt"
 
 script OperationsModalOpenHandler(headerId string, accountId string) {
 	const header = document.getElementById(headerId)
 	header.innerText =  accountId
 }
 
-templ AccountList(accounts []models.Account) {
+templ AccountList(accounts []models.AccountShort) {
 	<div class="list-group p-4">
+		if len(accounts) == 0 {
+			<span>Нет ни одного счета</span>
+		}
+
 		for _, account := range accounts {
 			<button
 				class="list-group-item list-group-item-action"
@@ -24,7 +27,7 @@ templ AccountList(accounts []models.Account) {
 						{ account.Id }
 					</div>
 					<div class="flex-grow-1 text-end">
-						{ fmt.Sprintf("%d", account.CurrencyAmount) + account.Currency.ToIcon() }
+						{ account.Money.String() }
 					</div>
 				</div>
 			</button>
@@ -36,6 +39,10 @@ templ AccountList(accounts []models.Account) {
 
 templ CreditsList(credits []models.CreditShort) {
 	<div class="list-group p-4">
+		if len(credits) == 0 {
+			<span>Нет ни одного кредита</span>
+		} 
+
 		for _, credit := range credits {
 			<button
 				class={
