@@ -11,6 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreApplication", "CoreAppl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{1FF1D5A5-CE3C-4D43-A67F-CB476CF2BFE2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client-bank", "client-bank", "{4A59B164-58F2-4807-8385-CAEF8AD4F975}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{77784612-EB39-4423-8B77-B55BBD432C66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client-bank-backend", "client-bank-backend", "{131E62CE-B019-4197-ABFF-F534B2480AC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "client-bank-backend", "client-bank\backend\client-bank-backend\client-bank-backend\client-bank-backend.csproj", "{05DB03A5-A8E6-4D36-9093-72C53C79E9D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,11 +41,20 @@ Global
 		{1FF1D5A5-CE3C-4D43-A67F-CB476CF2BFE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FF1D5A5-CE3C-4D43-A67F-CB476CF2BFE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FF1D5A5-CE3C-4D43-A67F-CB476CF2BFE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05DB03A5-A8E6-4D36-9093-72C53C79E9D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05DB03A5-A8E6-4D36-9093-72C53C79E9D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05DB03A5-A8E6-4D36-9093-72C53C79E9D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05DB03A5-A8E6-4D36-9093-72C53C79E9D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F6D565EF-062C-4F2D-96EF-FB29C9C99CA2}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{77784612-EB39-4423-8B77-B55BBD432C66} = {4A59B164-58F2-4807-8385-CAEF8AD4F975}
+		{131E62CE-B019-4197-ABFF-F534B2480AC9} = {77784612-EB39-4423-8B77-B55BBD432C66}
+		{05DB03A5-A8E6-4D36-9093-72C53C79E9D4} = {131E62CE-B019-4197-ABFF-F534B2480AC9}
 	EndGlobalSection
 EndGlobal
