@@ -32,7 +32,7 @@ type Operation struct {
 	Type           OperationType `json:"operationType"`
 	Money          Money         `json:"moneyAmmount"`
 	ConvertedMoney float64       `json:"moneyAmmountInAccountCurrency"`
-	Date           string
+	Date           string        `json:"creationTime"`
 }
 
 type AccountShort struct {

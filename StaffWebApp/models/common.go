@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type NameId struct {
 	Name string
@@ -24,4 +27,13 @@ type PageInfo struct {
 type Page[T any] struct {
 	PageInfo PageInfo `json:"pageInfo"`
 	Items    []T      `json:"items"`
+}
+
+func PrettifyDate(date string) string {
+	t, err := time.Parse(time.RFC3339, date)
+	if err != nil {
+		return date
+	}
+
+	return t.Format("2006-01-02 03:04")
 }
