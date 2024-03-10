@@ -1,4 +1,6 @@
-﻿namespace CreditApplication.Models
+﻿using Common.Models;
+
+namespace CreditApplication.Models
 {
     public class CreditRate : BaseEntity
     {

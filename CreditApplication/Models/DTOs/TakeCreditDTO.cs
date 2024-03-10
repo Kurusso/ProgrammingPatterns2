@@ -1,4 +1,4 @@
-﻿using CreditApplication.Models.Enumeration;
+﻿using Common.Models.Enumeration;
 using System.ComponentModel.DataAnnotations;
 
 namespace CreditApplication.Models.DTOs

@@ -12,6 +12,7 @@ services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddScoped<IAccountService, AccountService>();
 services.AddScoped<IMoneyOperationsService, MoneyOperationsService>();
+services.AddScoped<IUserService, UserService>();
 services.AddSwaggerGen();
 
 services.AddDbContext<CoreDbContext>(options =>

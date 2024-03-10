@@ -1,14 +1,16 @@
-﻿using CoreApplication.Helpers;
+﻿using Common.Models.Enumeration;
+using Common.Helpers;
 using CoreApplication.Models;
 using CoreApplication.Models.DTO;
 using CoreApplication.Models.Enumeration;
 using Microsoft.EntityFrameworkCore;
+using Common.Models;
 
 namespace CoreApplication.Services
 {
     public interface IAccountService
     {
-        public Task<AccountDTO> GetAccountInfo(Guid accountId);
+        public Task<AccountDTO> GetAccountInfo(Guid userId, Guid accountId);
         public Task OpenAccount(Guid userId, Currency currency);
         public Task<List<AccountDTO>> GetUserAccounts(Guid userId);
         public Task DeleteAccount(Guid userId, Guid accountId);
@@ -16,14 +18,17 @@ namespace CoreApplication.Services
     public class AccountService: IAccountService
     {
         private readonly CoreDbContext _dbContext;
-        public AccountService(CoreDbContext dbContext) 
+        private readonly IUserService _userService;
+        public AccountService(CoreDbContext dbContext, IUserService userService) 
         { 
-        _dbContext = dbContext;
+            _dbContext = dbContext;
+            _userService = userService;
         }
 
         public async Task DeleteAccount(Guid userId, Guid accountId)
         {
-            var account = await _dbContext.Accounts.GetUndeleted().FirstOrDefaultAsync(x => x.Id == accountId && x.UserId == userId);
+            var blockedUsers = await _userService.GetBlockedUsers();
+            var account = await _dbContext.Accounts.GetUndeleted().GetUnblocked(blockedUsers).FirstOrDefaultAsync(x => x.Id == accountId && x.UserId == userId);
             if (account == null)
             {
                 throw new ArgumentException("There is no account with this combination of Id and user id!");
@@ -32,9 +37,10 @@ namespace CoreApplication.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<AccountDTO> GetAccountInfo(Guid accountId)
+        public async Task<AccountDTO> GetAccountInfo(Guid userId, Guid accountId)
         {
-            var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().FirstOrDefaultAsync(x => x.Id == accountId);
+            var blockedUsers = await _userService.GetBlockedUsers();
+            var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().GetUnblocked(blockedUsers).FirstOrDefaultAsync(x => x.Id == accountId && x.UserId==userId);
             if(account == null)
             {
                 throw new ArgumentException("There is no account with this Id!");
@@ -51,6 +57,11 @@ namespace CoreApplication.Services
 
         public async Task OpenAccount(Guid userId, Currency currency)
         {
+            var blockedUsers = await _userService.GetBlockedUsers();
+            if (blockedUsers.Contains(userId))
+            {
+                throw new ArgumentException($"User with {userId} is blocked!");
+            }
             var account = new Account
             {
                 Id = Guid.NewGuid(),

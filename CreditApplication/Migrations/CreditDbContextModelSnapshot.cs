@@ -22,6 +22,17 @@ namespace CreditApplication.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Common.Models.BlockedUser", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("BlockedUsers");
+                });
+
             modelBuilder.Entity("CreditApplication.Models.Credit", b =>
                 {
                     b.Property<Guid>("Id")

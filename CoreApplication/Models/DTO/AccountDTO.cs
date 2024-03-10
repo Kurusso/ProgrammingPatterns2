@@ -1,4 +1,5 @@
-﻿using Microsoft.Identity.Client;
+﻿using Common.Models;
+using Microsoft.Identity.Client;
 
 namespace CoreApplication.Models.DTO
 {

@@ -1,4 +1,5 @@
-﻿using CoreApplication.Models.Enumeration;
+﻿using Common.Models.Enumeration;
+using CoreApplication.Models.Enumeration;
 using CoreApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,10 @@ namespace CoreApplication.Controllers
             {
                 await _accountService.OpenAccount(userId, currency);
                 return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return Problem(statusCode: 400, detail: ex.Message);
             }
             catch (Exception ex)
             {
@@ -51,11 +56,11 @@ namespace CoreApplication.Controllers
 
         [HttpGet]
         [Route("GetInfo/{accountId}")]
-        public async Task<IActionResult> GetAccountInfo(Guid accountId)
+        public async Task<IActionResult> GetAccountInfo(Guid userId, Guid accountId)
         {
             try
             {
-               var accountInfo = await _accountService.GetAccountInfo(accountId);
+               var accountInfo = await _accountService.GetAccountInfo(userId, accountId);
                 return Ok(accountInfo);
             }
             catch (ArgumentException ex)
@@ -76,6 +81,10 @@ namespace CoreApplication.Controllers
             {
                 var accountInfo = await _accountService.GetUserAccounts(userId);
                 return Ok(accountInfo);
+            }
+            catch (ArgumentException ex)
+            {
+                return Problem(statusCode: 404, detail: ex.Message);
             }
             catch (Exception ex)
             {

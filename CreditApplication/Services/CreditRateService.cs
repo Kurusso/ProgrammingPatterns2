@@ -1,7 +1,7 @@
 ﻿using CreditApplication.Models;
 using CreditApplication.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
-
+using Common.Helpers;
 namespace CreditApplication.Services
 {
 
@@ -32,7 +32,7 @@ namespace CreditApplication.Services
 
         public async Task<List<CreditRateDTO>> GetAllCreditRates()
         {
-           var rates = await _context.CreditRates.Select(x=> new CreditRateDTO(x)).ToListAsync();
+           var rates = await _context.CreditRates.GetUndeleted().Select(x=> new CreditRateDTO(x)).ToListAsync();
             return rates;
         }
     }

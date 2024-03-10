@@ -1,4 +1,6 @@
-﻿namespace CreditApplication.Models.Dtos
+﻿using Common.Models;
+
+namespace CreditApplication.Models.Dtos
 {
     public class CreditDTO
     {

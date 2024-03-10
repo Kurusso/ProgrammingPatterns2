@@ -1,4 +1,5 @@
-﻿using CoreApplication.Models.Enumeration;
+﻿using Common.Models;
+using CoreApplication.Models.Enumeration;
 using Microsoft.Identity.Client;
 
 namespace CoreApplication.Models.DTO

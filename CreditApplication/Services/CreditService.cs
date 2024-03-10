@@ -1,7 +1,9 @@
-﻿using CreditApplication.Models;
+﻿using Common.Models;
+using Common.Models.Enumeration;
+using CreditApplication.Models;
 using CreditApplication.Models.Dtos;
 using CreditApplication.Models.DTOs;
-using CreditApplication.Models.Enumeration;
+using Common.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace CreditApplication.Services
@@ -19,17 +21,24 @@ namespace CreditApplication.Services
         private readonly CreditDbContext _context;
         private readonly HttpClient _coreClient;
         private readonly string _withdrawMoney;
-        public CreditService(IConfiguration configuration, CreditDbContext context)
+        private readonly IUserService _userService;
+        public CreditService(IConfiguration configuration, CreditDbContext context, IUserService userService)
         {
             var coreSection = configuration.GetSection("CoreApplication");
             _context = context;
             _withdrawMoney = coreSection["WithdrawMoney"];
             _coreClient = new HttpClient();
+            _userService = userService;
         }
 
         public async Task<CreditDTO> GetCreditInfo(Guid id, Guid userId)
         {
-           var credit = await _context.Credits.Include(x=>x.CreditRate).FirstOrDefaultAsync(x=>x.UserId==userId && x.Id==id);
+            var blockedUsers = await _userService.GetBlockedUsers();
+            if (blockedUsers.Contains(userId))
+            {
+                throw new ArgumentException($"User with {userId} is blocked!");
+            }
+            var credit = await _context.Credits.Include(x=>x.CreditRate).GetUndeleted().FirstOrDefaultAsync(x=>x.UserId==userId && x.Id==id);
             if (credit == null)
             {
                 throw new KeyNotFoundException($"User with {userId} haven't got credit with {id} id!");
@@ -39,14 +48,24 @@ namespace CreditApplication.Services
 
         public async Task<List<CreditDTO>> GetUserCredits(Guid userId)
         {
-            var credits = await _context.Credits.Where(x=>x.UserId==userId).Include(x=>x.CreditRate).Select(x=>new CreditDTO(x)).ToListAsync();
+            var blockedUsers = await _userService.GetBlockedUsers();
+            if (blockedUsers.Contains(userId))
+            {
+                throw new ArgumentException($"User with {userId} is blocked!");
+            }
+            var credits = await _context.Credits.Where(x=>x.UserId==userId).Include(x=>x.CreditRate).GetUndeleted().Select(x=>new CreditDTO(x)).ToListAsync();
             return credits;
 
         }
 
         public async Task RepayCredit(Guid id, Guid userId, decimal moneyAmmount, Guid? accountId, Currency currency, bool monthPay=false) 
         {
-            var credit = await _context.Credits.Include(x => x.CreditRate).FirstOrDefaultAsync(x => x.UserId == userId && x.Id == id);
+            var blockedUsers = await _userService.GetBlockedUsers();
+            if (blockedUsers.Contains(userId))
+            {
+                throw new ArgumentException($"User with {userId} is blocked!");
+            }
+            var credit = await _context.Credits.Include(x => x.CreditRate).GetUndeleted().FirstOrDefaultAsync(x => x.UserId == userId && x.Id == id);
             if (credit == null)
             {
                 throw new KeyNotFoundException($"User with {userId} haven't got credit with {id} id!");
@@ -58,7 +77,7 @@ namespace CreditApplication.Services
                 money = credit.RemainingDebt;
             }
 
-            var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&money=" + moneyAmmount + "&currency=" + currency, null);
+            var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&userId=" +  userId + "&money=" + moneyAmmount + "&currency=" + currency, null);
             response.EnsureSuccessStatusCode();
             credit.RemainingDebt = credit.RemainingDebt - money;
             if (!monthPay)
@@ -70,8 +89,9 @@ namespace CreditApplication.Services
 
         public async Task TakeCredit(TakeCreditDTO creditDTO)
         {
-            var creditRate = await _context.CreditRates.FirstOrDefaultAsync(x => x.Id == creditDTO.CreditRateId);
+            var creditRate = await _context.CreditRates.GetUndeleted().FirstOrDefaultAsync(x => x.Id == creditDTO.CreditRateId);
             var money = new Money(creditDTO.MoneyAmount, creditDTO.Currency);
+            var monthPay = new Money(creditDTO.MonthPay, creditDTO.Currency);
             if (creditRate == null)
             {
                 throw new KeyNotFoundException($"There is no CreditRate with this {creditDTO.CreditRateId} id!");
@@ -84,7 +104,7 @@ namespace CreditApplication.Services
                 PayingAccountId = creditDTO.AccountId,
                 RemainingDebt = money,
                 FullMoneyAmount = money,
-                MonthPayAmount = money,
+                MonthPayAmount = monthPay,
                 UnpaidDebt = new Money { Amount=0, Currency= creditDTO.Currency },
             };
             await _context.Credits.AddAsync(credit);
@@ -93,7 +113,8 @@ namespace CreditApplication.Services
 
         public async Task UpdateCredits()
         {
-           var credits = await _context.Credits.Include(x=>x.CreditRate).ToListAsync();
+            var blockedUsers = await _userService.GetBlockedUsers();
+            var credits = await _context.Credits.Include(x=>x.CreditRate).GetUndeleted().GetUnblocked(blockedUsers).ToListAsync();
             foreach (var credit in credits) { 
                 try
                 {
