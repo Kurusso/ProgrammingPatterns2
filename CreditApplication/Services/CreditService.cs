@@ -22,12 +22,13 @@ namespace CreditApplication.Services
         private readonly HttpClient _coreClient;
         private readonly string _withdrawMoney;
         private readonly IUserService _userService;
-        public CreditService(IConfiguration configuration, CreditDbContext context)
+        public CreditService(IConfiguration configuration, CreditDbContext context, IUserService userService)
         {
             var coreSection = configuration.GetSection("CoreApplication");
             _context = context;
             _withdrawMoney = coreSection["WithdrawMoney"];
             _coreClient = new HttpClient();
+            _userService = userService;
         }
 
         public async Task<CreditDTO> GetCreditInfo(Guid id, Guid userId)
@@ -76,7 +77,7 @@ namespace CreditApplication.Services
                 money = credit.RemainingDebt;
             }
 
-            var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&money=" + moneyAmmount + "&currency=" + currency, null);
+            var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&userId=" +  userId + "&money=" + moneyAmmount + "&currency=" + currency, null);
             response.EnsureSuccessStatusCode();
             credit.RemainingDebt = credit.RemainingDebt - money;
             if (!monthPay)
@@ -90,6 +91,7 @@ namespace CreditApplication.Services
         {
             var creditRate = await _context.CreditRates.GetUndeleted().FirstOrDefaultAsync(x => x.Id == creditDTO.CreditRateId);
             var money = new Money(creditDTO.MoneyAmount, creditDTO.Currency);
+            var monthPay = new Money(creditDTO.MonthPay, creditDTO.Currency);
             if (creditRate == null)
             {
                 throw new KeyNotFoundException($"There is no CreditRate with this {creditDTO.CreditRateId} id!");
@@ -102,7 +104,7 @@ namespace CreditApplication.Services
                 PayingAccountId = creditDTO.AccountId,
                 RemainingDebt = money,
                 FullMoneyAmount = money,
-                MonthPayAmount = money,
+                MonthPayAmount = monthPay,
                 UnpaidDebt = new Money { Amount=0, Currency= creditDTO.Currency },
             };
             await _context.Credits.AddAsync(credit);
