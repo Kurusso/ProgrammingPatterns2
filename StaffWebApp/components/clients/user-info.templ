@@ -18,7 +18,7 @@ templ AccountList(accounts []models.AccountShort) {
 				class="list-group-item list-group-item-action"
 				data-bs-toggle="modal"
 				data-bs-target={ "#" + accountHistoryModalId }
-				hx-get={ "/api/accounts/" + account.Id + "/operations" }
+				hx-get={ "/api/clients/"+ account.UserId + "/accounts/" + account.Id + "/operations" }
 				hx-target={ "#" + operationsTbodyId }
 				onclick={ OperationsModalOpenHandler(operationsHeaderId, account.Id) }
 			>

@@ -29,16 +29,22 @@ func ListUserAccounts(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	clients.AccountList(accounts).Render(r.Context(), w)
 }
 
-const ListAccountOperationsUrlPattern = "/api/accounts/:accountId/operations"
+const ListAccountOperationsUrlPattern = "/api/clients/:userId/accounts/:accountId/operations"
 
 func ListAccountOperations(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	id := ps.ByName("accountId")
-	if id == "" {
+	userId := ps.ByName("userId")
+	if userId == "" {
 		fmt.Println("can't find Id")
 		//TODO: error handling
 	}
 
-	account, err := services.LoadAccountOperationHistory(r.Context(), id)
+	accountId := ps.ByName("accountId")
+	if accountId == "" {
+		fmt.Println("can't find Id")
+		//TODO: error handling
+	}
+
+	account, err := services.LoadAccountOperationHistory(r.Context(), accountId, userId)
 	if err != nil {
 		logger.Default.Error("failed to load account operation history: ", err)
 		return

@@ -36,8 +36,9 @@ type Operation struct {
 }
 
 type AccountShort struct {
-	Id    string
-	Money Money
+	Id     string
+	UserId string
+	Money  Money
 }
 
 type AccountDetailed struct {

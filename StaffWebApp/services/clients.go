@@ -77,17 +77,20 @@ func LoadUserAccounts(ctx context.Context, userId string) ([]models.AccountShort
 	return accounts, err
 }
 
-func LoadAccountOperationHistory(ctx context.Context, accountId string) (*models.AccountDetailed, error) {
+func LoadAccountOperationHistory(ctx context.Context, accountId string, userId string) (*models.AccountDetailed, error) {
 	requestUrl, err := url.JoinPath(config.Default.CoreApiUrl, "/Account/GetInfo/", accountId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request url: %v", err)
 	}
 
+	queries := url.Values{}
+	queries.Set("userId", userId)
+
 	var account models.AccountDetailed
 	err = makeRequestParseBody(
 		ctx,
 		http.MethodGet,
-		requestUrl,
+		requestUrl+"?"+queries.Encode(),
 		nil,
 		&account,
 	)
