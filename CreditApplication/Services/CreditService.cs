@@ -77,7 +77,7 @@ namespace CreditApplication.Services
                 money = credit.RemainingDebt;
             }
 
-            var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&userId=" +  userId + "&money=" + moneyAmmount + "&currency=" + currency, null);
+            var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&userId=" +  userId + "&money=" + money.Amount + "&currency=" + currency, null);
             response.EnsureSuccessStatusCode();
             credit.RemainingDebt = credit.RemainingDebt - money;
             if (!monthPay)
