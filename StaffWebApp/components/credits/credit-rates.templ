@@ -9,9 +9,9 @@ templ creditRatesList(rates []models.CreditRate) {
 			<li class="d-flex list-group-item row mx-0">
 				<div class="align-self-center col">{ rate.Name } </div>
 				<div class="align-self-center col">{ fmt.Sprintf("%g%%", rate.Percent * 100)  } </div>
-				<div class="col-auto me-3">
-					<button type="button" class="btn btn-danger">Удалить</button>
-				</div>
+				// <div class="col-auto me-3">
+					// <button type="button" class="btn btn-danger">Удалить</button>
+				// </div>
 			</li>
 		}
 	</ul>
