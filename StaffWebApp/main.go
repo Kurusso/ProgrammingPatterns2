@@ -33,6 +33,7 @@ func main() {
 	router.GET(controllers.ListUserCreditsUrlPattern, controllers.ListUserCredits)
 	router.GET(controllers.DetailedUserInfoUrlPattern, controllers.DetailedCreditInfo)
 	router.GET(controllers.ListStaffPageUrlPattern, controllers.ListStaffPage)
+	router.POST(controllers.CreateCreditRateUrlPattern, controllers.CreateCreditRate)
 
 	err = http.ListenAndServe(":8080", router)
 	if err != nil {
