@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
-using CreditApplication.Models;
+using Common.Models;
 
-namespace CreditApplication.Helpers
+namespace Common.Helpers
 {
-    internal static class BaseEntityTimestampHelper
+    public static class BaseEntityTimestampHelper
     {
-        internal static void SetTimestamps(ChangeTracker changeTracker, DateTime? dateTime = null)
+        public static void SetTimestamps(ChangeTracker changeTracker, DateTime? dateTime = null)
         {
             if (dateTime.HasValue && dateTime.Value.Kind != DateTimeKind.Utc)
             {

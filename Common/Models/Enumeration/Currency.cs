@@ -1,4 +1,4 @@
-﻿namespace CoreApplication.Models.Enumeration
+﻿namespace Common.Models.Enumeration
 {
     public enum Currency
     {

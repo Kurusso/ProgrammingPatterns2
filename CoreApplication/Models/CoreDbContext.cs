@@ -1,5 +1,6 @@
-﻿using CoreApplication.Extensions;
-using CoreApplication.Helpers;
+﻿using Common.Extensions;
+using Common.Helpers;
+using Common.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 
@@ -9,6 +10,7 @@ namespace CoreApplication.Models
     {
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Operation> Operations { get; set; }
+        public DbSet<BlockedUser> BlockedUsers { get; set; }
         public CoreDbContext(DbContextOptions<CoreDbContext> options) : base(options){ }
 
         protected override void OnModelCreating(ModelBuilder builder) 

@@ -1,4 +1,5 @@
-﻿using CoreApplication.Models.Enumeration;
+﻿using Common.Models;
+using CoreApplication.Models.Enumeration;
 using System.Reflection.Emit;
 
 namespace CoreApplication.Models

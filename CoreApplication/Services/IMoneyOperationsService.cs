@@ -1,4 +1,6 @@
-﻿using CoreApplication.Helpers;
+﻿using Common.Helpers;
+using Common.Models;
+using Common.Models.Enumeration;
 using CoreApplication.Models;
 using CoreApplication.Models.Enumeration;
 using Microsoft.EntityFrameworkCore;
@@ -7,21 +9,23 @@ namespace CoreApplication.Services
 {
     public interface IMoneyOperationsService
     {
-        public Task Deposit(decimal amount, Currency currency, Guid accountId);
-        public Task Withdraw(decimal amount, Currency currency, Guid accountId);
+        public Task Deposit(decimal amount, Currency currency, Guid accountId, Guid userId);
+        public Task Withdraw(decimal amount, Currency currency, Guid accountId, Guid userId);
     }
     public class MoneyOperationsService : IMoneyOperationsService
     {
         private readonly CoreDbContext _dbContext;
-        public MoneyOperationsService(CoreDbContext dbContext) 
+        private readonly IUserService _userService;
+        public MoneyOperationsService(CoreDbContext dbContext , IUserService userService) 
         {
             _dbContext = dbContext;
+            _userService = userService;
         }
-        public async Task Deposit(decimal amount,Currency currency, Guid accountId)
+        public async Task Deposit(decimal amount,Currency currency, Guid accountId, Guid userId)
         {
             try
             {
-                var result = await CreateOperation(amount, currency, accountId, OperationType.Deposit);
+                var result = await CreateOperation(amount, currency, accountId, userId, OperationType.Deposit);
                 result.Item1.Money = result.Item2;
 
                 await _dbContext.SaveChangesAsync();
@@ -32,11 +36,11 @@ namespace CoreApplication.Services
             }
         }
 
-        public async Task Withdraw(decimal amount, Currency currency, Guid accountId)
+        public async Task Withdraw(decimal amount, Currency currency, Guid accountId, Guid userId)
         {
             try
             {
-                var result = await CreateOperation(amount, currency, accountId, OperationType.Withdraw);
+                var result = await CreateOperation(amount, currency, accountId, userId, OperationType.Withdraw);
                 if (result.Item2.Amount < 0)
                 {
                     throw new InvalidOperationException("You haven't got enough money on your account!");
@@ -51,13 +55,14 @@ namespace CoreApplication.Services
                 
         }
 
-        private async Task<Tuple<Account,Money>> CreateOperation(decimal amount, Currency currency, Guid accountId, OperationType type)
+        private async Task<Tuple<Account,Money>> CreateOperation(decimal amount, Currency currency, Guid accountId, Guid userId, OperationType type)
         {
             if (amount < 0)
             {
                 throw new ArgumentException($"You can't use monneyAmount below 0!");
             }
-            var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().FirstOrDefaultAsync(x => x.Id == accountId);
+            var blockedUsers = await _userService.GetBlockedUsers();
+            var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().GetUnblocked(blockedUsers).FirstOrDefaultAsync(x => x.Id == accountId && x.UserId==userId);
             if (account == null)
             {
                 throw new KeyNotFoundException("There is no account with this Id!");

@@ -1,8 +1,8 @@
-﻿using CoreApplication.Models;
+﻿using Common.Models;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Text.Json;
 
-namespace CoreApplication.Helpers
+namespace Common.Helpers
 {
     public class MoneyValueConverter : ValueConverter<Money, string>
     {

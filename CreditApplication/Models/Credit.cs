@@ -1,8 +1,10 @@
-﻿using CreditApplication.Models.Dtos;
+﻿using Common.Models;
+using Common.Models.Interfaces;
+using CreditApplication.Models.Dtos;
 
 namespace CreditApplication.Models
 {
-    public class Credit : BaseEntity
+    public class Credit : BaseEntity , IHasUserId
     {
         public Guid CreditRateId { get; set; }
         public CreditRate CreditRate{ get; set; }
