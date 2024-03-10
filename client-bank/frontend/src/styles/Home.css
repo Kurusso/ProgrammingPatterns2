@@ -3,12 +3,6 @@ body {
 }
 
 
-#username,
-#logout-btn {
-    display: inline-block;
-    vertical-align: middle;
-}
-
 #title {
     color: #333;
     text-align: center;
@@ -51,7 +45,10 @@ button {
     margin-bottom: 20px;
 }
 
-.currency-selector {
+#credit-rate-select,
+.account-select,
+.currency-selector, .currency-input {
+
     width: 80%;
     padding: 5px;
     margin: 10px 0;
@@ -60,6 +57,7 @@ button {
     border-radius: 4px;
     box-sizing: border-box;
 }
+
 
 #accounts,
 #credits {
@@ -75,7 +73,8 @@ button {
     padding-top: 10px;
 }
 
-.account-item {
+.account-item,
+.credit-item {
     margin-bottom: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid #ddd;
@@ -85,32 +84,18 @@ button {
     margin-bottom: 10px;
 }
 
-#credit-rate-select {
+#credit-rate-select, .account-select {
     width: 80%;
-}
-
-.account-select {
     margin-bottom: 10px;
 }
 
-#currency-select-section {
-    margin-bottom: 10px;
-}
 
+#currency-select-section,
 #total-money-section,
 #payment-per-month-section {
     margin-bottom: 10px;
 }
 
-.currency-input {
-    width: 80%;
-    padding: 5px;
-    margin: 10px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
 
 #take-credit {
     background-color: #008CBA;
