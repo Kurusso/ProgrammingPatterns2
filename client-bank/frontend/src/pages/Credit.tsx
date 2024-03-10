@@ -6,6 +6,7 @@ import {useParams} from "react-router-dom";
 import {CreditData, getCredit} from "../api/credit";
 import {Currency, getAccount, Money} from "../api/account";
 import {RepayCredit} from "../components/RepayCredit";
+import {AccountProvider} from "../contexts/AccountContext";
 
 export const Credit = () => {
     const {creditId} = useParams<{ creditId: string }>();
@@ -54,15 +55,16 @@ export const Credit = () => {
 
     return (
         <div>
+        <AccountProvider>
             <h2>Credit</h2>
             <UsernameDisplay/>
             <LogoutButton/>
             <HomeButton/>
             <div>
-                <RepayCredit/>
+                <RepayCredit creditId={creditData?.id!} accountId={creditData?.payingAccountId!}/>
 
                 <div>
-                    <h3>CreditInformation</h3>
+                    <h3>Credit Information</h3>
                     <div>
                         <div>Credit: {creditData?.id}</div>
                         <div>Credit rate: {creditData?.creditRate.name}: {creditData?.creditRate.monthPercent}%
@@ -78,6 +80,7 @@ export const Credit = () => {
 
                 </div>
             </div>
+        </AccountProvider>
         </div>
     );
 };

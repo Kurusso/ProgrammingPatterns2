@@ -7,6 +7,7 @@ import {useAccounts} from "../contexts/AccountContext";
 import {CreditRate, getCreditRates, getCredits, takeCredit} from "../api/credit";
 import {mapAccountDataToElementProps} from "./Accounts";
 import {mapCreditDataToItemProps} from "./Credits";
+import {AccountSelect} from "./AccountSelect";
 
 export const TakeCredit = () => {
     const {setCreditItems} = useCredits();
@@ -19,7 +20,6 @@ export const TakeCredit = () => {
 
     const [creditRates, setCreditRates] = useState<CreditRate[]>([])
 
-    const {accountElements} = useAccounts();
 
     useEffect(() => {
 
@@ -88,13 +88,8 @@ export const TakeCredit = () => {
 
             </div>
             <div>
-                <h5>Account to pay</h5>
-                <select value={selectedAccount || ''} onChange={(e) => setSelectedAccount(e.target.value)}>
-                    <option value="">Select...</option>
-                    {accountElements.map((account) => (
-                        <option key={account.AccountId} value={account.AccountId}>{account.AccountId}</option>
-                    ))}
-                </select>
+
+                <AccountSelect selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount}/>
             </div>
             <div>
                 <h5>Currency</h5>

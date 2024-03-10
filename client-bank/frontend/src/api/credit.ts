@@ -2,10 +2,11 @@ import {
     createAccountEndpoint,
     getAccountsEndpoint, getCreditEndpoint,
     getCreditRatesEndpoint,
-    getCreditsEndpoint,
+    getCreditsEndpoint, repayCreditEndpoint,
     takeCreditEndpoint
 } from "./magicConst";
 import {Currency, Money} from "./account";
+
 export interface CreditRate {
     id: string;
     name: string;
@@ -24,28 +25,25 @@ export interface CreditData {
 }
 
 
-
-export async function getCredits(token:string){
-    try{
-        const response=await fetch(`${getCreditsEndpoint}?userId=${token}`)
-        let data:CreditData[]=await response.json();
+export async function getCredits(token: string) {
+    try {
+        const response = await fetch(`${getCreditsEndpoint}?userId=${token}`)
+        let data: CreditData[] = await response.json();
         console.log(data);
         return data
-    }
-    catch (error){
+    } catch (error) {
         throw error;
     }
 }
 
-export async function getCredit(token:string,creditId:string){
-    try{
+export async function getCredit(token: string, creditId: string) {
+    try {
         console.log("getting credit")
-        const response=await fetch(`${getCreditEndpoint}?id=${creditId}&userId=${token}`)
-        let data:CreditData=await response.json();
+        const response = await fetch(`${getCreditEndpoint}?id=${creditId}&userId=${token}`)
+        let data: CreditData = await response.json();
         console.log(data);
         return data
-    }
-    catch (error){
+    } catch (error) {
         throw error;
     }
 }
@@ -83,18 +81,29 @@ export async function takeCredit(creditRateId: string, userId: string, accountId
     }
 }
 
+export async function repayCredit(creditId: string, userId: string, moneyAmmount: number, currency: Currency, accountId: string) {
+    try {
+        console.log()
 
-//take credit
+        const response = await fetch(`${repayCreditEndpoint}?id=${creditId}&userId=${userId}&moneyAmmount=${moneyAmmount}&currency=${currency}&accountId=${accountId}`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
 
-//pay credit
-export async function getCreditRates(){
-    try{
-        const response=await fetch(getCreditRatesEndpoint)
-        let data:CreditRate[]=await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function getCreditRates() {
+    try {
+        const response = await fetch(getCreditRatesEndpoint)
+        let data: CreditRate[] = await response.json();
         console.log(data);
         return data
-    }
-    catch (error){
+    } catch (error) {
         throw error;
     }
 }
