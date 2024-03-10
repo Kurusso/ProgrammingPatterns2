@@ -1,4 +1,6 @@
-﻿using CoreApplication.Helpers;
+﻿using Common.Helpers;
+using Common.Models;
+using Common.Models.Enumeration;
 using CoreApplication.Models;
 using CoreApplication.Models.Enumeration;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +15,11 @@ namespace CoreApplication.Services
     public class MoneyOperationsService : IMoneyOperationsService
     {
         private readonly CoreDbContext _dbContext;
-        public MoneyOperationsService(CoreDbContext dbContext) 
+        private readonly IUserService _userService;
+        public MoneyOperationsService(CoreDbContext dbContext , IUserService userService) 
         {
             _dbContext = dbContext;
+            _userService = userService;
         }
         public async Task Deposit(decimal amount,Currency currency, Guid accountId)
         {
@@ -57,7 +61,8 @@ namespace CoreApplication.Services
             {
                 throw new ArgumentException($"You can't use monneyAmount below 0!");
             }
-            var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().FirstOrDefaultAsync(x => x.Id == accountId);
+            var blockedUsers = await _userService.GetBlockedUsers();
+            var account = await _dbContext.Accounts.Include(x => x.Operations).GetUndeleted().GetUnblocked(blockedUsers).FirstOrDefaultAsync(x => x.Id == accountId);
             if (account == null)
             {
                 throw new KeyNotFoundException("There is no account with this Id!");

@@ -13,6 +13,7 @@ services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddScoped<ICreditService, CreditService>();
 services.AddScoped<ICreditRateService, CreditRateService>();
+services.AddScoped<IUserService, UserService>();
 services.AddSwaggerGen();
 services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
         configuration.GetConnectionString("DefaultConnection")

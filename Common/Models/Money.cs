@@ -1,7 +1,7 @@
-﻿using CoreApplication.Helpers;
-using CoreApplication.Models.Enumeration;
+﻿using Common.Helpers;
+using Common.Models.Enumeration;
 
-namespace CoreApplication.Models
+namespace Common.Models
 {
     public class Money
     {

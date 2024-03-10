@@ -1,4 +1,5 @@
-﻿using CoreApplication.Models.Enumeration;
+﻿using Common.Models.Enumeration;
+using CoreApplication.Models.Enumeration;
 using CoreApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

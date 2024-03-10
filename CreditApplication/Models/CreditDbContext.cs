@@ -1,9 +1,10 @@
 ﻿using Azure;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
-using CreditApplication.Helpers;
+using Common.Helpers;
 using CreditApplication.Models.Dtos;
-using CreditApplication.Extensions;
+using Common.Extensions;
+using Common.Models;
 
 namespace CreditApplication.Models
 {
@@ -11,7 +12,7 @@ namespace CreditApplication.Models
     {
         public DbSet<Credit> Credits { get; set; }
         public DbSet<CreditRate> CreditRates { get; set; }
-
+        public DbSet<BlockedUser> BlockedUsers { get; set; }
         public CreditDbContext(DbContextOptions<CreditDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)

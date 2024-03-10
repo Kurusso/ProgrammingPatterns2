@@ -1,8 +1,8 @@
-﻿using CreditApplication.Helpers;
-using CreditApplication.Models;
+﻿using Common.Helpers;
+using Common.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace CreditApplication.Extensions
+namespace Common.Extensions
 {
     public static class ModelBuilderExtensions
     {

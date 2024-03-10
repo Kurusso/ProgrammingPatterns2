@@ -1,6 +1,6 @@
-﻿using CreditApplication.Models;
+﻿using Common.Models.Enumeration;
+using CreditApplication.Models;
 using CreditApplication.Models.DTOs;
-using CreditApplication.Models.Enumeration;
 using CreditApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +35,10 @@ namespace CreditApplication.Controllers
             {
                 return Problem(statusCode: 404, detail: ex.Message);
             }
+            catch (ArgumentException ex)
+            {
+                return Problem(statusCode: 400, detail: ex.Message);
+            }
             catch (Exception ex)
             {
                 return Problem(statusCode: 500, detail: ex.Message);
@@ -51,6 +55,10 @@ namespace CreditApplication.Controllers
                 var credits = await _creditService.GetUserCredits(userId);
                 return Ok(credits);
             }
+            catch (ArgumentException ex)
+            {
+                return Problem(statusCode: 400, detail: ex.Message);
+            }
             catch (Exception ex)
             {
                 return Problem(statusCode: 500, detail: ex.Message);
@@ -66,6 +74,10 @@ namespace CreditApplication.Controllers
             {
                var credit = await _creditService.GetCreditInfo(id, userId);
                 return Ok(credit);
+            }
+            catch (ArgumentException ex)
+            {
+                return Problem(statusCode: 400, detail: ex.Message);
             }
             catch (KeyNotFoundException ex)
             {

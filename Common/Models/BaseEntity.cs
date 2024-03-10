@@ -1,4 +1,4 @@
-﻿namespace CoreApplication.Models
+﻿namespace Common.Models
 {
     public interface IBaseEntity
     {
