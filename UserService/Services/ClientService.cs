@@ -1,3 +1,6 @@
+using System.Linq.Expressions;
+using System.Reflection.PortableExecutable;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using UserService.Helpers;
 using UserService.Models;
@@ -5,9 +8,27 @@ using UserService.Models.DTO;
 
 namespace UserService.Services;
 
-public class ClientService(MainDbContext dbc)
+public class ClientService
 {
-    private readonly MainDbContext _dbcontext = dbc;
+
+    public ClientService(MainDbContext dbc, IConfiguration conf)
+    {
+        HttpClientHandler clientHandler = new()
+        {
+            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+        };
+
+        // Pass the handler to httpclient(from you are calling api)
+        _http = new HttpClient(clientHandler);
+        _dbcontext = dbc;
+        _config = conf;
+
+    }
+    private readonly MainDbContext _dbcontext;
+    private readonly IConfiguration _config;
+    private readonly HttpClient _http;
+
+
     const int pageSize = 10;
 
     public async Task<Guid> Register(string username, string password)
@@ -80,14 +101,50 @@ public class ClientService(MainDbContext dbc)
         return new UserDTO { Id = client.Id, Username = client.Username };
     }
 
+    private async Task RollbackCoreBlock(Guid id)
+    {
+        string coreBaseUrl = _config.GetConnectionString("CoreApplication") ??
+            throw new BackendException(500, "misconfigured application");
+        var resp = await _http.PostAsync(coreBaseUrl + "User/Unblock/" + id.ToString(), null);
+        resp.EnsureSuccessStatusCode();
+    }
+
     public async Task BlockClient(Guid id)
     {
+
         var client = await _dbcontext.Clients.FindAsync(id) ??
             throw new BackendException(404, "client with given id does not exist");
 
-        client.Blocked = true;
-        //TODO: requests to another microservices;
+        string coreBaseUrl = _config.GetConnectionString("CoreApplication") ??
+            throw new BackendException(500, "misconfigured application");
+        string creditBaseUrl = _config.GetConnectionString("CreditApplication") ??
+            throw new BackendException(500, "misconfigured application");
 
+        HttpResponseMessage resp;
+        try
+        {
+            resp = await _http.PostAsync(coreBaseUrl + "User/Block/" + id.ToString(), null);
+            resp.EnsureSuccessStatusCode();
+        }
+        catch
+        {
+            throw new BackendException(500, "internal block request failed");
+        }
+
+        try
+        {
+            resp = await _http.PostAsync(creditBaseUrl + "User/Block/" + id.ToString(), null);
+            resp.EnsureSuccessStatusCode();
+        }
+        catch
+        {
+            await RollbackCoreBlock(id);
+            throw new BackendException(500, "internal block request failed");
+        }
+
+
+
+        client.Blocked = true;
         await _dbcontext.SaveChangesAsync();
     }
 }
