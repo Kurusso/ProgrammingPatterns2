@@ -35,11 +35,11 @@ public class AccountController:ControllerBase
     }
     
     [HttpGet("GetInfo/{accountId}")]
-    public async Task<IActionResult> GetAccount(Guid accountId)
+    public async Task<IActionResult> GetAccountInfo(Guid userId, Guid accountId)
     {
         try
         {
-            var requestUrl = $"{MagicConstants.GetAccountEndpoint}{accountId}";
+            var requestUrl = $"{MagicConstants.GetAccountEndpoint}{accountId}?userId={userId}";
             var response = await _coreClient.GetFromJsonAsync<AccountDTO>(requestUrl);
             if (response != null)
             {

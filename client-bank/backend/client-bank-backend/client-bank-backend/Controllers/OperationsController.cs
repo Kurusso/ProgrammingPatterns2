@@ -11,11 +11,11 @@ public class OperationsController:ControllerBase
     
     [HttpPost]
     [Route("Deposit")]
-    public async Task<IActionResult> Deposit(Guid accountId, int money, Currency currency)
+    public async Task<IActionResult> Deposit(Guid accountId, Guid userId, int money, Currency currency)
     {
         try
         {
-            var requestUrl = $"{MagicConstants.DepositEndpoint}?accountId={accountId}&money={money}&currency={currency}";
+            var requestUrl = $"{MagicConstants.DepositEndpoint}?accountId={accountId}&userId={userId}&money={money}&currency={currency}";
             var response =  await _coreClient.PostAsync(requestUrl,new StringContent("",Encoding.UTF8,"application/json"));
 
             if (response.IsSuccessStatusCode)
@@ -30,17 +30,17 @@ public class OperationsController:ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "An error occurred while creating the account.");
+            return StatusCode( 500, "An error occurred while creating the account.");
         }
     }
 
     [HttpPost]
     [Route("Withdraw")]
-    public async Task<IActionResult> Withdraw(Guid accountId, int money, Currency currency)
+    public async Task<IActionResult> Withdraw(Guid accountId, Guid userId, int money, Currency currency)
     {
         try
         {
-            var requestUrl = $"{MagicConstants.WithdrawEndpoint}?accountId={accountId}&money={money}&currency={currency}";
+            var requestUrl = $"{MagicConstants.WithdrawEndpoint}?accountId={accountId}&userId={userId}&money={money}&currency={currency}";
             var response =  await _coreClient.PostAsync(requestUrl,new StringContent("",Encoding.UTF8,"application/json"));
 
             if (response.IsSuccessStatusCode)

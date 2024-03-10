@@ -45,9 +45,9 @@ export async function getAccounts(token: string) {
 }
 
 
-export async function getAccount(accountId: string) {
+export async function getAccount(accountId: string,userId:string) {
     try {
-        const response = await fetch(`${getAccountEndpoint}${accountId}`);
+        const response = await fetch(`${getAccountEndpoint}${accountId}?userId=${userId}`);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

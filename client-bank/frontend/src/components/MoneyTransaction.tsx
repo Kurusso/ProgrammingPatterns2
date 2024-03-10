@@ -24,9 +24,20 @@ export const MoneyTransaction: React.FC<MoneyOperationProps> = ({transactionType
 
     console.log(accountId)
     const HandleOperation = async () => {
+
+        const storedToken = localStorage.getItem('token');
+        if (!storedToken) {
+            throw new Error('No token found');
+        }
+
+        const parsedToken = JSON.parse(storedToken).token;
+        if (!parsedToken) {
+            throw new Error('Invalid token');
+        }
+
         if(!selectedCurrency||amount<=0||!accountId)
             return;
-        await performTransaction(accountId,amount,selectedCurrency,transactionType)
+        await performTransaction(accountId,amount,selectedCurrency,transactionType,parsedToken)
     };
 
 

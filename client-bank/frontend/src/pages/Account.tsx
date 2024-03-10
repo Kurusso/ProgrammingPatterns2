@@ -17,7 +17,17 @@ export const Account = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const account = await getAccount(accountId!);
+                const storedToken = localStorage.getItem('token');
+                if (!storedToken) {
+                    throw new Error('No token found');
+                }
+
+                const parsedToken = JSON.parse(storedToken).token;
+                if (!parsedToken) {
+                    throw new Error('Invalid token');
+                }
+
+                const account = await getAccount(accountId!,parsedToken);
                 console.log(account)
                 setAccountData(account)
                 console.log('Account Fetched :', account);
