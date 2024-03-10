@@ -11,6 +11,7 @@ namespace CoreApplication.Models.DTO
         public OperationType OperationType { get; set; }
         public Money MoneyAmmount { get; set; }
         public decimal MoneyAmmountInAccountCurrency { get; set; }
+        public DateTime CreationTime {  get; set; }
         public OperationDTO() { }
         public OperationDTO(Operation operation) 
         {
@@ -19,6 +20,7 @@ namespace CoreApplication.Models.DTO
             MoneyAmmount = operation.MoneyAmmount;
             OperationType = operation.OperationType;
             MoneyAmmountInAccountCurrency = operation.MoneyAmmountInAccountCurrency;
+            CreationTime = operation.CreateDateTime;
         }
     }
 }
