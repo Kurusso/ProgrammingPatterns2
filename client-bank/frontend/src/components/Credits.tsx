@@ -35,7 +35,7 @@ fetchData();
         <div><h3>Credits</h3>
             <div>
                 {creditItems.map(item => (
-                    <CreditItem key={item.Id} Id={item.Id} Rate={item.Rate} AccountId={item.AccountId}
+                    <CreditItem key={item.Id} Id={item.Id} Rate={item.Rate} CreditAccountId={item.CreditAccountId}
                                 TotalDebt={item.TotalDebt} monthPayment={item.monthPayment}/>))}
             </div>
 
@@ -55,7 +55,7 @@ export function mapCreditDataToItemProps(creditDataArray: CreditData[]): CreditI
         return {
             Id: id,
             Rate: creditRate,
-            AccountId: payingAccountId,
+            CreditAccountId: payingAccountId,
             monthPayment: monthPayAmount,
             TotalDebt: {
                 amount: totalDebt,

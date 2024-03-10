@@ -15,7 +15,6 @@ export const Account = () => {
     const [accountData, setAccountData] = useState<AccountData>()
 
     useEffect(() => {
-        console.log("all good")
         const fetchData = async () => {
             try {
                 const account = await getAccount(accountId!);

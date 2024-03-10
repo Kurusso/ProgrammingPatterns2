@@ -48,10 +48,3 @@ export const AccountItem:React.FC<AccountItemProps> = ({ AccountId, Amount, Curr
 
 
 
-//CloseAccount
-
-//CreateAccount
-
-
-//Withdraw- Account
-//Deposit - Account

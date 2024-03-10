@@ -8,6 +8,7 @@ export const getUserEndpoint=base_url+"/api/Profile/";
 export const depositEndpoint=base_url+"/api/Operations/Deposit";
 export const withdrawEndpoint=base_url+"/api/Operations/Withdraw";
 export const getCreditsEndpoint=base_url+"/api/Credit/GetUserCredits";
+export const getCreditEndpoint=base_url+"/api/Credit/GetInfo";
 
 export const getCreditRatesEndpoint=base_url+ "/api/CreditRates/GetAll";
 export const takeCreditEndpoint=base_url+"/api/Credit/Take"

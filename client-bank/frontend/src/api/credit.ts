@@ -1,6 +1,6 @@
 import {
     createAccountEndpoint,
-    getAccountsEndpoint,
+    getAccountsEndpoint, getCreditEndpoint,
     getCreditRatesEndpoint,
     getCreditsEndpoint,
     takeCreditEndpoint
@@ -36,6 +36,20 @@ export async function getCredits(token:string){
         throw error;
     }
 }
+
+export async function getCredit(token:string,creditId:string){
+    try{
+        console.log("getting credit")
+        const response=await fetch(`${getCreditEndpoint}?id=${creditId}&userId=${token}`)
+        let data:CreditData=await response.json();
+        console.log(data);
+        return data
+    }
+    catch (error){
+        throw error;
+    }
+}
+
 
 export async function takeCredit(creditRateId: string, userId: string, accountId: string, currency: Currency, moneyAmount: number, monthPay: number) {
     try {
