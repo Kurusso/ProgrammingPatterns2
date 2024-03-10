@@ -7,7 +7,7 @@ export const HomeButton = () => {
 
     return (
         <div>
-            <button type="button" onClick={()=>navigate("/")}>
+            <button id={"home-btn"} type="button" onClick={()=>navigate("/")}>
                 Home
             </button>
         </div>

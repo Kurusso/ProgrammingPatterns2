@@ -74,7 +74,8 @@ export const TakeCredit = () => {
 
     return (
         <div>
-            <div>
+            <h3>Take Credit</h3>
+            <div className={"credit-rate "}>
                 <h5>Credit rate</h5>
                 <select value={selectedCreditRate || ''} onChange={(e) => setSelectedCreditRate(e.target.value)}>
                     <option value="">Select...</option>
@@ -101,7 +102,7 @@ export const TakeCredit = () => {
                 <h5>Payment per month</h5>
                 <CurrencyInput amount={moneyPerMonth} setAmount={setMoneyPerMonth}/>
             </div>
-            <button onClick={HandleTakingCredit}>Take Credit</button>
+            <button className={"take-credit-btn"} onClick={HandleTakingCredit}>Take Credit</button>
         </div>
     );
 };

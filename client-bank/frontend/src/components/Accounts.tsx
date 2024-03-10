@@ -33,8 +33,8 @@ export const Accounts = () => {
 
 
     return (
-        <div><h5>Accounts</h5>
-            <div>{
+        <div className={"accounts"}><h5>Accounts</h5>
+            <div className={"accounts-items"}>{
                 accountElements.map(item=>(
                     <AccountItem
                         key={item.AccountId} // Set a unique key

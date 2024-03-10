@@ -42,7 +42,7 @@ export const Account = () => {
             <UsernameDisplay/>
             <LogoutButton/>
             <HomeButton/>
-            <div>
+            <div className={"transactions"}>
                 <h3>Account Operations</h3>
                 <div>
                     <MoneyTransaction transactionType={TransactionType.Deposit}/>
@@ -51,7 +51,7 @@ export const Account = () => {
                     <MoneyTransaction transactionType={TransactionType.Withdrawal}/>
                 </div>
             </div>
-            <div>
+            <div className={"account-information"}>
                 <h3>Account Information</h3>
                 <div>{accountId}</div>
                 <div>{accountData?.money.amount} {Currency[accountData?.money.currency!]}</div>

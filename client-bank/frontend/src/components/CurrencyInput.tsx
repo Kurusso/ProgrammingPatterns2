@@ -12,6 +12,6 @@ export const CurrencyInput:React.FC<CurrencyInputProps> = ({amount,setAmount}) =
     };
 
     return (
-        <input type="number" value={amount} onChange={handleAmountChange} min="0" step="0.01"/>
+        <input className={"currency-input"} type="number" value={amount} onChange={handleAmountChange} min="0" step="0.01"/>
     );
 };

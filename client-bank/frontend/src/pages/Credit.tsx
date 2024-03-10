@@ -62,9 +62,9 @@ export const Credit = () => {
                 <div>
                     <RepayCredit creditId={creditData?.id!} accountId={creditData?.payingAccountId!}/>
 
-                    <div>
+                    <div className={"credit-info"}>
                         <h3>Credit Information</h3>
-                        <div>
+                        <div className={"credit-data"}>
                             <div>Credit: {creditData?.id}</div>
                             <div>Credit
                                 rate: {creditData?.creditRate.name}: {creditData?.creditRate.monthPercent! * 100}%

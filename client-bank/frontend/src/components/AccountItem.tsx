@@ -36,10 +36,10 @@ export const AccountItem:React.FC<AccountItemProps> = ({ AccountId, Amount, Curr
 
     return (
         <div>
-            <button onClick={handleClickAccountDetails}>Account: {AccountId}</button>
+            <button className={"account-btn"} onClick={handleClickAccountDetails}>Account: {AccountId}</button>
             <div>Amount: {Amount}</div>
             <div>Currency: {Currency[CurrencyValue]}</div>
-            <button onClick={handleClickClose}>Close Account</button>
+            <button className={"close-account-btn"} onClick={handleClickClose}>Close Account</button>
         </div>
     );
 };
