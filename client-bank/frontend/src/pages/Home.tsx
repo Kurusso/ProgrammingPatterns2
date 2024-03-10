@@ -6,10 +6,9 @@ import {useEffect} from "react";
 import {UsernameDisplay} from "../components/UserameDisplay";
 import {Credits} from "../components/Credits";
 import {CreditProvider} from "../contexts/CreditContext";
+import {TakeCredit} from "../components/TakeCredit";
 
 export const Home = () => {
-
-    console.log("check")
 
 
     return (
@@ -26,11 +25,12 @@ export const Home = () => {
             <AccountProvider>
                 <CreateAccount/>
                 <Accounts/>
-            </AccountProvider>
-            <CreditProvider>
-                <Credits/>
-            </CreditProvider>
 
+                <CreditProvider>
+                    <TakeCredit/>
+                    <Credits/>
+                </CreditProvider>
+            </AccountProvider>
         </div>
     );
 };

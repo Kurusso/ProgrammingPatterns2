@@ -28,7 +28,6 @@ export const CreateAccount = () => {
     const parsedToken = storedToken ? JSON.parse(storedToken).token : null;
 
     const handleCreate = async () => {
-        console.log(`Currency:${selectedCurrency}`)
         if (!parsedToken || !selectedCurrency) {
             return;
         }
