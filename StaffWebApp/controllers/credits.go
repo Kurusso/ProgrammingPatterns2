@@ -14,7 +14,7 @@ func RenderCreditsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 	rates, err := services.LoadCreditRates(r.Context())
 	if err != nil {
 		logger.Default.Error("Failed to render credits page: ", err)
-		//TODO: error handling
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -27,24 +27,24 @@ func CreateCreditRate(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	creditRateName := r.FormValue("creditRateName")
 	percentStr := r.FormValue("creditRatePercent")
 	if creditRateName == "" {
-		//TODO: error handling
+		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
 		return
 	}
 	if percentStr == "" {
-		//TODO: error handling
+		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
 		return
 	}
 
 	percent, err := strconv.Atoi(percentStr)
 	if err != nil {
-		//TODO: error handling
+		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
 		return
 	}
 
 	err = services.CreateCreditRate(r.Context(), creditRateName, percent)
 	if err != nil {
 		logger.Default.Error(err)
-		//TODO: error handling
+		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
 		return
 	}
 

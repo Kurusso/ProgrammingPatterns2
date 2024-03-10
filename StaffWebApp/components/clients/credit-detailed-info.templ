@@ -14,7 +14,7 @@ templ DetailedCreditInfo(creditInfo *models.CreditDetailed) {
 			{ creditInfo.Rate.Name }
 		</span>
 		<strong>
-			{ fmt.Sprintf("%g%%", creditInfo.Rate.Percent) }
+			{ fmt.Sprintf("%g%%", creditInfo.Rate.Percent * 100) }
 		</strong>
 	</div>
 	<div>

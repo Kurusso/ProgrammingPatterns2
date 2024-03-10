@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"staff-web-app/components/clients"
 	"staff-web-app/logger"
@@ -16,8 +15,9 @@ const ListUserAccountUrlPattern = "/api/clients/:userId/accounts"
 func ListUserAccounts(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	id := ps.ByName("userId")
 	if id == "" {
-		fmt.Println("can't find Id")
-		//TODO: error handling
+		logger.Default.Error("bad url!: ", r.URL.String())
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	accounts, err := services.LoadUserAccounts(r.Context(), id)
@@ -34,19 +34,22 @@ const ListAccountOperationsUrlPattern = "/api/clients/:userId/accounts/:accountI
 func ListAccountOperations(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	userId := ps.ByName("userId")
 	if userId == "" {
-		fmt.Println("can't find Id")
-		//TODO: error handling
+		logger.Default.Error("bad url!: ", r.URL.String())
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	accountId := ps.ByName("accountId")
 	if accountId == "" {
-		fmt.Println("can't find Id")
-		//TODO: error handling
+		logger.Default.Error("bad url!: ", r.URL.String())
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	account, err := services.LoadAccountOperationHistory(r.Context(), accountId, userId)
 	if err != nil {
 		logger.Default.Error("failed to load account operation history: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -58,13 +61,15 @@ const ListUserCreditsUrlPattern = "/api/clients/:userId/credits"
 func ListUserCredits(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	userId := ps.ByName("userId")
 	if userId == "" {
-		fmt.Println("can't find Id")
-		//TODO: error handling
+		logger.Default.Error("bad url!: ", r.URL.String())
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	credits, err := services.LoadUserCredits(r.Context(), userId)
 	if err != nil {
-		fmt.Println(err)
+		logger.Default.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -76,20 +81,22 @@ const DetailedUserInfoUrlPattern = "/api/clients/:userId/credits/:creditId"
 func DetailedCreditInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	userId := ps.ByName("userId")
 	if userId == "" {
-		fmt.Println("can't find userId")
-		//TODO: error handling
+		logger.Default.Error("bad url!: ", r.URL.String())
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	creditId := ps.ByName("creditId")
 	if creditId == "" {
-		fmt.Println("can't find creditId")
-		//TODO: error handling
+		logger.Default.Error("bad url!: ", r.URL.String())
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	creditInfo, err := services.LoadCreditDetailedInfo(r.Context(), userId, creditId)
 	if err != nil {
-		logger.Default.Error("failed to load credit info: ", err)
-		//TODO: error handling
+		logger.Default.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -102,7 +109,8 @@ func ListClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	params := r.URL.Query()
 	pageNumber, err := strconv.Atoi(params.Get("page"))
 	if err != nil {
-		//TODO: error handling
+		logger.Default.Error("bad query params!: ", r.URL.String())
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	searchTerm := params.Get("searchTerm")
@@ -110,6 +118,7 @@ func ListClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	page, err := services.LoadClientsPage(r.Context(), searchTerm, pageNumber)
 	if err != nil {
 		logger.Default.Error("failed to load clients page: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -122,18 +131,20 @@ func CreateClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.P
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 	if username == "" {
-		//TODO: error handling
+		logger.Default.Error("couldn't find username in form")
+		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
 		return
 	}
 	if password == "" {
-		//TODO: error handling
+		logger.Default.Error("couldn't find password in form")
+		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
 		return
 	}
 
 	err := services.CreateClientProfile(r.Context(), username, password)
 	if err != nil {
 		logger.Default.Error(err)
-		//TODO: error handling
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -145,14 +156,15 @@ const BlockClientProfileUrlPattern = "/api/clients/:userId"
 func BlockClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	userId := ps.ByName("userId")
 	if userId == "" {
-		//TODO: error handling
+		logger.Default.Error("bad url!: ", r.URL.String())
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	err := services.BlockClientProfile(r.Context(), userId)
 	if err != nil {
-		//TODO: error handling
 		logger.Default.Error(err)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
