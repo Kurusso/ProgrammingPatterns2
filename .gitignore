@@ -13,6 +13,8 @@ bin/
 # production
 /build
 
+*Development*
+
 # misc
 .DS_Store
 .env.local
