@@ -8,9 +8,9 @@ type OperationsHistoryProps = {
 export const TransactionHistory: React.FC<OperationsHistoryProps> = ({transactions}) => {
 
     return (
-        <div>
+        <div className={"history-item"}>
             <h3>Transaction History</h3>
-            <div>
+            <div className={"history-item-content"}>
                 {
                     transactions && transactions.map(item => (
                         <HistoryItem

@@ -33,5 +33,6 @@ export const CurrencySelect = ({selectedCurrency,setSelectedCurrency}: Props) =>
                 </option>
             ))}
         </select>
+
     );
 };

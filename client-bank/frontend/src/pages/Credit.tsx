@@ -7,7 +7,7 @@ import {CreditData, getCredit} from "../api/credit";
 import {Currency, getAccount, Money} from "../api/account";
 import {RepayCredit} from "../components/RepayCredit";
 import {AccountProvider} from "../contexts/AccountContext";
-
+import "../styles/Credit.css"
 export const Credit = () => {
     const {creditId} = useParams<{ creditId: string }>();
     const [creditData, setCreditData] = useState<CreditData>()
@@ -71,8 +71,8 @@ export const Credit = () => {
                         </div>
                         <div> {creditData?.monthPayAmount ? (`Payment per
                 Month: ${creditData?.monthPayAmount.amount}  ${Currency[creditData?.monthPayAmount.currency]}`) : null}</div>
-                    <div>{creditData?.fullMoneyAmount?(`Total Money Amount ${creditData?.fullMoneyAmount}`):null}</div>
-                    <div>{creditData?.monthPayAmount?(`Payment per month ${creditData?.fullMoneyAmount}`):null}</div>
+                    <div>{creditData?.fullMoneyAmount?(`Total Money Amount ${creditData?.fullMoneyAmount.amount} ${Currency[creditData?.fullMoneyAmount.currency]}`):null}</div>
+                    <div>{creditData?.monthPayAmount?(`Payment per month ${creditData?.fullMoneyAmount.amount} ${Currency[creditData?.fullMoneyAmount.currency]}`):null}</div>
                     <div>{totalDebt? `Debt to pay: ${totalDebt.amount} ${Currency[totalDebt.currency]}` : null}</div>
                     <div>{creditData?.remainingDebt? `Remaining debt: ${creditData?.remainingDebt.amount} ${Currency[creditData?.remainingDebt.currency]}` : null}</div>
                         <div>{creditData?.unpaidDebt ? `Unpaid debt: ${creditData?.unpaidDebt.amount} ${Currency[creditData?.unpaidDebt.currency]}` : null}</div>

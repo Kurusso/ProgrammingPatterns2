@@ -8,7 +8,7 @@ import {UsernameDisplay} from "../components/UserameDisplay";
 import {CurrencyInput} from "../components/CurrencyInput";
 import {CurrencySelect} from "../components/CurrencySelect";
 import {MoneyTransaction, TransactionType} from "../components/MoneyTransaction";
-
+import "../styles/Account.css"
 
 export const Account = () => {
     const {accountId} = useParams<{ accountId: string }>();
@@ -58,7 +58,7 @@ export const Account = () => {
                 <h3>Account Information</h3>
                 <div>{accountId}</div>
                 <div>{accountData?.money.amount} {Currency[accountData?.money.currency!]}</div>
-                <div>
+                <div id={"transaction-history"}>
                     <TransactionHistory transactions={accountData?.operationsHistory!}/>
                 </div>
             </div>
