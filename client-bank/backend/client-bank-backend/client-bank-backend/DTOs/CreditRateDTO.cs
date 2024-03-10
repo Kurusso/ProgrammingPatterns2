@@ -1,4 +1,7 @@
-﻿namespace CreditApplication.Models.Dtos
+﻿using Common.Models;
+
+
+namespace CreditApplication.Models.Dtos
 {
     public class CreditRateDTO
     {
@@ -8,11 +11,5 @@
         public decimal MonthPercent { get; set; }
 
         public CreditRateDTO() { }
-        public CreditRateDTO(CreditRate creditRate)
-        {
-            Id = creditRate.Id;
-            Name = creditRate.Name;
-            MonthPercent = creditRate.MonthPercent;
-        }
     }
 }

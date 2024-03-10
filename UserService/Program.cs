@@ -25,7 +25,7 @@ if (app.Environment.IsDevelopment())
 app.MigrateDBWhenNecessary<MainDbContext>();
 
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.MapControllers();
 

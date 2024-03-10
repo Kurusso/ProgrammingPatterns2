@@ -1,5 +1,7 @@
 ﻿
 
+using Common.Models;
+
 namespace client_bank_backend.DTOs;
 
     public class AccountDTO
@@ -10,12 +12,5 @@ namespace client_bank_backend.DTOs;
         public Money Money { get; set; }
 
         public AccountDTO() { }
-        public AccountDTO(Account account) 
-        {
-            Id = account.Id;
-            Money = account.Money;
-            OperationsHistory = account.Operations.Select(x => new OperationDTO(x)).ToList();
-            UserId = account.UserId;
-        }
     }
 

@@ -67,7 +67,7 @@ export const Credit = () => {
                     <h3>Credit Information</h3>
                     <div>
                         <div>Credit: {creditData?.id}</div>
-                        <div>Credit rate: {creditData?.creditRate.name}: {creditData?.creditRate.monthPercent}%
+                        <div>Credit rate: {creditData?.creditRate.name}: {creditData?.creditRate.monthPercent! * 100}%
                         </div>
                         <div> {creditData?.monthPayAmount ? (`Payment per
                 Month: ${creditData?.monthPayAmount.amount}  ${Currency[creditData?.monthPayAmount.currency]}`) : null}</div>

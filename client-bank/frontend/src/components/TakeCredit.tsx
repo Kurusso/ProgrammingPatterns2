@@ -82,7 +82,7 @@ export const TakeCredit = () => {
                     <option value="">Select...</option>
                     {creditRates.map((creditRate) => (
                         <option key={creditRate.id}
-                                value={creditRate.id}>{creditRate.name}: {creditRate.monthPercent}%</option>
+                                value={creditRate.id}>{creditRate.name}: {creditRate.monthPercent * 100}%</option>
                     ))}
                 </select>
 

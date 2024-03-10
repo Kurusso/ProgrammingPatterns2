@@ -1,4 +1,6 @@
 ﻿using CoreApplication.Models.Enumeration;
+using Common.Models;
+
 namespace client_bank_backend.DTOs;
 
 
@@ -11,13 +13,5 @@ namespace client_bank_backend.DTOs;
         public Money MoneyAmmount { get; set; }
         public decimal MoneyAmmountInAccountCurrency { get; set; }
         public OperationDTO() { }
-        public OperationDTO(Operation operation) 
-        {
-            AccountId = operation.AccountId;
-            Id = operation.Id;
-            MoneyAmmount = operation.MoneyAmmount;
-            OperationType = operation.OperationType;
-            MoneyAmmountInAccountCurrency = operation.MoneyAmmountInAccountCurrency;
-        }
     }
 

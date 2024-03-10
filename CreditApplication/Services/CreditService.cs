@@ -84,6 +84,11 @@ namespace CreditApplication.Services
             {
                 credit.UnpaidDebt = new Money(Math.Max((credit.UnpaidDebt - money).Amount, 0), credit.UnpaidDebt.Currency);
             }
+            if (credit.RemainingDebt.Amount == 0) 
+            {
+                _context.Credits.Remove(credit);
+            }
+
             await _context.SaveChangesAsync();          
         }
 
@@ -115,6 +120,7 @@ namespace CreditApplication.Services
         {
             var blockedUsers = await _userService.GetBlockedUsers();
             var credits = await _context.Credits.Include(x=>x.CreditRate).GetUndeleted().GetUnblocked(blockedUsers).ToListAsync();
+            // var credits = await _context.Credits.Include(x=>x.CreditRate).GetUndeleted().ToListAsync();
             foreach (var credit in credits) { 
                 try
                 {
@@ -125,6 +131,8 @@ namespace CreditApplication.Services
                     credit.UnpaidDebt += credit.MonthPayAmount;
                 }
                 credit.RemainingDebt.Amount =  (credit.RemainingDebt.Amount * (credit.CreditRate.MonthPercent + 1));
+                _context.Credits.Update(credit);
+                // await _context.AddAsync(credit);
             };
            await _context.SaveChangesAsync();
         }

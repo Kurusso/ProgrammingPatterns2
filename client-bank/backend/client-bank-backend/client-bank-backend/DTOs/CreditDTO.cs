@@ -1,4 +1,6 @@
 ﻿using client_bank_backend.DTOs;
+using Common.Models;
+
 
 namespace CreditApplication.Models.Dtos
 {
@@ -19,14 +21,5 @@ namespace CreditApplication.Models.Dtos
         public Money UnpaidDebt { get; set; }
 
         public CreditDTO() { }
-        public CreditDTO(Credit credit)
-        {
-            Id = credit.Id;
-            UnpaidDebt = credit.UnpaidDebt;
-            RemainingDebt = credit.RemainingDebt;
-            UserId = credit.UserId;
-            PayingAccountId = credit.PayingAccountId;
-            CreditRate = new CreditRateDTO(credit.CreditRate);
-        }
     }
 }

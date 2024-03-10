@@ -58,7 +58,7 @@ func LoadCreditDetailedInfo(ctx context.Context, userId string, creditId string)
 func CreateCreditRate(ctx context.Context, name string, percent int) error {
 	body := make(map[string]any, 2)
 	body["name"] = name
-	body["monthPercent"] = percent
+	body["monthPercent"] = float64(percent) / 100.0
 
 	output, err := json.Marshal(body)
 	if err != nil {
