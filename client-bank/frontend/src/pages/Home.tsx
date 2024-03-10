@@ -7,13 +7,13 @@ import {UsernameDisplay} from "../components/UserameDisplay";
 import {Credits} from "../components/Credits";
 import {CreditProvider} from "../contexts/CreditContext";
 import {TakeCredit} from "../components/TakeCredit";
-
+import "../styles/Home.css"
 export const Home = () => {
 
 
     return (
         <div>
-            <h1>Home</h1>
+            <h1 id={"title"}>Home</h1>
             {/*        UserName
             List of Accounts // Deposit Money on particular account ||Close particular account
             List of Credits  // Pay money for particular credit|| Repay Credit

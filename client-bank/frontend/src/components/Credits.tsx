@@ -32,8 +32,8 @@ fetchData();
 
 
     return (
-        <div><h3>Credits</h3>
-            <div>
+        <div id={"credits"}><h3>Credits</h3>
+            <div id={"credit-items"}>
                 {creditItems.map(item => (
                     <CreditItem key={item.Id} Id={item.Id} Rate={item.Rate} CreditAccountId={item.CreditAccountId}
                                 TotalDebt={item.TotalDebt} monthPayment={item.monthPayment}/>))}

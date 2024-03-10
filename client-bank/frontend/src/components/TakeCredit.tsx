@@ -75,10 +75,11 @@ export const TakeCredit = () => {
 
 
     return (
-        <div>
-            <div>
+        <div className={"take-credit"}>
+            <h3>Take Credit</h3>
+            <div className={"credit-rate-section"}>
                 <h5>Credit rate</h5>
-                <select value={selectedCreditRate || ''} onChange={(e) => setSelectedCreditRate(e.target.value)}>
+                <select id={"credit-rate-select"} value={selectedCreditRate || ''} onChange={(e) => setSelectedCreditRate(e.target.value)}>
                     <option value="">Select...</option>
                     {creditRates.map((creditRate) => (
                         <option key={creditRate.id}
@@ -87,23 +88,23 @@ export const TakeCredit = () => {
                 </select>
 
             </div>
-            <div>
+            <div id={"account select-section"}>
 
                 <AccountSelect selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount}/>
             </div>
-            <div>
+            <div id={"currency-select-section"}>
                 <h5>Currency</h5>
                 <CurrencySelect selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency}/>
             </div>
-            <div>
+            <div id={"total-money-section"}>
                 <h5>Total money</h5>
                 <CurrencyInput amount={totalMoney} setAmount={setTotalMoney}/>
             </div>
-            <div>
+            <div id={"payment-per-month-section"}>
                 <h5>Payment per month</h5>
                 <CurrencyInput amount={moneyPerMonth} setAmount={setMoneyPerMonth}/>
             </div>
-            <button onClick={HandleTakingCredit}>Take Credit</button>
+            <button id={"take-credit"} onClick={HandleTakingCredit}>Take Credit</button>
         </div>
     );
 };

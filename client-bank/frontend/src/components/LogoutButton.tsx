@@ -9,7 +9,7 @@ export const LogoutButton = () => {
     navigate("/login")
     }
     return (<div>
-        <button type="button" onClick={handleLogout}>
+        <button id={"logout-btn"} type="button" onClick={handleLogout}>
             Logout
         </button>
     </div>);

@@ -8,7 +8,7 @@ export const HistoryItem: React.FC<OperationsHistory> = ({
                                                             moneyAmmount
                                                         }) => {
     return (
-        <div>
+        <div className={"history-item"}>
             <div>OperationType: {OperationType[operationType]}</div>
             <div>{moneyAmmountInAccountCurrency}</div>
             <div>{moneyAmmount.amount} {Currency[moneyAmmount.currency]}</div>

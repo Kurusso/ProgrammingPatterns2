@@ -20,7 +20,7 @@ export const CreditItem: React.FC<CreditItemProps> = ({Id, CreditAccountId, Tota
     }, [navigate, Id]);
 
     return (
-        <div>
+        <div className={"credit-item"}>
             <button onClick={handleClickAccountDetails}> Credit:{Id}</button>
             <div>Bound to Account: {CreditAccountId}</div>
             <div>Credit rate: {Rate.name}: {Rate.monthPercent}%</div>

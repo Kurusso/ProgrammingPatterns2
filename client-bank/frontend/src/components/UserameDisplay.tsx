@@ -26,7 +26,7 @@ export const UsernameDisplay = () => {
     }, [user, parsedToken, setUser]);
 
     return (
-        <div>
+        <div id={"username"}>
             {user ? `${user.username}` : "You are not logged in."}
         </div>
     );
