@@ -19,9 +19,7 @@ templ StaffList(staffPage *models.Page[models.StaffShort]) {
 	<div class="mt-3 d-flex flex-row-reverse">
 		@common.Pagination(staffPage.PageInfo,
 			"/api/staff?page=%d",
-			"#userListContainer",
-			templ.Attributes{"hx-include": "[name='searchTerm']"} )
-	</div>
+			"#userListContainer",H
 }
 
 templ staffBlockButton(id string) {
