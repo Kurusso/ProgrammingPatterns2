@@ -1,4 +1,4 @@
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useState} from "react";
 import {createAccount, Currency, getAccounts} from "../api/account";
 import {useAccounts} from "../contexts/AccountContext";
 import {mapAccountDataToElementProps} from "./Accounts";

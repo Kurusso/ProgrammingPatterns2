@@ -1,4 +1,4 @@
-// SelectCurrency.tsx
+
 import {ChangeEvent, useState, useEffect} from "react";
 import {Currency} from "../api/account";
 

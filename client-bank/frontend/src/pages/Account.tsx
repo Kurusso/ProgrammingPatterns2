@@ -1,14 +1,11 @@
-import React, {ChangeEvent, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useParams} from 'react-router-dom';
 import {AccountData, Currency, getAccount} from "../api/account";
 import {LogoutButton} from "../components/LogoutButton";
 import {TransactionHistory} from "../components/TransactionHistory";
 import {HomeButton} from "../components/HomeButton";
 import {UsernameDisplay} from "../components/UserameDisplay";
-import {CurrencyInput} from "../components/CurrencyInput";
-import {CurrencySelect} from "../components/CurrencySelect";
 import {MoneyTransaction, TransactionType} from "../components/MoneyTransaction";
-
 
 export const Account = () => {
     const {accountId} = useParams<{ accountId: string }>();

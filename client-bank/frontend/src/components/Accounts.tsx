@@ -1,8 +1,7 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {AccountData, getAccounts} from "../api/account";
 import {AccountItem, AccountItemProps} from "./AccountItem";
 import {useAccounts} from "../contexts/AccountContext";
-import {CurrencySelect} from "./CurrencySelect";
 
 export const Accounts = () => {
 

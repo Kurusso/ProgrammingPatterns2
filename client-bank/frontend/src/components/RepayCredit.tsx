@@ -1,7 +1,7 @@
 import {repayCredit} from "../api/credit";
 import {CurrencyInput} from "./CurrencyInput";
 import {CurrencySelect} from "./CurrencySelect";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Currency} from "../api/account";
 import {AccountSelect} from "./AccountSelect";
 

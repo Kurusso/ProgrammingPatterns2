@@ -1,6 +1,5 @@
 import {
-    createAccountEndpoint,
-    getAccountsEndpoint, getCreditEndpoint,
+    getCreditEndpoint,
     getCreditRatesEndpoint,
     getCreditsEndpoint, repayCreditEndpoint,
     takeCreditEndpoint

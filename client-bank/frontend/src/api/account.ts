@@ -1,6 +1,4 @@
 import {closeAccountEndpoint, createAccountEndpoint, getAccountEndpoint, getAccountsEndpoint} from "./magicConst";
-import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
 
 export enum Currency {
     Ruble,

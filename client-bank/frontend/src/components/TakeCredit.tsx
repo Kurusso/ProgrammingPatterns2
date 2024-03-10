@@ -1,11 +1,9 @@
 import {useCredits} from "../contexts/CreditContext";
 import {useEffect, useState} from "react";
-import {createAccount, Currency, getAccounts} from "../api/account";
+import {Currency} from "../api/account";
 import {CurrencyInput} from "./CurrencyInput";
 import {CurrencySelect} from "./CurrencySelect";
-import {useAccounts} from "../contexts/AccountContext";
 import {CreditRate, getCreditRates, getCredits, takeCredit} from "../api/credit";
-import {mapAccountDataToElementProps} from "./Accounts";
 import {mapCreditDataToItemProps} from "./Credits";
 import {AccountSelect} from "./AccountSelect";
 
