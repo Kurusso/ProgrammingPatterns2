@@ -25,6 +25,8 @@
             UserId = credit.UserId;
             PayingAccountId = credit.PayingAccountId;
             CreditRate = new CreditRateDTO(credit.CreditRate);
+            FullMoneyAmount = credit.FullMoneyAmount;
+            MonthPayAmount = credit.MonthPayAmount;
         }
     }
 }

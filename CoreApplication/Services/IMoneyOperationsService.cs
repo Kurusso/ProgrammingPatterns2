@@ -69,7 +69,7 @@ namespace CoreApplication.Services
                 OperationType = type,
                 AccountId = accountId,
                 MoneyAmmount = money,
-                MoneyAmmountInAccountCurrency = MoneyConverter.ConvertMoneyFromDollarValue(MoneyConverter.ConvertMoneyToDollarValue(money), currency).Amount
+                MoneyAmmountInAccountCurrency = MoneyConverter.ConvertMoneyFromDollarValue(MoneyConverter.ConvertMoneyToDollarValue(money), account.Money.Currency).Amount
             };
             await _dbContext.Operations.AddAsync(operation);
             Money balance = await CountAccountBalance(account);

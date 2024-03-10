@@ -1,0 +1,18 @@
+package credits
+
+import "staff-web-app/models"
+import "fmt"
+
+templ creditRatesList(rates []models.CreditRate) {
+    <ul class="list-group">
+		for _, rate := range rates {
+			<li class="d-flex list-group-item row mx-0">
+				<div class="align-self-center col">{ rate.Name } </div>
+				<div class="align-self-center col">{ fmt.Sprintf("%g%%", rate.Percent)  } </div>
+				<div class="col-auto me-3">
+					<button type="button" class="btn btn-danger">Удалить</button>
+				</div>
+			</li>
+		}
+	</ul>
+}

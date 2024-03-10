@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreditApplication", "CreditApplication.csproj", "{51120E2E-3F88-4DC0-A6E8-8C9F87612606}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreditApplication", "CreditApplication.csproj", "{51120E2E-3F88-4DC0-A6E8-8C9F87612606}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
