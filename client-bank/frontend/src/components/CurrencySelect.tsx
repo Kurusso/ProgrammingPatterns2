@@ -1,4 +1,4 @@
-// SelectCurrency.tsx
+
 import {ChangeEvent, useState, useEffect} from "react";
 import {Currency} from "../api/account";
 
@@ -25,7 +25,7 @@ export const CurrencySelect = ({selectedCurrency,setSelectedCurrency}: Props) =>
     };
 
     return (
-        <select className={"currency-selector"} value={selectedCurrency || ''} onChange={HandleCurrencyChange}>
+        <select className={"currency-select"} value={selectedCurrency || ''} onChange={HandleCurrencyChange}>
             <option value="">Select...</option>
             {options.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -33,6 +33,5 @@ export const CurrencySelect = ({selectedCurrency,setSelectedCurrency}: Props) =>
                 </option>
             ))}
         </select>
-
     );
 };

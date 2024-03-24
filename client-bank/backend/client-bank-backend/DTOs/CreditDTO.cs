@@ -1,14 +1,16 @@
 ﻿using client_bank_backend.DTOs;
-using CreditApplication.Models.Dtos;
+using Common.Models;
 
-namespace CreditApplication.Models
+
+namespace CreditApplication.Models.Dtos
 {
-    public class Credit : BaseEntity
+    public class CreditDTO
     {
-        public Guid CreditRateId { get; set; }
-        public CreditRate CreditRate{ get; set; }
+        public Guid Id { get; set; }
 
-        public Guid UserId {  get; set; }
+        public CreditRateDTO CreditRate { get; set; }
+
+        public Guid UserId { get; set; }
         public Guid PayingAccountId { get; set; }
 
         public Money FullMoneyAmount { get; set; }
@@ -17,5 +19,7 @@ namespace CreditApplication.Models
         public Money RemainingDebt { get; set; }
 
         public Money UnpaidDebt { get; set; }
+
+        public CreditDTO() { }
     }
 }

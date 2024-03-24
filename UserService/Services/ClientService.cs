@@ -18,7 +18,6 @@ public class ClientService
             ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
         };
 
-        // Pass the handler to httpclient(from you are calling api)
         _http = new HttpClient(clientHandler);
         _dbcontext = dbc;
         _config = conf;

@@ -1,8 +1,7 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {AccountData, getAccounts} from "../api/account";
 import {AccountItem, AccountItemProps} from "./AccountItem";
 import {useAccounts} from "../contexts/AccountContext";
-import {CurrencySelect} from "./CurrencySelect";
 
 export const Accounts = () => {
 
@@ -34,8 +33,8 @@ export const Accounts = () => {
 
 
     return (
-        <div id={"accounts"}><h3>Accounts</h3>
-            <div className={"account-items"}>{
+        <div className={"accounts"}><h5>Accounts</h5>
+            <div className={"accounts-items"}>{
                 accountElements.map(item=>(
                     <AccountItem
                         key={item.AccountId} // Set a unique key

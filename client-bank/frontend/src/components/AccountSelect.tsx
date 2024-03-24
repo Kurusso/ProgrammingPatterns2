@@ -36,8 +36,8 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({selectedAccount, se
     }, []);
 
 
-    return (<div className={"account-select-section"}>
-            <h5>Account to pay</h5>
+    return (<div>
+            <h4>Account to pay</h4>
             <select className={"account-select"} value={selectedAccount || ''} onChange={(e) => setSelectedAccount(e.target.value)}>
                 <option value="">Select...</option>
                 {accountElements.map((account) => (

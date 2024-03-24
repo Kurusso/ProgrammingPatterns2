@@ -1,7 +1,7 @@
 import {repayCredit} from "../api/credit";
 import {CurrencyInput} from "./CurrencyInput";
 import {CurrencySelect} from "./CurrencySelect";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Currency} from "../api/account";
 import {AccountSelect} from "./AccountSelect";
 
@@ -44,12 +44,13 @@ export const RepayCredit:React.FC<RepayCreditProps> = ({creditId,accountId}) => 
 
 
     return (
-        <div>
+        <div className={"repay-credit"}>
             <h3>Repay Credit</h3>
             <AccountSelect selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount}/>
+            <h4>Currency</h4>
             <CurrencySelect selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency}/>
             <CurrencyInput amount={amount} setAmount={setAmount}/>
-            <button onClick={HandleCreditPayment}>Repay</button>
+            <button className={"repay-credit-btn"} onClick={HandleCreditPayment}>Repay</button>
         </div>
     );
 };

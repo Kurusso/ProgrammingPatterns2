@@ -11,6 +11,7 @@ namespace client_bank_backend.Controllers;
 public class AuthController:ControllerBase
 {
     private readonly HttpClient _coreClient = new();
+
     [HttpPost("Login")]
     public async Task<IActionResult> Login(UsernamePasswordDTO loginCreds)
     {

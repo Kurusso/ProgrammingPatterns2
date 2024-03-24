@@ -51,7 +51,8 @@ namespace CoreApplication.Services
 
         public async Task<List<AccountDTO>> GetUserAccounts(Guid userId)
         {
-            var accounts = await _dbContext.Accounts.Where(x=>x.UserId==userId).Include(x=>x.Operations).GetUndeleted().Select(x=>new AccountDTO(x)).ToListAsync();
+            var blockedUsers = await _userService.GetBlockedUsers();
+            var accounts = await _dbContext.Accounts.Where(x=>x.UserId==userId).Include(x=>x.Operations).GetUndeleted().GetUnblocked(blockedUsers).Select(x=>new AccountDTO(x)).ToListAsync();
             return accounts;
         }
 

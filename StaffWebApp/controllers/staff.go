@@ -16,7 +16,8 @@ func ListStaffPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	params := r.URL.Query()
 	pageNumber, err := strconv.Atoi(params.Get("page"))
 	if err != nil {
-		//TODO: error handling
+		logger.Default.Error("incorrect pageNumber: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	searchTerm := params.Get("searchTerm")
@@ -24,6 +25,7 @@ func ListStaffPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	page, err := services.LoadStaffPage(r.Context(), int64(pageNumber), searchTerm)
 	if err != nil {
 		logger.Default.Error("failed to load staff page: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -41,18 +43,18 @@ func CreateStaffProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 	if username == "" {
-		//TODO: error handling
+		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
 		return
 	}
 	if password == "" {
-		//TODO: error handling
+		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
 		return
 	}
 
 	err := services.CreateStaffProfile(r.Context(), username, password)
 	if err != nil {
 		logger.Default.Error(err)
-		//TODO: error handling
+		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -64,17 +66,17 @@ const BlockStaffProfileUrlPattern = "/api/staff/:userId"
 func BlockStaffProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	userId := ps.ByName("userId")
 	if userId == "" {
-		//TODO: error handling
+		logger.Default.Error("bad url!: ", r.URL.String())
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	err := services.BlockStaffProfile(r.Context(), userId)
 	if err != nil {
-		//TODO: error handling
 		logger.Default.Error(err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	ListStaffPage(w, r, ps)
-	// http.Redirect(w, r, "/Staff", http.StatusSeeOther)
 }

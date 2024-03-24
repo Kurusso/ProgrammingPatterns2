@@ -4,10 +4,12 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
+	"staff-web-app/components"
 	"staff-web-app/config"
 	"staff-web-app/controllers"
 	"staff-web-app/logger"
 
+	"github.com/a-h/templ"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -27,6 +29,7 @@ func main() {
 	router.GET("/", controllers.RenderClientsPage)
 	router.GET("/Staff", controllers.RenderStaffPage)
 	router.GET("/Credits", controllers.RenderCreditsPage)
+	router.Handler("GET", "/Error", templ.Handler(components.ErrorPage()))
 
 	router.GET(controllers.ListUserAccountUrlPattern, controllers.ListUserAccounts)
 	router.GET(controllers.ListAccountOperationsUrlPattern, controllers.ListAccountOperations)

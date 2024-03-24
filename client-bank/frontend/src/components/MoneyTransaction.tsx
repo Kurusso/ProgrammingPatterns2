@@ -42,12 +42,12 @@ export const MoneyTransaction: React.FC<MoneyOperationProps> = ({transactionType
 
 
     return (
-        <div>
+        <div className={"transaction"}>
             <h4>{operationName}</h4>
             <CurrencyInput amount={amount} setAmount={setAmount}/>
             <CurrencySelect selectedCurrency={selectedCurrency}
                             setSelectedCurrency={setSelectedCurrency}/>
-            <button type={"button"} onClick={HandleOperation}> {operationName}</button>
+            <button className={"transaction-btn"} type={"button"} onClick={HandleOperation}> {operationName}</button>
         </div>
     );
 };

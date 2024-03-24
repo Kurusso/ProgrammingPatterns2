@@ -1,4 +1,4 @@
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useState} from "react";
 import {createAccount, Currency, getAccounts} from "../api/account";
 import {useAccounts} from "../contexts/AccountContext";
 import {mapAccountDataToElementProps} from "./Accounts";
@@ -43,9 +43,9 @@ export const CreateAccount = () => {
     };
 
     return (
-        <div className={"new-account-from"}>
+        <div className={"new-account-form"}>
             <h3>Create Account</h3>
-            <button type={"button"} onClick={handleCreate}>Create Account</button>
+            <button className={"create-account-btn"} type={"button"} onClick={handleCreate}>Create Account</button>
             <CurrencySelect  selectedCurrency={selectedCurrency}
                             setSelectedCurrency={setSelectedCurrency}/>
         </div>

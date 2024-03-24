@@ -1,11 +1,9 @@
 import {useCredits} from "../contexts/CreditContext";
 import {useEffect, useState} from "react";
-import {createAccount, Currency, getAccounts} from "../api/account";
+import {Currency} from "../api/account";
 import {CurrencyInput} from "./CurrencyInput";
 import {CurrencySelect} from "./CurrencySelect";
-import {useAccounts} from "../contexts/AccountContext";
 import {CreditRate, getCreditRates, getCredits, takeCredit} from "../api/credit";
-import {mapAccountDataToElementProps} from "./Accounts";
 import {mapCreditDataToItemProps} from "./Credits";
 import {AccountSelect} from "./AccountSelect";
 
@@ -75,36 +73,36 @@ export const TakeCredit = () => {
 
 
     return (
-        <div className={"take-credit"}>
+        <div>
             <h3>Take Credit</h3>
-            <div className={"credit-rate-section"}>
+            <div className={"credit-rate "}>
                 <h5>Credit rate</h5>
-                <select id={"credit-rate-select"} value={selectedCreditRate || ''} onChange={(e) => setSelectedCreditRate(e.target.value)}>
+                <select value={selectedCreditRate || ''} onChange={(e) => setSelectedCreditRate(e.target.value)}>
                     <option value="">Select...</option>
                     {creditRates.map((creditRate) => (
                         <option key={creditRate.id}
-                                value={creditRate.id}>{creditRate.name}: {creditRate.monthPercent}%</option>
+                                value={creditRate.id}>{creditRate.name}: {creditRate.monthPercent * 100}%</option>
                     ))}
                 </select>
 
             </div>
-            <div id={"account select-section"}>
+            <div>
 
                 <AccountSelect selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount}/>
             </div>
-            <div id={"currency-select-section"}>
+            <div>
                 <h5>Currency</h5>
                 <CurrencySelect selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency}/>
             </div>
-            <div id={"total-money-section"}>
+            <div>
                 <h5>Total money</h5>
                 <CurrencyInput amount={totalMoney} setAmount={setTotalMoney}/>
             </div>
-            <div id={"payment-per-month-section"}>
+            <div>
                 <h5>Payment per month</h5>
                 <CurrencyInput amount={moneyPerMonth} setAmount={setMoneyPerMonth}/>
             </div>
-            <button id={"take-credit"} onClick={HandleTakingCredit}>Take Credit</button>
+            <button className={"take-credit-btn"} onClick={HandleTakingCredit}>Take Credit</button>
         </div>
     );
 };

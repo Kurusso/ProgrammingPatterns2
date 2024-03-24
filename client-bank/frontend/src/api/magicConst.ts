@@ -1,4 +1,4 @@
-const base_url="https://localhost:7075";
+const base_url="http://localhost:5082";
 export const loginEndpoint=base_url+"/api/Auth/Login";
 export const getAccountsEndpoint=base_url+"/api/Account/User/";
 export const getAccountEndpoint=base_url+"/api/Account/GetInfo/";

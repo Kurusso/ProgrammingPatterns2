@@ -2,9 +2,9 @@
 
 public static class MagicConstants
 {
-    private static readonly string BaseUrlCore = "https://localhost:7143";
-    private static readonly string BaseUrlCredit = "https://localhost:7186";
-    private static readonly string BaseUrUserService = "https://localhost:7212";
+    private static readonly string BaseUrlCore = "http://localhost:5274";
+    private static readonly string BaseUrlCredit = "http://localhost:5145";
+    private static readonly string BaseUrUserService = "http://localhost:5056";
     
     public static readonly string GetAccountsEndpoint = BaseUrlCore +"/api/Account/User/";
     public static readonly string GetAccountEndpoint = BaseUrlCore +"/api/Account/GetInfo/";
