@@ -1,8 +1,10 @@
 ﻿using Common.Helpers;
 using Common.Models;
 using Common.Models.Enumeration;
+using CoreApplication.Hubs;
 using CoreApplication.Models;
 using CoreApplication.Models.Enumeration;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreApplication.Services

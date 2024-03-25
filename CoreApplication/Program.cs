@@ -1,3 +1,4 @@
+using CoreApplication.Hubs;
 using CoreApplication.Models;
 using CoreApplication.Services;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ services.AddScoped<IAccountService, AccountService>();
 services.AddScoped<IMoneyOperationsService, MoneyOperationsService>();
 services.AddScoped<IUserService, UserService>();
 services.AddSwaggerGen();
+services.AddSignalR();
 
 services.AddDbContext<CoreDbContext>(options =>
     options.UseNpgsql(
@@ -35,5 +37,5 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<ClientOperationsHub>($"/{configuration.GetSection("SignalRPath")}");
 app.Run();
