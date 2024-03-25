@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {useNavigate} from 'react-router-dom';
 import  "../styles/Login.css";
 import { useAuth } from '../contexts/AuthContext';
-import {getToken} from "../api/auth";
+import {AuthService} from "../api/auth";
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -13,7 +13,7 @@ const Login: React.FC = () => {
     const handleLoginFormSubmit = async () => {
 
         console.log('Logging in with:', email, password);
-        let token = await getToken(email, password);
+        let token = await AuthService.getToken(email, password);
         handleLogin(token)
         navigate('/');
     };

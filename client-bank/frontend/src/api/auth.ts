@@ -1,21 +1,23 @@
-import {loginEndpoint} from "./magicConst";
+import {magicConsts} from "./magicConst";
 
-export async function getToken(email: string, password: string): Promise<string> {
-    try {
+export class AuthService {
+    static async getToken(email: string, password: string): Promise<string> {
+        try {
 
-        const response = await fetch(loginEndpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username:email,
-                password:password
-            }),
-        });
+            const response = await fetch(magicConsts.loginEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: email,
+                    password: password
+                }),
+            });
 
-        return await response.json();
-    } catch (error) {
-        throw error;
+            return await response.json();
+        } catch (error) {
+            throw error;
+        }
     }
 }

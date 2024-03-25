@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import {CreditData, getCredits} from "../api/credit";
+import {CreditData, CreditService} from "../api/credit";
 import {useCredits} from "../contexts/CreditContext";
 import {CreditItem, CreditItemProps} from "./CreditItem";
 
@@ -13,7 +13,7 @@ useEffect(()=>{
             if (storedToken) {
                 const parsedToken = JSON.parse(storedToken).token;
                 if (parsedToken) {
-                    const credits= await getCredits(parsedToken);
+                    const credits= await CreditService.getCredits(parsedToken);
                     let CreditItemsData=mapCreditDataToItemProps(credits);
                     setCreditItems(CreditItemsData);
                     console.log('Fetched credits:', credits);

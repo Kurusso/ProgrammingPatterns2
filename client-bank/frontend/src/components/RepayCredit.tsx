@@ -1,4 +1,4 @@
-import {repayCredit} from "../api/credit";
+import {CreditService} from "../api/credit";
 import {CurrencyInput} from "./CurrencyInput";
 import {CurrencySelect} from "./CurrencySelect";
 import {useState} from "react";
@@ -34,7 +34,7 @@ export const RepayCredit:React.FC<RepayCreditProps> = ({creditId,accountId}) => 
                 throw new Error('Account wasnt selected')
 
             console.log("paying for credit")
-            await repayCredit(creditId,parsedToken,amount,selectedCurrency,selectedAccount);
+            await CreditService.repayCredit(creditId,parsedToken,amount,selectedCurrency,selectedAccount);
         }
         catch (e) {
 

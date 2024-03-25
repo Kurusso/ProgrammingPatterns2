@@ -1,6 +1,6 @@
 import {useAccounts} from "../contexts/AccountContext";
 import {useEffect} from "react";
-import {getAccounts} from "../api/account";
+import {AccountService} from "../api/account";
 import {mapAccountDataToElementProps} from "./Accounts";
 
 interface AccountSelectProps {
@@ -25,7 +25,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({selectedAccount, se
                     throw new Error('Invalid token');
                 }
 
-                const accounts = await getAccounts(parsedToken);
+                const accounts = await AccountService.getAccounts(parsedToken);//getAccounts
                 let AccountsElementsData = mapAccountDataToElementProps(accounts);
                 setAccountElements(AccountsElementsData);
             } catch (e) {

@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {Currency} from "../api/account";
 import {CurrencyInput} from "./CurrencyInput";
 import {CurrencySelect} from "./CurrencySelect";
-import {CreditRate, getCreditRates, getCredits, takeCredit} from "../api/credit";
+import {CreditRate,  CreditService} from "../api/credit";
 import {mapCreditDataToItemProps} from "./Credits";
 import {AccountSelect} from "./AccountSelect";
 
@@ -26,7 +26,7 @@ export const TakeCredit = () => {
 
             try {
 
-                let creditRatesData = await getCreditRates()
+                let creditRatesData = await CreditService.getCreditRates()
                 setCreditRates(creditRatesData);
                 console.log('Fetched credit rates:', creditRatesData);
 
@@ -62,8 +62,8 @@ export const TakeCredit = () => {
                 throw new Error('Incorrect amount of money')
             }
 
-            await takeCredit(selectedCreditRate, parsedToken, selectedAccount, selectedCurrency, totalMoney, moneyPerMonth);
-            const credits = await getCredits(parsedToken);
+            await CreditService.takeCredit(selectedCreditRate, parsedToken, selectedAccount, selectedCurrency, totalMoney, moneyPerMonth);
+            const credits = await CreditService.getCredits(parsedToken);
             const creditItemsData = mapCreditDataToItemProps(credits);
             setCreditItems(creditItemsData);
         } catch (error) {

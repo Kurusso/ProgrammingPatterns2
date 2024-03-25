@@ -3,7 +3,7 @@ import {CurrencySelect} from "./CurrencySelect";
 import React, {useState} from "react";
 import {Currency} from "../api/account";
 import {useParams} from "react-router-dom";
-import {performTransaction} from "../api/transaction";
+import {TransactionService} from "../api/transaction";
 
 interface MoneyOperationProps {
     transactionType:TransactionType
@@ -37,7 +37,7 @@ export const MoneyTransaction: React.FC<MoneyOperationProps> = ({transactionType
 
         if(!selectedCurrency||amount<=0||!accountId)
             return;
-        await performTransaction(accountId,amount,selectedCurrency,transactionType,parsedToken)
+        await TransactionService.performTransaction(accountId,amount,selectedCurrency,transactionType,parsedToken)
     };
 
 

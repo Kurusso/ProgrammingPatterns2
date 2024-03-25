@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from 'react-router-dom';
-import {AccountData, Currency, getAccount} from "../api/account";
+import {AccountData, Currency, AccountService} from "../api/account";
 import {LogoutButton} from "../components/LogoutButton";
 import {TransactionHistory} from "../components/TransactionHistory";
 import {HomeButton} from "../components/HomeButton";
@@ -24,7 +24,7 @@ export const Account = () => {
                     throw new Error('Invalid token');
                 }
 
-                const account = await getAccount(accountId!,parsedToken);
+                const account = await AccountService.getAccount(accountId!,parsedToken);
                 console.log(account)
                 setAccountData(account)
                 console.log('Account Fetched :', account);

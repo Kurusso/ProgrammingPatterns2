@@ -1,6 +1,6 @@
 // UsernameDisplay.tsx
 import {useUser} from "../contexts/UserContext";
-import {getUser} from "../api/user";
+import {UserService} from "../api/user";
 import {useEffect} from "react";
 
 
@@ -14,7 +14,7 @@ export const UsernameDisplay = () => {
         const fetchUser = async () => {
             if (!user && parsedToken) {
                 try {
-                    let userData = await getUser(parsedToken);
+                    let userData = await UserService.getUser(parsedToken);
                     setUser(userData);
                 } catch (error) {
                     console.error('An error occurred while getting user data:', error);

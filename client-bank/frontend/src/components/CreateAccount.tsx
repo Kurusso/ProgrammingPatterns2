@@ -1,5 +1,5 @@
 import {ChangeEvent, useState} from "react";
-import {createAccount, Currency, getAccounts} from "../api/account";
+import {AccountService, Currency } from "../api/account";
 import {useAccounts} from "../contexts/AccountContext";
 import {mapAccountDataToElementProps} from "./Accounts";
 import {CurrencySelect} from "./CurrencySelect";
@@ -33,8 +33,8 @@ export const CreateAccount = () => {
         }
 
         try {
-            await createAccount(parsedToken, selectedCurrency!);
-            const accounts = await getAccounts(parsedToken);
+            await AccountService.createAccount(parsedToken, selectedCurrency!);
+            const accounts = await AccountService.getAccounts(parsedToken);
             let AccountsElementsData = mapAccountDataToElementProps(accounts);
             setAccountElements(AccountsElementsData);
         } catch (error) {

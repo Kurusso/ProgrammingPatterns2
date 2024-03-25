@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import {AccountData, getAccounts} from "../api/account";
+import {AccountData, AccountService} from "../api/account";
 import {AccountItem, AccountItemProps} from "./AccountItem";
 import {useAccounts} from "../contexts/AccountContext";
 
@@ -14,7 +14,8 @@ export const Accounts = () => {
                 if (storedToken) {
                     const parsedToken = JSON.parse(storedToken).token;
                     if (parsedToken) {
-                        const accounts = await getAccounts(parsedToken);
+
+                        const accounts = await AccountService.getAccounts(parsedToken);//getAccounts
                         let AccountsElementsData = mapAccountDataToElementProps(accounts);
                         setAccountElements(AccountsElementsData);
                         console.log('Fetched accounts:', accounts);
