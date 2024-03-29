@@ -4,12 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using CoreApplication.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using CoreApplication.Models;
+using CoreApplication.Models.DTO;
 namespace CoreApplication.Helpers
 {
 
     public static class OperationUpdateHelper
     {
-        public static async void CatchOperationUpdate(ChangeTracker changeTracker, IHubContext<ClientOperationsHub> _hubContext, CoreDbContext context)
+        public static async Task CatchOperationUpdate(ChangeTracker changeTracker, IHubContext<ClientOperationsHub> _hubContext, CoreDbContext context)
         {
             var modifiedEntries = changeTracker.Entries()
             .Where(e => e.State == EntityState.Added && e.Entity.GetType() == typeof(Operation))
@@ -21,11 +22,12 @@ namespace CoreApplication.Helpers
                 accounts.Add(((Operation)entity).Account);
             }
             accounts = accounts.Distinct().ToList();
-            accounts.ForEach(async account =>
+            foreach (var account in accounts)
             {
                 var accountForSend = await context.Accounts.Include(x => x.Operations).FirstOrDefaultAsync(x => x.Id == account.Id);
-                await _hubContext.Clients.User(accountForSend.UserId.ToString()).SendAsync("client", accountForSend);
-            });
+                await _hubContext.Clients.User(accountForSend.UserId.ToString()).SendAsync("client", new AccountDTO(accountForSend));
+            }
+
         }
     }
 }
