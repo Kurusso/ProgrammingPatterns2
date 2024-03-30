@@ -15,22 +15,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<AuthService, AuthService>();
+builder.Services.AddScoped<UsersService, UsersService>();
 // builder.Services.AddScoped<ClientService, ClientService>();
-// builder.Services.AddScoped<StaffService, StaffService>();
-builder.Services.AddIdentity<User, Role>()
-    .AddEntityFrameworkStores<MainDbContext>()
-    .AddDefaultTokenProviders()
-    .AddDefaultUI();
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequireDigit = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 1;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
-});
-
+builder.AddIdentity();
 builder.AddDB<MainDbContext>("DbConnection");
 builder.AddOpenIddict();
 
@@ -45,10 +33,9 @@ if (app.Environment.IsDevelopment())
 
 app.MigrateDBWhenNecessary<MainDbContext>();
 app.AddOauthClients();
+app.InitRoles();
 
 app.UseStaticFiles();
-
-// app.UseRouting();
 
 app.UseAuthentication();
 

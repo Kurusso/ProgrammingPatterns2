@@ -4,7 +4,7 @@ namespace UserService.Controllers;
 
 public class UIController : Controller
 {
-    [Route("/")]
+    // [Route("/")]
     public IActionResult Index() {
         return View("/Views/Home/Index.cshtml");
     }

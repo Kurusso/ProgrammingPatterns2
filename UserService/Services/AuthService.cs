@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -38,7 +39,7 @@ public class AuthService(
                 "The specified grant is not implemented."
             );
         }
-        var userId = authResult.Principal.GetClaim(Claims.Subject) ??
+        var userId = authResult.Principal?.GetClaim(Claims.Subject) ??
             throw new BackendException(401, "Unauthorized");
 
         var user = await _userManager.FindByIdAsync(userId) ??
@@ -65,14 +66,22 @@ public class AuthService(
         return new ClaimsPrincipal(identity);
     }
 
-    public async Task Authorize(OpenIddictRequest? request, AuthenticateResult authResult) {
-        if (request == null) {
-            throw new ArgumentException();
+    public async Task<bool> ValidateAuth(AuthenticateResult authResult) {
+        if (!authResult.Succeeded) {
+            return false;
         }
 
-        if (!authResult.Succeeded || request.HasPrompt(Prompts.Login)) {
-
+        var userId = authResult.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null) {
+            return false;
         }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) {
+            return false;
+        }
+
+        return !user.Blocked;
     }
 
 

@@ -11,29 +11,19 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace UserService.Controllers;
 
-
+[Route("auth")]
 public class AuthController(
     AuthService aus
-// UserManager<User> userManager,
-// IOpenIddictApplicationManager appm,
-// IOpenIddictAuthorizationManager am,
-// IOpenIddictScopeManager sm
-
-) : Controller
-{
+) : Controller {
     private readonly AuthService _authService = aus;
-    // private readonly UserManager<User> _userManager = userManager;
-    // private readonly IOpenIddictApplicationManager _applicationManager = appm;
-    // private readonly IOpenIddictAuthorizationManager _authorizationManager = am;
-    // private readonly IOpenIddictScopeManager _scopeManager = sm;
 
-    [HttpGet("/connect/authorize")]
-    [HttpPost("/connect/authorize")]
+    [HttpGet()]
+    [HttpPost()]
     public async Task<IActionResult> Authorize()
     {
         var request = HttpContext.GetOpenIddictServerRequest();
         var authResponse = await HttpContext.AuthenticateAsync();
-        if (!authResponse.Succeeded)
+        if (!await _authService.ValidateAuth(authResponse))
         {
             var prompt = string.Join(" ", request.GetPrompts().Remove(Prompts.Login));
             var parameters = Request.HasFormContentType ?
@@ -59,7 +49,7 @@ public class AuthController(
     }
 
 
-    [HttpPost("/connect/token")]
+    [HttpPost("token")]
     public async Task<ActionResult> AccessToken()
     {
         try

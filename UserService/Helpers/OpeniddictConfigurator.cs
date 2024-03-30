@@ -16,8 +16,8 @@ public static class OpeniddictConfigurator
             })
             .AddServer(options =>
             {
-                options.SetAuthorizationEndpointUris("connect/authorize")
-                    .SetTokenEndpointUris("connect/token");
+                options.SetAuthorizationEndpointUris("/auth")
+                    .SetTokenEndpointUris("auth/token");
 
                 options.AllowAuthorizationCodeFlow()
                     .AllowRefreshTokenFlow();
@@ -31,6 +31,11 @@ public static class OpeniddictConfigurator
                     .EnableErrorPassthrough();
 
                 options.RegisterScopes(Scopes.Profile, Scopes.Roles);
+            })
+            .AddValidation(options => 
+            {
+                options.UseLocalServer();
+                options.UseAspNetCore();
             });
     }
 
