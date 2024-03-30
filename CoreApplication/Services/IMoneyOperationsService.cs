@@ -1,8 +1,10 @@
 ﻿using Common.Helpers;
 using Common.Models;
 using Common.Models.Enumeration;
+using CoreApplication.Hubs;
 using CoreApplication.Models;
 using CoreApplication.Models.Enumeration;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreApplication.Services
@@ -27,7 +29,7 @@ namespace CoreApplication.Services
             {
                 var result = await CreateOperation(amount, currency, accountId, userId, OperationType.Deposit);
                 result.Item1.Money = result.Item2;
-
+                
                 await _dbContext.SaveChangesAsync();
             }
             catch

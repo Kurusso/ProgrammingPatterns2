@@ -9,7 +9,7 @@ public static class MagicConstants
     public static readonly string GetAccountsEndpoint = BaseUrlCore +"/api/Account/User/";
     public static readonly string GetAccountEndpoint = BaseUrlCore +"/api/Account/GetInfo/";
     public static readonly string CreateAccountEndpoint = BaseUrlCore +"/api/Account/Create";
-    public static readonly string CloseAccountEndpoint = BaseUrlCore +"/api/Account/Create";
+    public static readonly string CloseAccountEndpoint = BaseUrlCore +"/api/Account/Close";
     public static readonly string DepositEndpoint = BaseUrlCore +"/api/Operations/Deposit";
     public static readonly string WithdrawEndpoint = BaseUrlCore +"/api/Operations/Withdraw";
     
@@ -26,5 +26,7 @@ public static class MagicConstants
 
     public static readonly string LoginEndpoint = BaseUrUserService + "/api/clients/login";
     public static readonly string GetUserProfileEndpoint = BaseUrUserService + "/api/clients";
+
+    public static readonly string AccountHub = BaseUrlCore + "/AccountHub";
 
 }

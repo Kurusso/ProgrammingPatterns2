@@ -15,5 +15,6 @@ export class magicConsts{
     static getCreditRatesEndpoint=this.base_url+ "/api/CreditRates/GetAll";
     static takeCreditEndpoint=this.base_url+"/api/Credit/Take"
 
+    static AccountInfoHub=this.base_url+"/AccountHub";
 }
 

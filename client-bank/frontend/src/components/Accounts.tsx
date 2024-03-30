@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {AccountData, AccountService} from "../api/account";
 import {AccountItem, AccountItemProps} from "./AccountItem";
-import {useAccounts} from "../contexts/AccountContext";
+import {useAccounts} from "../contexts/AccountsContext";
 
 export const Accounts = () => {
 

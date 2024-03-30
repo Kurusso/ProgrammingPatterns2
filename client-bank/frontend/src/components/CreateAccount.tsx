@@ -1,6 +1,6 @@
 import {ChangeEvent, useState} from "react";
 import {AccountService, Currency } from "../api/account";
-import {useAccounts} from "../contexts/AccountContext";
+import {useAccounts} from "../contexts/AccountsContext";
 import {mapAccountDataToElementProps} from "./Accounts";
 import {CurrencySelect} from "./CurrencySelect";
 

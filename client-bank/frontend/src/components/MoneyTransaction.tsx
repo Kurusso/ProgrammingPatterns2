@@ -7,7 +7,7 @@ import {TransactionService} from "../api/transaction";
 
 interface MoneyOperationProps {
     transactionType:TransactionType
-
+    setAccount: ()=>Promise<void>//React.Dispatch<React.SetStateAction<AccountData | undefined>>
 }
 
 export enum TransactionType {
@@ -15,12 +15,13 @@ export enum TransactionType {
     Deposit
 }
 
-export const MoneyTransaction: React.FC<MoneyOperationProps> = ({transactionType}) => {
+export const MoneyTransaction: React.FC<MoneyOperationProps> = ({transactionType,setAccount}) => {
     const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(null);
     const [amount, setAmount] = useState<number>(0);
-    const {accountId} = useParams<{ accountId: string }>();
+    const { accountId } = useParams<{ accountId: string }>();
 
-    var operationName=TransactionType[transactionType];
+
+    let operationName = TransactionType[transactionType];
 
     console.log(accountId)
     const HandleOperation = async () => {
@@ -38,6 +39,9 @@ export const MoneyTransaction: React.FC<MoneyOperationProps> = ({transactionType
         if(!selectedCurrency||amount<=0||!accountId)
             return;
         await TransactionService.performTransaction(accountId,amount,selectedCurrency,transactionType,parsedToken)
+
+        await setAccount();
+
     };
 
 

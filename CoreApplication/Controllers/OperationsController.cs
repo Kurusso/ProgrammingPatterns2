@@ -1,8 +1,10 @@
 ﻿using Common.Models.Enumeration;
+using CoreApplication.Hubs;
 using CoreApplication.Models.Enumeration;
 using CoreApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CoreApplication.Controllers
 {
@@ -11,9 +13,15 @@ namespace CoreApplication.Controllers
     public class OperationsController : ControllerBase
     {
         private readonly IMoneyOperationsService _moneyOperationsService;
-        public OperationsController(IMoneyOperationsService moneyOperationsService)
+        private readonly IAccountService _accountService;
+        private readonly IHubContext<AccountHub> _hubContext;
+
+        public OperationsController(IMoneyOperationsService moneyOperationsService, IAccountService accountService,
+            IHubContext<AccountHub> hubContext)
         {
             _moneyOperationsService = moneyOperationsService;
+            _accountService = accountService;
+            _hubContext = hubContext;
         }
 
         [HttpPost]
@@ -23,6 +31,12 @@ namespace CoreApplication.Controllers
             try
             {
                 await _moneyOperationsService.Deposit(money, currency, accountId, userId);
+
+                var updAccountInfo = await _accountService.GetAccountInfo(userId, accountId);
+
+                await _hubContext.Clients.All.SendAsync("ReceiveAccountInfo", updAccountInfo);
+
+
                 return Ok();
             }
             catch (ArgumentException ex)

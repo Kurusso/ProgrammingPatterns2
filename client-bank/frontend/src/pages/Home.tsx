@@ -1,7 +1,7 @@
 import {LogoutButton} from "../components/LogoutButton";
 import {Accounts} from "../components/Accounts";
 import {CreateAccount} from "../components/CreateAccount";
-import {AccountProvider} from "../contexts/AccountContext";
+import {AccountsProvider} from "../contexts/AccountsContext";
 import {UsernameDisplay} from "../components/UserameDisplay";
 import {Credits} from "../components/Credits";
 import {CreditProvider} from "../contexts/CreditContext";
@@ -14,7 +14,7 @@ export const Home = () => {
             <h1>Home</h1>
             <UsernameDisplay/>
             <LogoutButton/>
-            <AccountProvider>
+            <AccountsProvider>
                 <CreateAccount/>
                 <Accounts/>
 
@@ -22,7 +22,7 @@ export const Home = () => {
                     <TakeCredit/>
                     <Credits/>
                 </CreditProvider>
-            </AccountProvider>
+            </AccountsProvider>
         </div>
     );
 };

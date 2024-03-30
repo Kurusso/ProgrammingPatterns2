@@ -1,3 +1,4 @@
+using CoreApplication.Hubs;
 using CoreApplication.Models;
 using CoreApplication.Services;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,10 @@ services.AddEndpointsApiExplorer();
 services.AddScoped<IAccountService, AccountService>();
 services.AddScoped<IMoneyOperationsService, MoneyOperationsService>();
 services.AddScoped<IUserService, UserService>();
+
 services.AddSwaggerGen();
+
+services.AddSignalR();
 
 services.AddDbContext<CoreDbContext>(options =>
     options.UseNpgsql(
@@ -33,7 +37,7 @@ if (app.Environment.IsDevelopment())
 // app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.MapHub<AccountHub>("/AccountHub");
 app.MapControllers();
 
 app.Run();

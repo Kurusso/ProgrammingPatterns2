@@ -1,4 +1,4 @@
-import {useAccounts} from "../contexts/AccountContext";
+import {useAccounts} from "../contexts/AccountsContext";
 import {useEffect} from "react";
 import {AccountService} from "../api/account";
 import {mapAccountDataToElementProps} from "./Accounts";
