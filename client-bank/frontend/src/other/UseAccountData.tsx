@@ -35,7 +35,21 @@ export const useAccountData = (accountId: string | undefined) => {
 
     useEffect(() => {
         const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl(magicConsts.AccountInfoHub)// .withUrl("Your_SignalR_Endpoint", { accessTokenFactory: () => localStorage.getItem('token') })
+            .withUrl(`${magicConsts.AccountInfoHub}`, {
+                accessTokenFactory: () => {
+                    const storedToken = localStorage.getItem('token');
+                    if (!storedToken) {
+                        throw new Error('No token found');
+                    }
+
+                    const parsedToken = JSON.parse(storedToken).token;
+                    if (!parsedToken) {
+                        throw new Error('Invalid token');
+                    }
+
+                    return parsedToken;
+                }
+            })
             .withAutomaticReconnect()
             .build();
 
@@ -60,7 +74,6 @@ export const useAccountData = (accountId: string | undefined) => {
             }
         }
     }, [connection]);
-
 
 
     return {accountData, setAccountData, updateAccount};
