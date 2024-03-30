@@ -13,9 +13,11 @@ namespace CreditApplication.Controllers
     public class CreditController : ControllerBase
     {
         private readonly ICreditService _creditService;
-        public CreditController(ICreditService creditService)
+        private readonly ICreditScoreService _creditScoreService;
+        public CreditController(ICreditService creditService, ICreditScoreService creditScoreService)
         {
             _creditService = creditService;
+            _creditScoreService = creditScoreService;
         }
 
 
@@ -78,6 +80,25 @@ namespace CreditApplication.Controllers
             catch (ArgumentException ex)
             {
                 return Problem(statusCode: 400, detail: ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return Problem(statusCode: 404, detail: ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: 500, detail: ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetUserCreditScore")]
+        public async Task<IActionResult> GetUserCreditScore(Guid userId, bool withUpdateHistory = false)
+        {
+            try
+            {
+                var score = await _creditScoreService.GetUserCreditScore(userId, withUpdateHistory);
+                return Ok(score);
             }
             catch (KeyNotFoundException ex)
             {

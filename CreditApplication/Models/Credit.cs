@@ -18,5 +18,6 @@ namespace CreditApplication.Models
         public Money RemainingDebt { get; set; }
 
         public Money UnpaidDebt { get; set; }
+        public ICollection<Penalty> Penalties { get; set; }
     }
 }

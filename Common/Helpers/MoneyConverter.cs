@@ -3,7 +3,7 @@ using Common.Models.Enumeration;
 
 namespace Common.Helpers
 {
-    public class MoneyConverter
+    public static class MoneyConverter
     {
         public static decimal RubleToDollar = new decimal(0.010946);
         public static decimal EuroToDollar = new decimal(1.08);
@@ -16,7 +16,7 @@ namespace Common.Helpers
             [Currency.Ruble] = MoneyConverter.RubleToDollar,
         };
 
-        public static decimal ConvertMoneyToDollarValue(Money money)
+        public static decimal ConvertMoneyToDollarValue(this Money money)
         {
             decimal currency;
             CurrencyDictionary.TryGetValue(money.Currency, out currency);
