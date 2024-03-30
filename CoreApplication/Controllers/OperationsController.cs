@@ -65,5 +65,32 @@ namespace CoreApplication.Controllers
                 return Problem(statusCode: 500, detail: "Something goes wrong!");
             }
         }
+
+        [HttpPost]
+        [Route("Transfer")]
+        public async Task<IActionResult> Transfer(Guid accountId, Guid userId, int money, Currency currency, Guid reciveAccountId)
+        {
+            try
+            {
+                await _moneyOperationsService.TransferMoney(money, currency, accountId, userId, reciveAccountId);
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return Problem(statusCode: 400, detail: ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return Problem(statusCode: 404, detail: ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(statusCode: 400, detail: ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: 500, detail: "Something goes wrong!");
+            }
+        }
     }
 }
