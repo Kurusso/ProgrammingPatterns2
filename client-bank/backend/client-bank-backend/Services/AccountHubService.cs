@@ -2,7 +2,6 @@
 using client_bank_backend.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Options;
 
 namespace client_bank_backend.Services;
 
@@ -16,16 +15,13 @@ public class AccountHubService:IHostedService
         _bffAccountHubContext = bffAccountHubContext;
     }
 
-    
-    
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _backendHubConnection = new HubConnectionBuilder()
             .WithUrl(MagicConstants.AccountHub)
             .Build();
-        
 
-        _backendHubConnection.On<AccountDTO>("ReceiveAccountInfo", (accountInfo) =>
+        _backendHubConnection.On<AccountDTO>("ReceiveAccount", (accountInfo) =>
         {
             ForwardAccountInfoToClients(accountInfo);
         });
@@ -40,6 +36,6 @@ public class AccountHubService:IHostedService
 
     private void ForwardAccountInfoToClients(AccountDTO accountInfo)
     {
-        _bffAccountHubContext.Clients.Client("").SendAsync("ReceiveAccountInfo", accountInfo);
+        _bffAccountHubContext.Clients.All.SendAsync("ReceiveAccount", accountInfo);
     }
 }

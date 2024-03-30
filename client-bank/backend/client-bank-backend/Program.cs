@@ -3,17 +3,9 @@ using client_bank_backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-
 var services = builder.Services;
 
 services.AddSingleton<IHostedService, AccountHubService>();
-
-
-
-
-
 
 services.AddCors(options =>
 {

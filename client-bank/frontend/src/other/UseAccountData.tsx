@@ -62,7 +62,7 @@ export const useAccountData = (accountId: string | undefined) => {
                 .then(() => console.log('Connection started'))
                 .catch(err => console.log('Error while starting connection: ' + err))
 
-            connection.on("ReceiveAccountInfo", (message) => {
+            connection.on("ReceiveAccount", (message) => {
                 console.log('Received message:', message);
                 setAccountData(message);
             });

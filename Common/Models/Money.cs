@@ -20,29 +20,29 @@ namespace Common.Models
 
         public static Money operator +(Money a, Money b)
         {
-            var aDollar = MoneyConverter.ConvertMoneyToDollarValue(a);
-            var bDollar = MoneyConverter.ConvertMoneyToDollarValue(b);
-            var result = MoneyConverter.ConvertMoneyFromDollarValue(aDollar + bDollar, a.Currency);
+            var aDollar = CurrencyValues.Instance.ConvertMoneyToDollarValue(a);
+            var bDollar = CurrencyValues.Instance.ConvertMoneyToDollarValue(b);
+            var result = CurrencyValues.Instance.ConvertMoneyFromDollarValue(aDollar + bDollar, a.Currency);
             return result;
         }
         public static Money operator -(Money a, Money b)
         {
-            var aDollar = MoneyConverter.ConvertMoneyToDollarValue(a);
-            var bDollar = MoneyConverter.ConvertMoneyToDollarValue(b);
-            var result = MoneyConverter.ConvertMoneyFromDollarValue(aDollar - bDollar, a.Currency);
+            var aDollar = CurrencyValues.Instance.ConvertMoneyToDollarValue(a);
+            var bDollar = CurrencyValues.Instance.ConvertMoneyToDollarValue(b);
+            var result = CurrencyValues.Instance.ConvertMoneyFromDollarValue(aDollar - bDollar, a.Currency);
             return result;
         }
 
         public static bool operator <(Money a, Money b)
         {
-            var aDollar = MoneyConverter.ConvertMoneyToDollarValue(a);
-            var bDollar = MoneyConverter.ConvertMoneyToDollarValue(b);
+            var aDollar = CurrencyValues.Instance.ConvertMoneyToDollarValue(a);
+            var bDollar = CurrencyValues.Instance.ConvertMoneyToDollarValue(b);
             return aDollar < bDollar ? true : false;
         }
         public static bool operator >(Money a, Money b)
         {
-            var aDollar = MoneyConverter.ConvertMoneyToDollarValue(a);
-            var bDollar = MoneyConverter.ConvertMoneyToDollarValue(b);
+            var aDollar = CurrencyValues.Instance.ConvertMoneyToDollarValue(a);
+            var bDollar = CurrencyValues.Instance.ConvertMoneyToDollarValue(b);
             return aDollar > bDollar ? true : false;
         }
     }
