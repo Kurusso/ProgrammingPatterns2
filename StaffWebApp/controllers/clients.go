@@ -50,13 +50,6 @@ func ListAccountOperations(w http.ResponseWriter, r *http.Request) {
 	go services.WsLoadAccountOperations(r, updates, clientQuit)
 	services.WsUpdateAccountOperations(w, r, updates, clientQuit)
 
-	// account, err := services.LoadAccountOperationHistory(r.Context(), accountId, userId)
-	// if err != nil {
-	// logger.Default.Error("failed to load account operation history: ", err)
-	// w.WriteHeader(http.StatusInternalServerError)
-	// return
-	// }
-
 }
 
 const ListUserCreditsUrlPattern = "GET /api/clients/{userId}/credits"
