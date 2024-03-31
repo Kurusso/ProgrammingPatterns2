@@ -1,12 +1,12 @@
 import {UsernameDisplay} from "../components/UserameDisplay";
-import {LogoutButton} from "../components/LogoutButton";
-import {HomeButton} from "../components/HomeButton";
+import {LogoutButton} from "../components/Buttons/LogoutButton";
+import {HomeButton} from "../components/Buttons/HomeButton";
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {CreditData, getCredit} from "../api/credit";
+import {CreditData, CreditService} from "../api/credit";
 import {Currency, Money} from "../api/account";
-import {RepayCredit} from "../components/RepayCredit";
-import {AccountProvider} from "../contexts/AccountContext";
+import {RepayCredit} from "../components/Credits/Credit/RepayCredit";
+import {AccountsProvider} from "../contexts/AccountsContext";
 
 export const Credit = () => {
     const {creditId} = useParams<{ creditId: string }>();
@@ -30,7 +30,7 @@ export const Credit = () => {
                     throw new Error('Invalid creditId');
                 }
 
-                const credit = await getCredit(parsedToken, creditId);
+                const credit = await CreditService.getCredit(parsedToken, creditId);
                 setCreditData(credit);
                 console.log('fetched credit:', credit)
             } catch (error) {
@@ -54,7 +54,7 @@ export const Credit = () => {
 
     return (
         <div>
-            <AccountProvider>
+            <AccountsProvider>
                 <h2>Credit</h2>
                 <UsernameDisplay/>
                 <LogoutButton/>
@@ -78,7 +78,7 @@ export const Credit = () => {
 
                     </div>
                 </div>
-            </AccountProvider>
+            </AccountsProvider>
         </div>
     );
 };

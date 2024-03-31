@@ -1,40 +1,17 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {useParams} from 'react-router-dom';
-import {AccountData, Currency, getAccount} from "../api/account";
-import {LogoutButton} from "../components/LogoutButton";
-import {TransactionHistory} from "../components/TransactionHistory";
-import {HomeButton} from "../components/HomeButton";
+import {Currency} from "../api/account";
+import {LogoutButton} from "../components/Buttons/LogoutButton";
+import {TransactionHistory} from "../components/Accounts/Account/TransactionHistory";
+import {HomeButton} from "../components/Buttons/HomeButton";
 import {UsernameDisplay} from "../components/UserameDisplay";
-import {MoneyTransaction, TransactionType} from "../components/MoneyTransaction";
+import {MoneyTransaction, TransactionType} from "../components/Accounts/Account/MoneyTransaction";
+import {useAccountData} from "../other/UseAccountData";
 
 export const Account = () => {
-    const {accountId} = useParams<{ accountId: string }>();
-    const [accountData, setAccountData] = useState<AccountData>()
+    const { accountId } = useParams<{ accountId: string }>();
+    const { accountData, updateAccount } = useAccountData(accountId);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const storedToken = localStorage.getItem('token');
-                if (!storedToken) {
-                    throw new Error('No token found');
-                }
-
-                const parsedToken = JSON.parse(storedToken).token;
-                if (!parsedToken) {
-                    throw new Error('Invalid token');
-                }
-
-                const account = await getAccount(accountId!,parsedToken);
-                console.log(account)
-                setAccountData(account)
-                console.log('Account Fetched :', account);
-            } catch (error) {
-                console.error('Error fetching account:', error);
-            }
-        }
-
-        fetchData();
-    }, []);
 
     return (
         <div>
@@ -45,10 +22,10 @@ export const Account = () => {
             <div className={"transactions"}>
                 <h3>Account Operations</h3>
                 <div>
-                    <MoneyTransaction transactionType={TransactionType.Deposit}/>
+                    <MoneyTransaction transactionType={TransactionType.Deposit} setAccount={updateAccount}/>
                 </div>
                 <div>
-                    <MoneyTransaction transactionType={TransactionType.Withdrawal}/>
+                    <MoneyTransaction transactionType={TransactionType.Withdrawal} setAccount={updateAccount}/>
                 </div>
             </div>
             <div className={"account-information"}>

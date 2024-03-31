@@ -1,4 +1,4 @@
-import {closeAccountEndpoint, createAccountEndpoint, getAccountEndpoint, getAccountsEndpoint} from "./magicConst";
+import {magicConsts} from "./magicConst";
 
 export enum Currency {
     Ruble,
@@ -30,66 +30,70 @@ export interface OperationsHistory {
     operationType: OperationType;
 }
 
-export async function getAccounts(token: string) {
-    try {
-        console.log(token);
-        const response = await fetch(getAccountsEndpoint + token)
-        let data: AccountData[] = await response.json()
-        console.log(data)
-        return data
-    } catch (error) {
-        throw error;
-    }
-}
-
-
-export async function getAccount(accountId: string,userId:string) {
-    try {
-        const response = await fetch(`${getAccountEndpoint}${accountId}?userId=${userId}`);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+export class AccountService {
+    static async getAccounts(token: string) {
+        try {
+            console.log(token);
+            const response = await fetch(magicConsts.getAccountsEndpoint + token)
+            let data: AccountData[] = await response.json()
+            console.log(data)
+            return data
+        } catch (error) {
+            throw error;
         }
-
-        const data: AccountData = await response.json();
-        return data;
-    } catch (error) {
-        console.error('An error occurred while fetching the account:', error);
-        throw error;
     }
-}
 
+    static async getAccount(accountId: string, userId: string) {
+        try {
+            const response = await fetch(`${magicConsts.getAccountEndpoint}${accountId}?userId=${userId}`);
 
-export async function createAccount(userId: string, currency: Currency) {
-    try {
-        const response = await fetch(`${createAccountEndpoint}?userId=${userId}&currency=${currency}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(`HTTP error! status: ${response.status}, message: ${errorData}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data: AccountData = await response.json();
+            return data;
+        } catch (error) {
+            console.error('An error occurred while fetching the account:', error);
+            throw error;
         }
-
-    } catch (error) {
-        console.error('An error occurred while creating the account')
-        throw error;
     }
-}
 
-export async function closeAccount(userId: string, accountId: string) {
-    try {
-        const params = new URLSearchParams({userId, accountId});
-        const response = await fetch(`${closeAccountEndpoint}?${params}`, {method: 'DELETE'});
+    static async createAccount(userId: string, currency: Currency) {
+        try {
+            const response = await fetch(`${magicConsts.createAccountEndpoint}?userId=${userId}&currency=${currency}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData}`);
+            }
 
-        if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(`HTTP error! status: ${response.status}, message: ${errorData}`);
+        } catch (error) {
+            console.error('An error occurred while creating the account')
+            throw error;
         }
-    } catch (error) {
-        console.error('An error occurred while deleting the account');
-        throw error;
     }
+
+    static async closeAccount(userId: string, accountId: string) {
+        try {
+            const params = new URLSearchParams({userId, accountId});
+            const response = await fetch(`${magicConsts.closeAccountEndpoint}?${params}`, {method: 'DELETE'});
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData}`);
+            }
+        } catch (error) {
+            console.error('An error occurred while deleting the account');
+            throw error;
+        }
+    }
+
+
 }
+
+
