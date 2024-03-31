@@ -20,19 +20,23 @@ namespace CreditApplication.Services
     {
         private readonly CreditDbContext _context;
         private readonly HttpClient _coreClient;
-        private readonly string _withdrawMoney;
+        private readonly Guid _bankBaseAccount;
+        private readonly Guid _bankBaseAccountUser;
         private readonly IUserService _userService;
         private readonly ICreditPenaltyService _penaltyService;
         private readonly ICreditScoreService _creditScoreService;
-        public CreditService(IConfiguration configuration, CreditDbContext context, IUserService userService, ICreditPenaltyService penaltyService, ICreditScoreService creditScoreService)
+        private readonly IRabbitMqService _rabbitMqOperationService;
+        public CreditService(IConfiguration configuration, CreditDbContext context, IUserService userService, ICreditPenaltyService penaltyService, ICreditScoreService creditScoreService, IRabbitMqService rabbitMqService)
         {
             var coreSection = configuration.GetSection("CoreApplication");
-            _context = context;
-            _withdrawMoney = coreSection["WithdrawMoney"];
+            _context = context;            
+            Guid.TryParse(coreSection["BaseAccountId"], out _bankBaseAccount);
+            Guid.TryParse(coreSection["BaseAccountUserId"], out _bankBaseAccountUser);
             _coreClient = new HttpClient();
             _userService = userService;
             _penaltyService = penaltyService;
             _creditScoreService = creditScoreService;
+            _rabbitMqOperationService = rabbitMqService;
         }
 
         public async Task<CreditDTO> GetCreditInfo(Guid id, Guid userId)
@@ -84,9 +88,18 @@ namespace CreditApplication.Services
                 money = credit.RemainingDebt;
             }
 
-            var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&userId=" + userId + "&money=" + money.Amount + "&currency=" + currency, null);
-            response.EnsureSuccessStatusCode();
+            //var response = await _coreClient.PostAsync(_transferApiRoute + "?accountId=" + notNullAccountId + "&userId=" + userId + "&money=" + money.Amount + "&currency=" + currency + "&reciveAccountId=" + _bankBaseAccount, null);
+            _rabbitMqOperationService.SendMessage(new OperationPostDTO
+            {
+                AccountId = notNullAccountId,
+                Currency = currency,
+                UserId = userId,
+                MoneyAmmount = money.Amount,
+                RecieverAccount = _bankBaseAccount,                
+            });
+
             credit.RemainingDebt = credit.RemainingDebt - money;
+            await _creditScoreService.UpdateUserCreditScore(credit.UserId, CreditScoreUpdateReason.CreditPaymentMade, baseSum: money);
             if (!monthPay)
             {
                 credit.UnpaidDebt = new Money(Math.Max((credit.UnpaidDebt - money).Amount, 0), credit.UnpaidDebt.Currency);
@@ -122,6 +135,19 @@ namespace CreditApplication.Services
                 MonthPayAmount = monthPay,
                 UnpaidDebt = new Money { Amount = 0, Currency = creditDTO.Currency },
             };
+
+            //var response = await _coreClient.PostAsync(_transferApiRoute + "?accountId=" + _bankBaseAccount + "&userId=" + _bankBaseAccountUser + "&money=" + money.Amount + "&currency=" + money.Currency + "&reciveAccountId=" + creditDTO.AccountId, null);
+
+            _rabbitMqOperationService.SendMessage(new OperationPostDTO
+            {
+                UserId = _bankBaseAccountUser,
+                AccountId = _bankBaseAccount,
+                MoneyAmmount = money.Amount,
+                Currency = money.Currency,
+                RecieverAccount = creditDTO.AccountId,
+                OperationType = OperationType.TransferSend,
+            });
+
             await _context.Credits.AddAsync(credit);
             await _context.SaveChangesAsync();
 
@@ -141,10 +167,12 @@ namespace CreditApplication.Services
                     try
                     {
                         await _penaltyService.RepayPenalty(penalty.Id, credit.UserId, penalty.Amount.Amount, credit.PayingAccountId, penalty.Amount.Currency);
+                        await _creditScoreService.UpdateUserCreditScore(credit.UserId, CreditScoreUpdateReason.CreditPaymentOverduePayOff);
                     }
                     catch
                     {
                         penaltiesUnpaid = true;
+                        await _creditScoreService.UpdateUserCreditScore(credit.UserId, CreditScoreUpdateReason.CreditPaymentOverdue, $"{penalty.Id} penalty", penalty.Amount);
                     }
                 }
                 if (penaltiesUnpaid)

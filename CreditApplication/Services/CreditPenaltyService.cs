@@ -3,6 +3,7 @@ using Common.Models;
 using Common.Models.Enumeration;
 using CreditApplication.Models;
 using CreditApplication.Models.Dtos;
+using CreditApplication.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace CreditApplication.Services
@@ -22,14 +23,17 @@ namespace CreditApplication.Services
     {
         private readonly CreditDbContext _context;
         private readonly HttpClient _coreClient;
-        private readonly string _withdrawMoneyRoute;
+        private readonly Guid _bankBaseAccount;
         private readonly IUserService _userService;
-        public CreditPenaltyService(IConfiguration configuration, CreditDbContext context, IUserService userService)
+        private readonly IRabbitMqService _rabbitMqOperationService;
+        public CreditPenaltyService(IConfiguration configuration, CreditDbContext context, IUserService userService, IRabbitMqService rabbitMqOperationService)
         {
-            _withdrawMoneyRoute = configuration["CoreApplication:WithdrawMoney"];
+            var coreSection = configuration.GetSection("CoreApplication");
             _context = context;
+            Guid.TryParse(coreSection["BaseAccountId"], out _bankBaseAccount);
             _coreClient = new HttpClient();
             _userService = userService;
+            _rabbitMqOperationService = rabbitMqOperationService;
         }
 
         public async Task<IEnumerable<Penalty>> GetPenalties(Credit credit, bool unpaidOnly = false, Func<Penalty, bool>? customQuery = null)
@@ -108,15 +112,22 @@ namespace CreditApplication.Services
             }
 
             var credit = penalty.Credit;
-            accountId ??= penalty.Credit.PayingAccountId;
             var money = new Money(moneyAmmount, currency);
             if (credit.RemainingDebt < money)
             {
                 money = credit.RemainingDebt;
             }
 
-            var response = await _coreClient.PostAsync(_withdrawMoneyRoute + "?accountId=" + accountId + "&userId=" + userId + "&money=" + money.Amount + "&currency=" + currency, null);
-            response.EnsureSuccessStatusCode();
+            //var response = await _coreClient.PostAsync(_transferApiRoute + "?accountId=" + accountId + "&userId=" + userId + "&money=" + money.Amount + "&currency=" + currency + "&reciveAccountId=" + _bankBaseAccount, null);
+            _rabbitMqOperationService.SendMessage(new OperationPostDTO
+            {
+                AccountId = accountId ?? penalty.Credit.PayingAccountId,
+                UserId = userId,
+                MoneyAmmount = money.Amount,
+                Currency = currency,
+                RecieverAccount = _bankBaseAccount,
+            });
+
             //TODO: penalty.PayoffOperationId = await response.Content.ReadAsStringAsync();
             penalty.IsPaidOff = true;
             credit.UnpaidDebt -= penalty.Amount;

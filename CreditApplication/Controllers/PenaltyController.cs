@@ -1,5 +1,6 @@
 ﻿using Common.Models.Enumeration;
 using CreditApplication.Models;
+using CreditApplication.Models.Dtos;
 using CreditApplication.Models.DTOs;
 using CreditApplication.Services;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,7 @@ namespace CreditApplication.Controllers
 
         [HttpGet]
         [Route("GetUserPenalties")]
-        public async Task<IActionResult> GetUserPenalties(Guid userId)
+        public async Task<ActionResult<ICollection<PenaltyDTO>>> GetUserPenalties(Guid userId)
         {
             try
             {
@@ -39,7 +40,7 @@ namespace CreditApplication.Controllers
 
         [HttpGet]
         [Route("GetCreditPenalties")]
-        public async Task<IActionResult> GetCreditPenalties(Guid creditId, Guid userId)
+        public async Task<ActionResult<ICollection<PenaltyDTO>>> GetCreditPenalties(Guid creditId, Guid userId)
         {
             try
             {

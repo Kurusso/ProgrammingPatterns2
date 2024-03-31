@@ -1,5 +1,6 @@
 ﻿using Common.Models.Enumeration;
 using CreditApplication.Models;
+using CreditApplication.Models.Dtos;
 using CreditApplication.Models.DTOs;
 using CreditApplication.Services;
 using Microsoft.AspNetCore.Http;
@@ -50,7 +51,7 @@ namespace CreditApplication.Controllers
 
         [HttpGet]
         [Route("GetUserCredits")]
-        public async Task<IActionResult> GetUserCredits(Guid userId)
+        public async Task<ActionResult<ICollection<CreditDTO>>> GetUserCredits(Guid userId)
         {
             try
             {
@@ -70,7 +71,7 @@ namespace CreditApplication.Controllers
 
         [HttpGet]
         [Route("GetInfo")]
-        public async Task<IActionResult> GetCreditInfo(Guid id,  Guid userId)
+        public async Task<ActionResult<CreditDTO>> GetCreditInfo(Guid id,  Guid userId)
         {
             try
             {
@@ -93,7 +94,7 @@ namespace CreditApplication.Controllers
 
         [HttpGet]
         [Route("GetUserCreditScore")]
-        public async Task<IActionResult> GetUserCreditScore(Guid userId, bool withUpdateHistory = false)
+        public async Task<ActionResult<CreditScoreDTO>> GetUserCreditScore(Guid userId, bool withUpdateHistory = false)
         {
             try
             {
