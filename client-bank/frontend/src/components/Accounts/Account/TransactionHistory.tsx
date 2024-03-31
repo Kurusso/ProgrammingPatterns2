@@ -1,4 +1,4 @@
-import {OperationsHistory} from "../api/account";
+import {OperationsHistory} from "../../../api/account";
 import React from "react";
 import {HistoryItem} from "./HistoryItem";
 

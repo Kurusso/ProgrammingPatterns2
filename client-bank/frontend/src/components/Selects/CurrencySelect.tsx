@@ -1,6 +1,6 @@
 
 import {ChangeEvent, useState, useEffect} from "react";
-import {Currency} from "../api/account";
+import {Currency} from "../../api/account";
 
 type OptionType = {
     value: string;

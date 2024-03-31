@@ -1,6 +1,6 @@
 import {useEffect} from "react";
-import {CreditData, CreditService} from "../api/credit";
-import {useCredits} from "../contexts/CreditContext";
+import {CreditData, CreditService} from "../../api/credit";
+import {useCredits} from "../../contexts/CreditContext";
 import {CreditItem, CreditItemProps} from "./CreditItem";
 
 export const Credits = () => {

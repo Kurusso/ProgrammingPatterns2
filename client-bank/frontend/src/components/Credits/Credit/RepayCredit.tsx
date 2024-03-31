@@ -1,9 +1,9 @@
-import {CreditService} from "../api/credit";
-import {CurrencyInput} from "./CurrencyInput";
-import {CurrencySelect} from "./CurrencySelect";
+import {CreditService} from "../../../api/credit";
+import {CurrencyInput} from "../../Input/CurrencyInput";
+import {CurrencySelect} from "../../Selects/CurrencySelect";
 import {useState} from "react";
-import {Currency} from "../api/account";
-import {AccountSelect} from "./AccountSelect";
+import {Currency} from "../../../api/account";
+import {AccountSelect} from "../../Selects/AccountSelect";
 
 interface RepayCreditProps{
     creditId:string,

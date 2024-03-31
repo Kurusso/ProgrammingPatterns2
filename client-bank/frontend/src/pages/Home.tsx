@@ -1,11 +1,11 @@
-import {LogoutButton} from "../components/LogoutButton";
-import {Accounts} from "../components/Accounts";
-import {CreateAccount} from "../components/CreateAccount";
+import {LogoutButton} from "../components/Buttons/LogoutButton";
+import {Accounts} from "../components/Accounts/Accounts";
+import {CreateAccount} from "../components/Accounts/CreateAccount";
 import {AccountsProvider} from "../contexts/AccountsContext";
 import {UsernameDisplay} from "../components/UserameDisplay";
-import {Credits} from "../components/Credits";
+import {Credits} from "../components/Credits/Credits";
 import {CreditProvider} from "../contexts/CreditContext";
-import {TakeCredit} from "../components/TakeCredit";
+import {TakeCredit} from "../components/Credits/TakeCredit";
 export const Home = () => {
 
 

@@ -1,9 +1,9 @@
-import {CurrencyInput} from "./CurrencyInput";
-import {CurrencySelect} from "./CurrencySelect";
+import {CurrencyInput} from "../../Input/CurrencyInput";
+import {CurrencySelect} from "../../Selects/CurrencySelect";
 import React, {useState} from "react";
-import {Currency} from "../api/account";
+import {Currency} from "../../../api/account";
 import {useParams} from "react-router-dom";
-import {TransactionService} from "../api/transaction";
+import {TransactionService} from "../../../api/transaction";
 
 interface MoneyOperationProps {
     transactionType:TransactionType

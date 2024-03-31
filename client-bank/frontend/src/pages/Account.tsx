@@ -1,11 +1,11 @@
 import React from "react";
 import {useParams} from 'react-router-dom';
 import {Currency} from "../api/account";
-import {LogoutButton} from "../components/LogoutButton";
-import {TransactionHistory} from "../components/TransactionHistory";
-import {HomeButton} from "../components/HomeButton";
+import {LogoutButton} from "../components/Buttons/LogoutButton";
+import {TransactionHistory} from "../components/Accounts/Account/TransactionHistory";
+import {HomeButton} from "../components/Buttons/HomeButton";
 import {UsernameDisplay} from "../components/UserameDisplay";
-import {MoneyTransaction, TransactionType} from "../components/MoneyTransaction";
+import {MoneyTransaction, TransactionType} from "../components/Accounts/Account/MoneyTransaction";
 import {useAccountData} from "../other/UseAccountData";
 
 export const Account = () => {

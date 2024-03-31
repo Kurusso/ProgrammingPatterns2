@@ -1,4 +1,4 @@
-import {Currency, AccountService} from "../api/account";
+import {Currency, AccountService} from "../../api/account";
 import React, {useCallback} from 'react';
 import {useNavigate} from "react-router-dom";
 

@@ -1,11 +1,11 @@
 import {UsernameDisplay} from "../components/UserameDisplay";
-import {LogoutButton} from "../components/LogoutButton";
-import {HomeButton} from "../components/HomeButton";
+import {LogoutButton} from "../components/Buttons/LogoutButton";
+import {HomeButton} from "../components/Buttons/HomeButton";
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {CreditData, CreditService} from "../api/credit";
 import {Currency, Money} from "../api/account";
-import {RepayCredit} from "../components/RepayCredit";
+import {RepayCredit} from "../components/Credits/Credit/RepayCredit";
 import {AccountsProvider} from "../contexts/AccountsContext";
 
 export const Credit = () => {

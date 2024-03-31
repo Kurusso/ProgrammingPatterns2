@@ -1,6 +1,6 @@
-import {Currency, Money} from "../api/account";
+import {Currency, Money} from "../../api/account";
 import {useNavigate} from "react-router-dom";
-import {CreditRate} from "../api/credit";
+import {CreditRate} from "../../api/credit";
 import {useCallback} from "react";
 
 export interface CreditItemProps {

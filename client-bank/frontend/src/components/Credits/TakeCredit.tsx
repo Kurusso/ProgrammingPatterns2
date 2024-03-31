@@ -1,11 +1,11 @@
-import {useCredits} from "../contexts/CreditContext";
+import {useCredits} from "../../contexts/CreditContext";
 import {useEffect, useState} from "react";
-import {Currency} from "../api/account";
-import {CurrencyInput} from "./CurrencyInput";
-import {CurrencySelect} from "./CurrencySelect";
-import {CreditRate,  CreditService} from "../api/credit";
+import {Currency} from "../../api/account";
+import {CurrencyInput} from "../Input/CurrencyInput";
+import {CurrencySelect} from "../Selects/CurrencySelect";
+import {CreditRate,  CreditService} from "../../api/credit";
 import {mapCreditDataToItemProps} from "./Credits";
-import {AccountSelect} from "./AccountSelect";
+import {AccountSelect} from "../Selects/AccountSelect";
 
 export const TakeCredit = () => {
     const {setCreditItems} = useCredits();

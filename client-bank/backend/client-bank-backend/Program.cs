@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
 services.AddSingleton<IHostedService, AccountHubService>();
-
+builder.Services.AddHttpClient();
 services.AddCors(options =>
 {
     options.AddDefaultPolicy(

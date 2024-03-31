@@ -1,5 +1,5 @@
 import {Currency} from "./account";
-import {TransactionType} from "../components/MoneyTransaction";
+import {TransactionType} from "../components/Accounts/Account/MoneyTransaction";
 import {magicConsts} from "./magicConst";
 
 

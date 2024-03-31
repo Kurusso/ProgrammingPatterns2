@@ -49,6 +49,7 @@ export const useAccountData = (accountId: string | undefined) => {
 
                     return parsedToken;
                 }
+
             })
             .withAutomaticReconnect()
             .build();

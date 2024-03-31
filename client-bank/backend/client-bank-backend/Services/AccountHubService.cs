@@ -1,5 +1,7 @@
-﻿using client_bank_backend.DTOs;
+﻿using System.Net.Http.Headers;
+using client_bank_backend.DTOs;
 using client_bank_backend.Hubs;
+using Microsoft.AspNetCore.Http.Connections.Client;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 

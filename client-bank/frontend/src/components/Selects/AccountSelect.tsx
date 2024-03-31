@@ -1,7 +1,7 @@
-import {useAccounts} from "../contexts/AccountsContext";
+import {useAccounts} from "../../contexts/AccountsContext";
 import {useEffect} from "react";
-import {AccountService} from "../api/account";
-import {mapAccountDataToElementProps} from "./Accounts";
+import {AccountService} from "../../api/account";
+import {mapAccountDataToElementProps} from "../Accounts/Accounts";
 
 interface AccountSelectProps {
     selectedAccount: string | null,
