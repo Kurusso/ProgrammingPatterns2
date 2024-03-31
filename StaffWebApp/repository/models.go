@@ -59,6 +59,6 @@ type Preference struct {
 }
 
 type Session struct {
-	Sessionid   pgtype.UUID
+	Sessionid   string
 	Accesstoken pgtype.Text
 }

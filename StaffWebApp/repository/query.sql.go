@@ -28,7 +28,7 @@ SELECT accessToken FROM sessions
     WHERE sessionId = $1
 `
 
-func (q *Queries) GetTokenBySessionId(ctx context.Context, sessionid pgtype.UUID) (pgtype.Text, error) {
+func (q *Queries) GetTokenBySessionId(ctx context.Context, sessionid string) (pgtype.Text, error) {
 	row := q.db.QueryRow(ctx, getTokenBySessionId, sessionid)
 	var accesstoken pgtype.Text
 	err := row.Scan(&accesstoken)
@@ -49,7 +49,7 @@ INSERT INTO sessions (sessionId, accessToken) VALUES($1, $2)
 `
 
 type InsertSessionParams struct {
-	Sessionid   pgtype.UUID
+	Sessionid   string
 	Accesstoken pgtype.Text
 }
 
@@ -62,7 +62,7 @@ const removeSession = `-- name: RemoveSession :exec
 DELETE FROM sessions WHERE sessionId = $1
 `
 
-func (q *Queries) RemoveSession(ctx context.Context, sessionid pgtype.UUID) error {
+func (q *Queries) RemoveSession(ctx context.Context, sessionid string) error {
 	_, err := q.db.Exec(ctx, removeSession, sessionid)
 	return err
 }

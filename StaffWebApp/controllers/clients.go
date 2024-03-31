@@ -117,8 +117,9 @@ func ListClientsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	searchTerm := params.Get("searchTerm")
+	sessionId := services.GetSeessionId(r)
 
-	page, err := services.LoadClientsPage(r.Context(), searchTerm, pageNumber)
+	page, err := services.LoadClientsPage(r.Context(), searchTerm, pageNumber, sessionId)
 	if err != nil {
 		logger.Default.Error("failed to load clients page: ", err)
 		w.WriteHeader(http.StatusInternalServerError)

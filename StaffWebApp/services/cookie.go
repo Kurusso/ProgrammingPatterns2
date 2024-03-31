@@ -1,23 +1,87 @@
 package services
 
-import "net/http"
+import (
+	"context"
+	"math/rand"
+	"net/http"
+	"net/url"
+	"staff-web-app/config"
+	"staff-web-app/repository"
+
+	"github.com/jackc/pgx/v5/pgtype"
+)
 
 const CookieName = "StaffWebAppSession"
-const tokenSecret = "fp{Zc(QA!<3kUY7X-yxCG2"
 
 func CheckSessionCookie(r *http.Request) bool {
-	_, err := r.Cookie(CookieName)
-	return err == nil
+	cookie, err := r.Cookie(CookieName)
+	if err != nil {
+		return false
+	}
 
+	dbctx := repository.NewDbContext(r.Context())
+	accessToken, err := dbctx.GetTokenBySessionId(r.Context(), cookie.Value)
+	if err != nil {
+		return false
+	}
+
+	_, err = GetUserId(r.Context(), accessToken.String)
+	return err == nil
 }
 
-// func CreateCookie(userId uuid, sessionId uuid, theme string) (string, error) {
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-// 		"exp":       time.Now().Add(240 * time.Hour).Unix(),
-// 		"sub":       userId,
-// 		"theme":     theme,
-// 		"sessionId": sessionId,
-// 	})
+func RandomString(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-// 	return token.SignedString(tokenSecret)
-// }
+	result := make([]byte, length)
+	for i := range result {
+		result[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(result)
+}
+
+func GetSeessionId(r *http.Request) string {
+	cookie, err := r.Cookie(CookieName)
+	if err != nil {
+		return ""
+	}
+	return cookie.Value
+}
+
+func GetUserId(ctx context.Context, accessToken string) (string, error) {
+	reqUrl, _ := url.JoinPath(config.Default.AuthApiUrl, "/auth/validate")
+	var headers = map[string]string{
+		"Authorization": "Bearer " + accessToken,
+	}
+	userId, err := makeRequestWithHeaders(
+		ctx,
+		"GET",
+		reqUrl,
+		headers,
+	)
+	return userId, err
+}
+
+func CreateCookie(ctx context.Context, accessToken string) (string, error) {
+	session := RandomString(30)
+	dbctx := repository.NewDbContext(ctx)
+	err := dbctx.InsertSession(ctx, repository.InsertSessionParams{
+		Sessionid:   session,
+		Accesstoken: pgtype.Text{String: accessToken, Valid: true},
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return session, nil
+}
+
+func makeAccessTokenHeader(ctx context.Context, sessionId string) map[string]string {
+	dbctx := repository.NewDbContext(ctx)
+	token, err := dbctx.GetTokenBySessionId(ctx, sessionId)
+	if err != nil {
+		return nil
+	}
+	return map[string]string{
+		"Authorization": "Bearer " + token.String,
+	}
+}

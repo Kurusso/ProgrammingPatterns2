@@ -82,3 +82,33 @@ func makeRequestParseBodyWithHeaders(ctx context.Context, method string, url str
 
 	return nil
 }
+
+func makeRequestWithHeaders(ctx context.Context, method string, url string, headers map[string]string) (string, error) {
+	request, err := http.NewRequestWithContext(
+		ctx,
+		method,
+		url,
+		nil,
+	)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to create request: %v", err)
+	}
+
+	for key, value := range headers {
+		request.Header.Set(key, value)
+	}
+	logger.Default.Info(request)
+	resp, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return "", fmt.Errorf("failed to make request: %v", err)
+	}
+
+	if resp.StatusCode >= 300 {
+		respBody, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("got invalid status code (%d) from service: %v", resp.StatusCode, string(respBody))
+	}
+
+	output, _ := io.ReadAll(resp.Body)
+	return string(output), nil
+}

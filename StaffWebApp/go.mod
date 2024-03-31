@@ -13,6 +13,7 @@ require (
 require (
 	github.com/carterjones/go-cloudflare-scraper v0.1.2 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rainhq/signalr/v2 v2.4.0 // indirect

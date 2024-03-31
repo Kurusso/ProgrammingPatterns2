@@ -1,10 +1,14 @@
+using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
+using OpenIddict.Validation.AspNetCore;
 using UserService.Helpers;
 using UserService.Services;
 using static OpenIddict.Abstractions.OpenIddictConstants;
@@ -68,5 +72,14 @@ public class AuthController(
             return Problem("Unknown server error", statusCode: 500);
         }
     }
+
+    [HttpGet("validate")]
+    [Authorize(
+        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
+        Roles = IdentityConfigurator.StaffRole
+    )]
+    public async Task<ActionResult<string>> Validate() {
+        return Ok(User.FindFirstValue("sub").ToString());
+    } 
 
 }

@@ -19,8 +19,8 @@ func ListStaffPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	searchTerm := params.Get("searchTerm")
-
-	page, err := services.LoadStaffPage(r.Context(), int64(pageNumber), searchTerm)
+	sessionId := services.GetSeessionId(r)
+	page, err := services.LoadStaffPage(r.Context(), int64(pageNumber), searchTerm, sessionId)
 	if err != nil {
 		logger.Default.Error("failed to load staff page: ", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -48,8 +48,7 @@ func CreateStaffProfile(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
 		return
 	}
-
-	err := services.CreateStaffProfile(r.Context(), username, password)
+	err := services.CreateStaffProfile(r.Context(), username, password, services.GetSeessionId(r))
 	if err != nil {
 		logger.Default.Error(err)
 		http.Redirect(w, r, "/Error", http.StatusTemporaryRedirect)
@@ -69,7 +68,7 @@ func BlockStaffProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := services.BlockStaffProfile(r.Context(), userId)
+	err := services.BlockStaffProfile(r.Context(), userId, services.GetSeessionId(r))
 	if err != nil {
 		logger.Default.Error(err)
 		w.WriteHeader(http.StatusBadRequest)

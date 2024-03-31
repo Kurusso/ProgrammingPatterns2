@@ -21,6 +21,7 @@ func LoadClientsPage(
 	ctx context.Context,
 	searchTerm string,
 	page int,
+	sessionId string,
 ) (*models.Page[models.ClientShort], error) {
 
 	params := url.Values{}
@@ -32,12 +33,13 @@ func LoadClientsPage(
 	params.Set("searchPattern", searchTerm)
 
 	var clientsPage models.Page[models.ClientShort]
-	err := makeRequestParseBody(
+	err := makeRequestParseBodyWithHeaders(
 		ctx,
 		http.MethodGet,
 		config.Default.UserApiUrl+"clients?"+params.Encode(),
 		nil,
 		&clientsPage,
+		makeAccessTokenHeader(ctx, sessionId),
 	)
 	return &clientsPage, err
 }

@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"staff-web-app/config"
 	"staff-web-app/logger"
@@ -22,7 +23,7 @@ func MakeOauth2AuthUrl() string {
 func RetrieveOauth2Token(ctx context.Context, code string) (string, error) {
 	requestUrl, _ := url.JoinPath(config.Default.AuthApiUrl, "/auth/token")
 
-	var value any
+	var value map[string]any
 	var headers = map[string]string{
 		"Content-Type":  "application/x-www-form-urlencoded",
 		"Accept":        "application/x-www-form-urlencoded, application/json",
@@ -40,7 +41,7 @@ func RetrieveOauth2Token(ctx context.Context, code string) (string, error) {
 	err := makeRequestParseBodyWithHeaders(
 		ctx,
 		"POST",
-		requestUrl, // "https://localhost:7212/auth/token?grant_type=authorization_code&client_id=StaffApplication&client_secret=901564A5-E7FE-42CB-B10D-61EF6A8F3656&code=X356rxLsaEequOEJpQs6UUdsNdgwGaXPqI6EecOZNxI&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogin%2Fcallback",
+		requestUrl,
 		buffer,
 		&value,
 		headers,
@@ -49,7 +50,10 @@ func RetrieveOauth2Token(ctx context.Context, code string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	return "", err
+	token, ok := value["access_token"]
+	if !ok {
+		return "", fmt.Errorf("failed to get access_token")
+	}
+	return token.(string), err
 
 }

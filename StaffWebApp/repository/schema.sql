@@ -1,7 +1,7 @@
 CREATE TYPE theme AS ENUM ('light', 'dark');
 
 CREATE TABLE sessions (
-	sessionId uuid PRIMARY KEY,
+	sessionId text PRIMARY KEY,
 	accessToken text NULL
 );
 
