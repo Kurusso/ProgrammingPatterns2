@@ -44,7 +44,7 @@ namespace Common.Helpers
             }
         }
 
-        public  decimal ConvertMoneyToDollarValue(Money money)
+        public decimal ConvertMoneyToDollarValue(Money money)
         {
             decimal currency;
             CurrencyDictionary.TryGetValue(money.Currency, out currency);
