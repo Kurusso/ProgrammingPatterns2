@@ -7,9 +7,14 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"staff-web-app/components/clients"
 	"staff-web-app/config"
+	"staff-web-app/logger"
 	"staff-web-app/models"
 	"strconv"
+	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 func LoadClientsPage(
@@ -115,4 +120,66 @@ func BlockClientProfile(ctx context.Context, userId string) error {
 	}
 
 	return nil
+}
+
+func WsUpdateAccountOperations(
+	w http.ResponseWriter,
+	r *http.Request,
+	updates chan *models.AccountDetailed,
+	clientQuit chan bool,
+) {
+	defer close(clientQuit)
+
+	var wsUpgrader = websocket.Upgrader{}
+	wsConn, err := wsUpgrader.Upgrade(w, r, nil)
+	if err != nil {
+		logger.Default.Error("failed to upgrade http connection to ws")
+		return
+	}
+	defer wsConn.Close()
+
+	pingTimer := time.NewTicker(30 * time.Second)
+	defer pingTimer.Stop()
+
+	for {
+		select {
+		case account, ok := <-updates:
+			if !ok {
+				return
+			}
+			wsWritter, err := wsConn.NextWriter(websocket.TextMessage)
+			if err != nil {
+				logger.Default.Error("failed to create wsWriter")
+				return
+			}
+
+			err = clients.OperationList(account).Render(r.Context(), wsWritter)
+			if err != nil {
+				logger.Default.Error("failed to write html template to ws: ", err)
+				return
+			}
+
+			err = wsWritter.Close()
+			if err != nil {
+				logger.Default.Error("error during wsWritter close: ", err)
+			}
+
+		case <-pingTimer.C:
+			err = wsConn.WriteMessage(websocket.PingMessage, nil)
+			if err != nil {
+				logger.Default.Error("ws ping failed")
+				return
+			}
+		}
+
+	}
+}
+
+func WsLoadAccountOperations(
+	r *http.Request,
+	updates chan *models.AccountDetailed,
+	clientQuit chan bool,
+) {
+	defer close(updates)
+
 }

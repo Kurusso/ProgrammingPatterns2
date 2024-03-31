@@ -25,7 +25,8 @@ namespace CoreApplication.Helpers
             foreach (var account in accounts)
             {
                 var accountForSend = await context.Accounts.Include(x => x.Operations).FirstOrDefaultAsync(x => x.Id == account.Id);
-                await _hubContext.Clients.User(accountForSend.UserId.ToString()).SendAsync("client", new AccountDTO(accountForSend));
+                // await _hubContext.Clients.User(accountForSend.UserId.ToString()).SendAsync("/api/client", new AccountDTO(accountForSend));
+                await _hubContext.Clients.All.SendAsync("/api/client", new AccountDTO(accountForSend));
             }
 
         }

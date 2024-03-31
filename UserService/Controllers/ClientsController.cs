@@ -40,10 +40,10 @@ public class ClientsController(UsersService us) : Controller
     }
 
     [HttpGet]
-    [Authorize(
-        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
-        Roles = IdentityConfigurator.StaffRole
-    )]
+    // [Authorize(
+    //     AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
+    //     Roles = IdentityConfigurator.StaffRole
+    // )]
     public async Task<ActionResult<Page<UserDTO>>> ListClients(string searchPattern, int page = 1)
     {
         try
@@ -62,10 +62,10 @@ public class ClientsController(UsersService us) : Controller
     }
 
     [HttpGet("{id}")]
-    [Authorize(
-        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
-        Roles = IdentityConfigurator.ClientRole
-    )]
+    // [Authorize(
+    //     AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
+    //     Roles = IdentityConfigurator.ClientRole
+    // )]
     public async Task<ActionResult<UserDTO>> ClientInfo(Guid id)
     {
         var auth = await HttpContext.AuthenticateAsync();

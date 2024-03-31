@@ -6,13 +6,11 @@ import (
 	"staff-web-app/logger"
 	"staff-web-app/services"
 	"strconv"
-
-	"github.com/julienschmidt/httprouter"
 )
 
-const ListStaffPageUrlPattern = "/api/staff"
+const ListStaffPageUrlPattern = "GET /api/staff"
 
-func ListStaffPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func ListStaffPage(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 	pageNumber, err := strconv.Atoi(params.Get("page"))
 	if err != nil {
@@ -33,13 +31,13 @@ func ListStaffPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 
 }
 
-func RenderStaffPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func RenderStaffPage(w http.ResponseWriter, r *http.Request) {
 	staff.StaffPage().Render(r.Context(), w)
 }
 
-const CreateStaffProfileUrlPattern = "/api/staff"
+const CreateStaffProfileUrlPattern = "POST /api/staff"
 
-func CreateStaffProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func CreateStaffProfile(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 	if username == "" {
@@ -61,10 +59,10 @@ func CreateStaffProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	http.Redirect(w, r, "/Staff", http.StatusSeeOther)
 }
 
-const BlockStaffProfileUrlPattern = "/api/staff/:userId"
+const BlockStaffProfileUrlPattern = "DELETE /api/staff/{userId}"
 
-func BlockStaffProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId := ps.ByName("userId")
+func BlockStaffProfile(w http.ResponseWriter, r *http.Request) {
+	userId := r.PathValue("userId")
 	if userId == "" {
 		logger.Default.Error("bad url!: ", r.URL.String())
 		w.WriteHeader(http.StatusNotFound)
@@ -78,5 +76,5 @@ func BlockStaffProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 		return
 	}
 
-	ListStaffPage(w, r, ps)
+	ListStaffPage(w, r)
 }

@@ -4,6 +4,9 @@ using UserService.Helpers;
 using UserService.Models;
 using UserService.Services;
 
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -35,6 +38,8 @@ app.MigrateDBWhenNecessary<MainDbContext>();
 app.AddOauthClients();
 app.InitRoles();
 
+
+app.UseMiddleware<MyMiddleware>();
 app.UseStaticFiles();
 
 app.UseAuthentication();
@@ -44,5 +49,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
+
 
 app.Run();
