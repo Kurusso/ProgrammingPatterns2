@@ -42,6 +42,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<ClientOperationsHub>($"/client");//{configuration.GetSection("SignalRPath")}/client
+app.MapHub<ClientOperationsHub>("/api/client");
 BankAccountInitializer.InitializeBankAccount( app.Services, configuration);
 app.Run();

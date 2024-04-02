@@ -8,9 +8,10 @@ import (
 	"staff-web-app/config"
 	"staff-web-app/controllers"
 	"staff-web-app/logger"
+	"staff-web-app/middleware"
+	"staff-web-app/repository"
 
 	"github.com/a-h/templ"
-	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
@@ -23,27 +24,34 @@ func main() {
 		return
 	}
 
+	closedb := repository.ConnectToDatabase()
+	defer closedb()
+
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
-	router := httprouter.New()
-	router.GET("/", controllers.RenderClientsPage)
-	router.GET("/Staff", controllers.RenderStaffPage)
-	router.GET("/Credits", controllers.RenderCreditsPage)
-	router.Handler("GET", "/Error", templ.Handler(components.ErrorPage()))
+	authRouter := http.NewServeMux()
+	authRouter.HandleFunc("GET /", controllers.RenderClientsPage)
+	authRouter.HandleFunc("GET /Staff", controllers.RenderStaffPage)
+	authRouter.HandleFunc("GET /Credits", controllers.RenderCreditsPage)
+	authRouter.Handle("GET /Error", templ.Handler(components.ErrorPage()))
 
-	router.GET(controllers.ListUserAccountUrlPattern, controllers.ListUserAccounts)
-	router.GET(controllers.ListAccountOperationsUrlPattern, controllers.ListAccountOperations)
-	router.GET(controllers.ListUserCreditsUrlPattern, controllers.ListUserCredits)
-	router.GET(controllers.DetailedUserInfoUrlPattern, controllers.DetailedCreditInfo)
-	router.GET(controllers.ListStaffPageUrlPattern, controllers.ListStaffPage)
-	router.GET(controllers.ListClientsPageUrlPattern, controllers.ListClientsPage)
+	authRouter.HandleFunc(controllers.ListUserAccountUrlPattern, controllers.ListUserAccounts)
+	authRouter.HandleFunc(controllers.ListAccountOperationsUrlPattern, controllers.ListAccountOperations)
+	authRouter.HandleFunc(controllers.ListUserCreditsUrlPattern, controllers.ListUserCredits)
+	authRouter.HandleFunc(controllers.DetailedUserInfoUrlPattern, controllers.DetailedCreditInfo)
+	authRouter.HandleFunc(controllers.ListStaffPageUrlPattern, controllers.ListStaffPage)
+	authRouter.HandleFunc(controllers.ListClientsPageUrlPattern, controllers.ListClientsPage)
 
-	router.POST(controllers.CreateCreditRateUrlPattern, controllers.CreateCreditRate)
-	router.POST(controllers.CreateStaffProfileUrlPattern, controllers.CreateStaffProfile)
-	router.POST(controllers.CreateClientProfileUrlPattern, controllers.CreateClientProfile)
+	authRouter.HandleFunc(controllers.CreateCreditRateUrlPattern, controllers.CreateCreditRate)
+	authRouter.HandleFunc(controllers.CreateStaffProfileUrlPattern, controllers.CreateStaffProfile)
+	authRouter.HandleFunc(controllers.CreateClientProfileUrlPattern, controllers.CreateClientProfile)
 
-	router.DELETE(controllers.BlockStaffProfileUrlPattern, controllers.BlockStaffProfile)
-	router.DELETE(controllers.BlockClientProfileUrlPattern, controllers.BlockClientProfile)
+	authRouter.HandleFunc(controllers.BlockStaffProfileUrlPattern, controllers.BlockStaffProfile)
+	authRouter.HandleFunc(controllers.BlockClientProfileUrlPattern, controllers.BlockClientProfile)
+
+	router := http.NewServeMux()
+	router.HandleFunc(controllers.LoginUrlPattern, controllers.LoginCallback)
+	router.Handle("/", middleware.Auth(authRouter))
 
 	err = http.ListenAndServe(":8080", router)
 	if err != nil {

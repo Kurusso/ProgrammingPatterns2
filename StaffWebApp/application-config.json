@@ -1,5 +1,7 @@
 {
     "CreditsApiUrl": "https://localhost:7186/api/",
     "CoreApiUrl": "https://localhost:7143/api/",
-    "UserApiUrl": "https://localhost:7212/api/"
+    "UserApiUrl": "https://localhost:7212/api/",
+    "AuthApiUrl": "https://localhost:7212/",
+    "DbConnectionString": "postgresql://postgres:postgres@localhost:5432/StaffWebAppDb"
 }

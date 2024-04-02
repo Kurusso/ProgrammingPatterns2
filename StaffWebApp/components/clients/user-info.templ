@@ -2,9 +2,12 @@ package clients
 
 import "staff-web-app/models"
 
-script OperationsModalOpenHandler(headerId string, accountId string) {
-	const header = document.getElementById(headerId)
+script OperationsModalOpenHandler(operationsHeaderId, operationsTbodyId, accountId, userId string) {
+	const header = document.getElementById(operationsHeaderId)
 	header.innerText =  accountId
+
+	const body = document.getElementById(operationsTbodyId)
+	body.setAttribute("ws-connect", `/api/clients/${userId}/accounts/${accountId}/operations`)
 }
 
 templ AccountList(accounts []models.AccountShort) {
@@ -18,9 +21,7 @@ templ AccountList(accounts []models.AccountShort) {
 				class="list-group-item list-group-item-action"
 				data-bs-toggle="modal"
 				data-bs-target={ "#" + accountHistoryModalId }
-				hx-get={ "/api/clients/"+ account.UserId + "/accounts/" + account.Id + "/operations" }
-				hx-target={ "#" + operationsTbodyId }
-				onclick={ OperationsModalOpenHandler(operationsHeaderId, account.Id) }
+				onclick={ OperationsModalOpenHandler(operationsHeaderId, operationsTbodyId, account.Id, account.UserId) }
 			>
 				<div class="d-flex flex-row">
 					<div>
