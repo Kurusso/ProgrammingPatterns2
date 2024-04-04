@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation.AspNetCore;
 using UserService.Helpers;
 using UserService.Models.DTO;
 using UserService.Services;
@@ -8,16 +10,24 @@ using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 namespace UserService.Controllers;
 
 [Route("api/staff")]
-public class StaffController(StaffService ss) : Controller
+[Authorize(
+    AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
+    Roles = IdentityConfigurator.StaffRole
+)]
+public class StaffController(UsersService ss) : Controller
 {
-    private readonly StaffService _staffService = ss;
+    private readonly UsersService _staffService = ss;
 
     [HttpPost("register")]
     public async Task<ActionResult<Guid>> Create([FromBody] UsernamePasswordDTO reginfo)
     {
         try
         {
-            var guid = await _staffService.Register(reginfo.Username, reginfo.Password);
+            var guid = await _staffService.Register(
+                reginfo.Username, 
+                reginfo.Password,
+                [IdentityConfigurator.ClientRole, IdentityConfigurator.StaffRole]
+            );
             return Ok(guid);
         }
         catch (BackendException be)
@@ -35,7 +45,7 @@ public class StaffController(StaffService ss) : Controller
     {
         try
         {
-            var users = await _staffService.ListStaff(searchPattern, page);
+            var users = await _staffService.ListUsers(searchPattern, page, IdentityConfigurator.StaffRole);
             return Ok(users);
         }
         catch (BackendException be)
@@ -54,7 +64,7 @@ public class StaffController(StaffService ss) : Controller
     {
         try
         {
-            await _staffService.BlockStaff(id);
+            await _staffService.BlockUser(id);
             return Ok();
         }
         catch (BackendException be)

@@ -10,6 +10,7 @@ public static class DBConfigurator
         builder.Services.AddDbContext<T>(options =>
         {
             options.UseNpgsql(builder.Configuration.GetConnectionString(connectionString ?? "DefaultConnection"));
+            options.UseOpenIddict();
         });
     }
 
@@ -25,4 +26,5 @@ public static class DBConfigurator
             }
         }
     }
+
 }

@@ -1,5 +1,4 @@
-﻿using Common.Models;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
 using CoreApplication.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -25,7 +24,8 @@ namespace CoreApplication.Helpers
             foreach (var account in accounts)
             {
                 var accountForSend = await context.Accounts.Include(x => x.Operations).FirstOrDefaultAsync(x => x.Id == account.Id);
-                await _hubContext.Clients.User(accountForSend.UserId.ToString()).SendAsync("client", new AccountDTO(accountForSend));
+                await _hubContext.Clients.All.SendAsync("ReceiveAccount", new AccountDTO(accountForSend));
+                //await _hubContext.Clients.User(accountForSend.UserId.ToString()).SendAsync("ReceiveAccount", new AccountDTO(accountForSend));
             }
 
         }

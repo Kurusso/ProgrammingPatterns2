@@ -10,38 +10,64 @@ namespace client_bank_backend.Controllers;
 [ApiController]
 public class AuthController:ControllerBase
 {
-    private readonly HttpClient _coreClient = new();
+    
+    private readonly IHttpClientFactory _clientFactory;
 
-    [HttpPost("Login")]
-    public async Task<IActionResult> Login(UsernamePasswordDTO loginCreds)
+    public AuthController(IHttpClientFactory clientFactory)
     {
-        try
-        {
-            var requestUrl = $"{MagicConstants.LoginEndpoint}";
-
-            var jsonContent = JsonConvert.SerializeObject(loginCreds);
-
-            var response = await _coreClient.PostAsync(requestUrl, new StringContent(jsonContent, Encoding.UTF8, "application/json"));
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var userId = JsonConvert.DeserializeObject<dynamic>(responseContent);
-                return Ok(new TokenDTO(userId));
-            }
-
-            var errorContent = await response.Content.ReadAsStringAsync();
-            return StatusCode((int)response.StatusCode, errorContent);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return StatusCode(500, "An error occurred while logging in.");
-        }
+        _clientFactory = clientFactory;
     }
 
+
+
     
+    [HttpGet]
+    [HttpPost]
+    public async Task<IActionResult> Authorize()
+    {
+        var client = _clientFactory.CreateClient();
+        var request = new HttpRequestMessage(HttpMethod.Get, MagicConstants.AuthorizeEndpoint);
+
+        foreach (var header in Request.Headers)
+        {
+            request.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+        }
+
+        var response = await client.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode) return StatusCode((int)response.StatusCode);
+        
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return Content(responseContent, "application/json");
+
+    }
     
-    
-    
+    [HttpPost("token")]
+    public async Task<IActionResult> AccessToken()
+    {
+        var client = _clientFactory.CreateClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, MagicConstants.AuthorizeTokenEndpoint);
+
+        // Copy the headers from the original request to the new one
+        foreach (var header in Request.Headers)
+        {
+            request.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+        }
+
+        // If there's a body in the original request, copy it to the new request
+        if (Request.HasFormContentType)
+        {
+            var formValues = await Request.ReadFormAsync();
+            request.Content = new FormUrlEncodedContent(formValues.ToDictionary(x => x.Key, x => x.Value.ToString()));
+        }
+
+        var response = await client.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode) return StatusCode((int)response.StatusCode);
+        
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return Content(responseContent, "application/json");
+
+    }
+
 }

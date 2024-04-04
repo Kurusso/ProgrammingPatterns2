@@ -1,0 +1,27 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+h2, h3, h5 {
+    color: #333;
+}
+
+#username {
+    font-weight: bold;
+    color: #555;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.account-select-section {
+    margin: 10px 0;
+}
+
+.account-select, .currency-selector {
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    max-width: 300px;
+}
