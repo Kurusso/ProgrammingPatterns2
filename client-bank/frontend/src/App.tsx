@@ -8,6 +8,7 @@ import {Account} from "./pages/Account";
 import PrivateRoute from "./other/PrivateRoute";
 import {UserProvider} from "./contexts/UserContext";
 import {Credit} from "./pages/Credit";
+import {AuthProcessing} from "./pages/AuthProcessing";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
                     <UserProvider>
                         <Routes>
                             <Route path="login" element={<Login/>}/>
+                            <Route path="auth" element={<AuthProcessing/>}/>
                             <Route path='/' element={<PrivateRoute/>}>
                                 <Route path="/" element={<Home/>}/>
                                 <Route path="*" element={<Home/>}/>

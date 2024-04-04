@@ -17,7 +17,6 @@ const Login: React.FC = () => {
         console.log(url)
         window.location.assign(url);
     };
-
     return (
         <div className="login-container">
             <h2>Login</h2>

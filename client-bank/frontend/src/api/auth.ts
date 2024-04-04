@@ -1,20 +1,20 @@
-import {UserManager, UserManagerSettings, WebStorageStateStore} from 'oidc-client-ts';
+import {User, UserManager, UserManagerSettings, WebStorageStateStore} from 'oidc-client-ts';
 import {Role} from "../pages/Login";
 
 
-const config: UserManagerSettings = {
+export const config: UserManagerSettings = {
     authority: "https://localhost:7212",
     client_id: "ClientApplication",
-    redirect_uri: "http://localhost:3000",
+    redirect_uri: "https://localhost:3000/auth",
     client_secret: "901564A5-E7FE-42CB-B10D-61EF6A8F3655",
     response_type: "code",
     scope: "openid profile api1",
-    post_logout_redirect_uri: "http://localhost:3000",
+    post_logout_redirect_uri: "https://localhost:3000/auth",
     userStore: new WebStorageStateStore({store: window.localStorage}),
 };
 
 
-const userManager = new UserManager(config);
+export const userManager = new UserManager(config);
 
 
 export async function getUser() {
@@ -32,6 +32,7 @@ export async function isAuthenticated(role: Role) {
 export function makeOauth2AuthUrl(role: Role): string {
     // depending on role specifying callback url
 
+
     let requestUrl = new URL(config.authority + "/auth");
     let queryParams = new URLSearchParams();
     queryParams.set("client_id", config.client_id);
@@ -39,12 +40,28 @@ export function makeOauth2AuthUrl(role: Role): string {
         queryParams.set("response_type", config.response_type);
     }
     queryParams.set("redirect_uri", config.redirect_uri);
-    if (config.scope != null) {
-        queryParams.set("scope", config.scope);
-    }
+    // if (config.scope != null) {
+    //     queryParams.set("scope", config.scope);
+    // }
     return requestUrl + "?" + queryParams.toString();
 
 }
+
+export const RetrieveOauth2Token = async (): Promise<User> => {
+
+    try {
+        const user: User | void = await userManager.signinCallback();
+        if (!user) {
+            throw new Error('User is undefined');
+        }
+        console.log(`Token:${user.access_token}`);
+        return user;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
 
 
 export async function handleOAuthCallback(callbackUrl: string) {
