@@ -20,29 +20,29 @@ namespace CoreApplication.Hubs
                 }
                 else
                 {
-                    context.Response.StatusCode = 400; // Bad Request
+                    context.Response.StatusCode = 400;
                 }
             }
             else
             {
-                context.Response.StatusCode = 400; // Bad Request
+                context.Response.StatusCode = 400; 
             }
         }
 
         private async Task ListenSocket(WebSocket socket, string userId)
         {
             byte[] buffer = new byte[1024 * 4];
-            WebSocketReceiveResult result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), System.Threading.CancellationToken.None);
+            WebSocketReceiveResult result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
             while (!result.CloseStatus.HasValue)
             {
 
-                await socket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, System.Threading.CancellationToken.None);
+                await socket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
 
-                result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), System.Threading.CancellationToken.None);
+                result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             }
 
-            await socket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, System.Threading.CancellationToken.None);
+            await socket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
             WebSocket removedSocket;
             _sockets.TryRemove(userId, out removedSocket);
         }
@@ -52,7 +52,7 @@ namespace CoreApplication.Hubs
             if (_sockets.TryGetValue(userId, out WebSocket socket))
             {
                 var buffer = new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(message));
-                await socket.SendAsync(buffer, WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
+                await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
             }
         }
     }
