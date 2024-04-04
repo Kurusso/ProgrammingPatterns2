@@ -47,7 +47,7 @@ func ListAccountOperations(w http.ResponseWriter, r *http.Request) {
 
 	updates := make(chan *models.AccountDetailed)
 	clientQuit := make(chan bool)
-	go services.WsLoadAccountOperations(r, updates, clientQuit)
+	go services.WsLoadAccountOperations(r, userId, accountId, updates, clientQuit)
 	services.WsUpdateAccountOperations(w, r, updates, clientQuit)
 
 }

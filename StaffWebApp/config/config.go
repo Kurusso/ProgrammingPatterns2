@@ -11,6 +11,7 @@ var Default ApplicationConfig
 type ApplicationConfig struct {
 	CreditsApiUrl      string
 	CoreApiUrl         string
+	CoreWsUrl          string
 	UserApiUrl         string
 	AuthApiUrl         string
 	DbConnectionString string

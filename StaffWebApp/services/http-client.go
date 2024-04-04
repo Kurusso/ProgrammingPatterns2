@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"staff-web-app/logger"
 )
 
 var HttpClient *http.Client
@@ -62,7 +61,6 @@ func makeRequestParseBodyWithHeaders(ctx context.Context, method string, url str
 	for key, value := range headers {
 		request.Header.Set(key, value)
 	}
-	logger.Default.Info(request)
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("failed to make request: %v", err)
@@ -98,7 +96,6 @@ func makeRequestWithHeaders(ctx context.Context, method string, url string, head
 	for key, value := range headers {
 		request.Header.Set(key, value)
 	}
-	logger.Default.Info(request)
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return "", fmt.Errorf("failed to make request: %v", err)

@@ -1,5 +1,10 @@
 package models
 
+import (
+	"sort"
+	"time"
+)
+
 type OperationType int
 
 const (
@@ -44,6 +49,21 @@ type AccountShort struct {
 type AccountDetailed struct {
 	AccountShort
 	Operations []Operation `json:"operationsHistory"`
+}
+
+func (ad *AccountDetailed) SortOperationsByDate() {
+	sort.Slice(ad.Operations, func(i, j int) bool {
+		a, err := time.Parse(time.RFC3339, ad.Operations[i].Date)
+		if err != nil {
+			return false
+		}
+		b, err := time.Parse(time.RFC3339, ad.Operations[j].Date)
+		if err != nil {
+			return true
+		}
+
+		return a.Unix() > b.Unix()
+	})
 }
 
 type ClientShort struct {
