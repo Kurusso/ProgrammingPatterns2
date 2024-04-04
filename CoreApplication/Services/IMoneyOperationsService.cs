@@ -30,7 +30,7 @@ namespace CoreApplication.Services
             {
                 var result = await CreateOperation(amount, currency, accountId, userId, OperationType.Deposit);
                 result.Item1.Money = result.Item2;
-
+                
                 await _dbContext.SaveChangesAsync();
             }
             catch

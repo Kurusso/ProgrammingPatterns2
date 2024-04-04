@@ -1,8 +1,10 @@
 ﻿using Common.Models.Enumeration;
+using CoreApplication.Hubs;
 using CoreApplication.Models.Enumeration;
 using CoreApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CoreApplication.Controllers
 {
@@ -11,9 +13,13 @@ namespace CoreApplication.Controllers
     public class OperationsController : ControllerBase
     {
         private readonly IMoneyOperationsService _moneyOperationsService;
-        public OperationsController(IMoneyOperationsService moneyOperationsService)
+        private readonly IAccountService _accountService;
+ 
+
+        public OperationsController(IMoneyOperationsService moneyOperationsService, IAccountService accountService)
         {
             _moneyOperationsService = moneyOperationsService;
+            _accountService = accountService;
         }
 
         [HttpPost]

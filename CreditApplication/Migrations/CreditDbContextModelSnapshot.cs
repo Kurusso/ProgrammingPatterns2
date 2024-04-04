@@ -107,6 +107,93 @@ namespace CreditApplication.Migrations
                     b.ToTable("CreditRates");
                 });
 
+            modelBuilder.Entity("CreditApplication.Models.CreditScore", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Score")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("CreditScore");
+                });
+
+            modelBuilder.Entity("CreditApplication.Models.CreditScoreUpdate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Change")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreditScoreId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeleteDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ModifyDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreditScoreId");
+
+                    b.ToTable("CreditScoreUpdates");
+                });
+
+            modelBuilder.Entity("CreditApplication.Models.Penalty", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Amount")
+                        .IsRequired()
+                        .HasColumnType("varchar");
+
+                    b.Property<DateTime>("CreateDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreditId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeleteDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsPaidOff")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("ModifyDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PayoffOperationId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreditId");
+
+                    b.ToTable("Penalties");
+                });
+
             modelBuilder.Entity("CreditApplication.Models.Credit", b =>
                 {
                     b.HasOne("CreditApplication.Models.CreditRate", "CreditRate")
@@ -116,6 +203,38 @@ namespace CreditApplication.Migrations
                         .IsRequired();
 
                     b.Navigation("CreditRate");
+                });
+
+            modelBuilder.Entity("CreditApplication.Models.CreditScoreUpdate", b =>
+                {
+                    b.HasOne("CreditApplication.Models.CreditScore", "CreditScore")
+                        .WithMany("ScoreUpdateHistory")
+                        .HasForeignKey("CreditScoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreditScore");
+                });
+
+            modelBuilder.Entity("CreditApplication.Models.Penalty", b =>
+                {
+                    b.HasOne("CreditApplication.Models.Credit", "Credit")
+                        .WithMany("Penalties")
+                        .HasForeignKey("CreditId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Credit");
+                });
+
+            modelBuilder.Entity("CreditApplication.Models.Credit", b =>
+                {
+                    b.Navigation("Penalties");
+                });
+
+            modelBuilder.Entity("CreditApplication.Models.CreditScore", b =>
+                {
+                    b.Navigation("ScoreUpdateHistory");
                 });
 #pragma warning restore 612, 618
         }

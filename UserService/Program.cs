@@ -19,6 +19,18 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<AuthService, AuthService>();
 builder.Services.AddScoped<UsersService, UsersService>();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        corsPolicyBuilder =>
+        {
+            corsPolicyBuilder
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+});
 // builder.Services.AddScoped<ClientService, ClientService>();
 
 builder.AddIdentity();

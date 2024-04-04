@@ -1,15 +1,32 @@
-const base_url="http://localhost:5082";
-export const loginEndpoint=base_url+"/api/Auth/Login";
-export const getAccountsEndpoint=base_url+"/api/Account/User/";
-export const getAccountEndpoint=base_url+"/api/Account/GetInfo/";
-export const createAccountEndpoint=base_url+"/api/Account/Create";
-export const closeAccountEndpoint=base_url+"/api/Account/Close";
-export const getUserEndpoint=base_url+"/api/Profile";
-export const depositEndpoint=base_url+"/api/Operations/Deposit";
-export const withdrawEndpoint=base_url+"/api/Operations/Withdraw";
-export const getCreditsEndpoint=base_url+"/api/Credit/GetUserCredits";
-export const getCreditEndpoint=base_url+"/api/Credit/GetInfo";
-export const repayCreditEndpoint=base_url+"/api/Credit/Repay";
+export class magicConsts {
+    static base_url = "https://localhost:7075";
 
-export const getCreditRatesEndpoint=base_url+ "/api/CreditRates/GetAll";
-export const takeCreditEndpoint=base_url+"/api/Credit/Take"
+    static loginEndpoint = this.base_url + "/api/Auth/Login";
+
+    //Accounts
+    static getAccountsEndpoint = this.base_url + "/api/Account/User/";
+    static getAccountEndpoint = this.base_url + "/api/Account/GetInfo/";
+    static createAccountEndpoint = this.base_url + "/api/Account/Create";
+    static closeAccountEndpoint = this.base_url + "/api/Account/Close";
+    static getUserEndpoint = this.base_url + "/api/Profile";
+
+    //Operations
+    static depositEndpoint = this.base_url + "/api/Operations/Deposit";
+    static withdrawEndpoint = this.base_url + "/api/Operations/Withdraw";
+
+    //Credits
+    static getCreditsEndpoint = this.base_url + "/api/Credit/GetUserCredits";
+    static getCreditEndpoint = this.base_url + "/api/Credit/GetInfo";
+    static repayCreditEndpoint = this.base_url + "/api/Credit/Repay";
+    static getCreditRatesEndpoint = this.base_url + "/api/CreditRates/GetAll";
+    static takeCreditEndpoint = this.base_url + "/api/Credit/Take"
+
+    //WebSocket
+    static AccountInfoHub = this.base_url + "/AccountHub";
+
+    //Auth
+    static authService_url = "https://localhost:7212"
+    static LoginRedirectUrl = this.authService_url + "/auth"
+
+}
+
