@@ -26,6 +26,6 @@ public static class MagicConstants
     public static readonly string AuthorizeEndpoint = BaseUrUserService + "/auth";
     public static readonly string AuthorizeTokenEndpoint = BaseUrUserService + "/auth/token";
 
-    public static readonly string AccountHub = BaseUrlCore + "/client";
+    public static readonly string AccountHub = BaseUrlCore + "/api/client";
 
 }

@@ -1,15 +1,20 @@
-import {UserManager} from 'oidc-client-ts';
-import {AuthConfig} from "../utils/config/AuthConfig";
+import {UserManager, UserManagerSettings, WebStorageStateStore} from 'oidc-client-ts';
+import {Role} from "../pages/Login";
 
 
-const userManager = new UserManager({
-    authority: 'https://localhost:7212', // Your authority server
-    client_id: 'ClientApplication', // Your client id
+const config: UserManagerSettings = {
+    authority: "https://localhost:7212",
+    client_id: "ClientApplication",
+    redirect_uri: "http://localhost:3000",
     client_secret: "901564A5-E7FE-42CB-B10D-61EF6A8F3655",
-    redirect_uri: 'http://localhost:auth/', // Your callback route
-    response_type: 'code',
-    scope: 'openid profile api1',
-});
+    response_type: "code",
+    scope: "openid profile api1",
+    post_logout_redirect_uri: "http://localhost:3000",
+    userStore: new WebStorageStateStore({store: window.localStorage}),
+};
+
+
+const userManager = new UserManager(config);
 
 
 export async function getUser() {
@@ -17,11 +22,30 @@ export async function getUser() {
     return user;
 }
 
-export async function isAuthenticated() {
+export async function isAuthenticated(role: Role) {
     let token = await getAccessToken();
 
     return !!token;
 }
+
+
+export function makeOauth2AuthUrl(role: Role): string {
+    // depending on role specifying callback url
+
+    let requestUrl = new URL(config.authority + "/auth");
+    let queryParams = new URLSearchParams();
+    queryParams.set("client_id", config.client_id);
+    if (config.response_type != null) {
+        queryParams.set("response_type", config.response_type);
+    }
+    queryParams.set("redirect_uri", config.redirect_uri);
+    if (config.scope != null) {
+        queryParams.set("scope", config.scope);
+    }
+    return requestUrl + "?" + queryParams.toString();
+
+}
+
 
 export async function handleOAuthCallback(callbackUrl: string) {
     try {
@@ -33,8 +57,12 @@ export async function handleOAuthCallback(callbackUrl: string) {
     }
 }
 
+
 export async function sendOAuthRequest() {
-    return await userManager.signinRedirect();
+    console.log("sending OAuth req")
+    //return await userManager.signinRedirect();
+
+
 }
 
 // renews token using refresh token
@@ -53,26 +81,3 @@ export async function logout() {
     await userManager.clearStaleState()
     await userManager.signoutRedirect();
 }
-
-
-// export class AuthService {
-//     static async getToken(email: string, password: string): Promise<string> {
-//         try {
-//
-//             const response = await fetch(magicConsts.loginEndpoint, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify({
-//                     username: email,
-//                     password: password
-//                 }),
-//             });
-//
-//             return await response.json();
-//         } catch (error) {
-//             throw error;
-//         }
-//     }
-// }
