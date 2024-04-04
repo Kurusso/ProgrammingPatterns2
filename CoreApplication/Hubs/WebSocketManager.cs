@@ -31,7 +31,7 @@ namespace CoreApplication.Hubs
 
         private async Task ListenSocket(WebSocket socket, string userId)
         {
-            byte[] buffer = new byte[1024 * 4];
+            byte[] buffer = new byte[4096];
             WebSocketReceiveResult result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
             while (!result.CloseStatus.HasValue)

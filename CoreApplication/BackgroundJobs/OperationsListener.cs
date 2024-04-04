@@ -18,6 +18,7 @@ namespace CoreApplication.BackgroundJobs
     {
         private IConnection _connection;
         private IModel _channel;
+        private IModel _deliveryConfirmationChannel;
         private IServiceProvider _provider;
         private readonly RabbitMqConfigurations _rabbitMqConfigurations;
         public OperationsListener(IServiceProvider provider, IOptions<RabbitMqConfigurations> rabbitMqConfigurations)
@@ -28,7 +29,9 @@ namespace CoreApplication.BackgroundJobs
             var factory = new ConnectionFactory { HostName = rabbitMqConfigurations.Value.HostName };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
+            _deliveryConfirmationChannel = _connection.CreateModel();
             _channel.QueueDeclare(queue: _rabbitMqConfigurations.QueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            _deliveryConfirmationChannel.QueueDeclare(queue: _rabbitMqConfigurations.SecondQueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -43,24 +46,63 @@ namespace CoreApplication.BackgroundJobs
                 using (var scope = _provider.CreateScope())
                 {
                     var scopedService = scope.ServiceProvider.GetRequiredService<IMoneyOperationsService>();
-
-
-                    if (message != null)
+                    var confirmationMessage = new ConfirmationDTO();
+                    try
                     {
-                        switch (message.OperationType)
+                        if (message != null)
                         {
-                            case OperationType.Deposit:
-                                await scopedService.Deposit(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId);
-                                break;
-                            case OperationType.Withdraw:
-                                await scopedService.Withdraw(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId);
-                                break;
-                            case OperationType.TransferSend:
-                                await scopedService.TransferMoney(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId, (Guid)message.RecieverAccount);
-                                break;
+
+                            switch (message.OperationType)
+                            {
+                                case OperationType.Deposit:
+                                    await scopedService.Deposit(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId);
+                                    break;
+                                case OperationType.Withdraw:
+                                    await scopedService.Withdraw(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId);
+                                    break;
+                                case OperationType.TransferSend:
+                                    await scopedService.TransferMoney(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId, (Guid)message.RecieverAccount);
+                                    break;
+
+                            }
 
                         }
+
+                        confirmationMessage.Message = "";
+                        confirmationMessage.MessageTrackNumber = ea.DeliveryTag;
+                        confirmationMessage.Status = 200;
+                        
+                        
                     }
+                    catch (InvalidOperationException ex)
+                    {
+                        confirmationMessage.Message = ex.Message;
+                        confirmationMessage.MessageTrackNumber = ea.DeliveryTag;
+                        confirmationMessage.Status = 400;
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        confirmationMessage.Message = ex.Message;
+                        confirmationMessage.MessageTrackNumber = ea.DeliveryTag;
+                        confirmationMessage.Status = 400;
+                    }
+                    catch(KeyNotFoundException ex)
+                    {
+                        confirmationMessage.Message = ex.Message;
+                        confirmationMessage.MessageTrackNumber = ea.DeliveryTag;
+                        confirmationMessage.Status = 404;
+                    }
+                    catch (Exception ex)
+                    {
+                        confirmationMessage.Message = ex.Message;
+                        confirmationMessage.MessageTrackNumber = ea.DeliveryTag;
+                        confirmationMessage.Status = 500;
+                    }
+                    var deliveryConfirmationMessage = JsonConvert.SerializeObject(confirmationMessage);
+                    _deliveryConfirmationChannel.BasicPublish(exchange: "",
+                                                                  routingKey: _rabbitMqConfigurations.SecondQueName,
+                                                                  basicProperties: null,
+                                                                  body: Encoding.UTF8.GetBytes(deliveryConfirmationMessage));
                 }
                 _channel.BasicAck(ea.DeliveryTag, false);
 
