@@ -33,7 +33,6 @@ func main() {
 	authRouter.HandleFunc("GET /", controllers.RenderClientsPage)
 	authRouter.HandleFunc("GET /Staff", controllers.RenderStaffPage)
 	authRouter.HandleFunc("GET /Credits", controllers.RenderCreditsPage)
-	authRouter.Handle("GET /Error", templ.Handler(components.ErrorPage()))
 
 	authRouter.HandleFunc(controllers.ListUserAccountUrlPattern, controllers.ListUserAccounts)
 	authRouter.HandleFunc(controllers.ListAccountOperationsUrlPattern, controllers.ListAccountOperations)
@@ -48,10 +47,18 @@ func main() {
 
 	authRouter.HandleFunc(controllers.BlockStaffProfileUrlPattern, controllers.BlockStaffProfile)
 	authRouter.HandleFunc(controllers.BlockClientProfileUrlPattern, controllers.BlockClientProfile)
+	authRouter.HandleFunc(controllers.UpdateThemeUrlPattern, controllers.UpdateTheme)
 
 	router := http.NewServeMux()
+	router.Handle("GET /Error", templ.Handler(components.ErrorPage()))
 	router.HandleFunc(controllers.LoginUrlPattern, controllers.LoginCallback)
-	router.Handle("/", middleware.Auth(authRouter))
+	router.Handle("/",
+		middleware.Auth(
+			middleware.Theme(
+				authRouter,
+			),
+		),
+	)
 
 	err = http.ListenAndServe(":8080", router)
 	if err != nil {

@@ -9,6 +9,18 @@ const (
 	None
 )
 
+
+script changeThemeHandler() {
+	console.log(event)
+	const body = document.getElementsByTagName("body")[0]
+	if (event.target.checked) {
+		body.setAttribute("data-bs-theme", "dark")
+	} else {
+		body.setAttribute("data-bs-theme", "light")
+	}
+
+}
+
 templ navbar(currentTab Tab) {
 	<nav class="navbar container-fluid border-bottom">
 		<ul class="nav nav-tabs flex-grow-1 border-bottom-0">
@@ -29,7 +41,8 @@ templ navbar(currentTab Tab) {
 				role="switch"
 				name="themeSwitch"
 				hx-post="/api/preferences/theme"
-				hx-
+				checked?={ ctx.Value("theme").(string) == "dark" }
+				onclick={ changeThemeHandler() }
 			/>
 			<label class="form-check-label text-nowrap" for="themeSwitch">Темная тема</label>
 		</div>
@@ -70,7 +83,7 @@ templ MainPageWrapper(currentTab Tab) {
 			<script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/ws.js"></script>
 			<title>Сотрудник</title>
 		</head>
-		<body data-bs-theme="dark">
+		<body data-bs-theme={ ctx.Value("theme").(string) }>
 			@navbar(currentTab)
 			<div class="container mt-5">
 				{ children... }

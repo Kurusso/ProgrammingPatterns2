@@ -31,6 +31,14 @@ func LoginCallback(w http.ResponseWriter, r *http.Request) {
 			Domain: r.URL.Host,
 			Path:   "/",
 		})
+		userId, err := services.GetUserId(r.Context(), token)
+		if err == nil {
+			err = services.InitPreferences(r.Context(), userId)
+			if err != nil {
+				logger.Default.Error("failed to init user preferences")
+			}
+		}
+
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
