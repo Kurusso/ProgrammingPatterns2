@@ -140,8 +140,8 @@ func WsUpdateAccountOperations(
 	}
 	defer wsConn.Close()
 
-	pingTimer := time.NewTicker(30 * time.Second)
-	defer pingTimer.Stop()
+	answCh := make(chan wsAnswer)
+	go readWsMessage(wsConn, answCh)
 
 	for {
 		select {
@@ -149,12 +149,13 @@ func WsUpdateAccountOperations(
 			if !ok {
 				return
 			}
+
 			wsWritter, err := wsConn.NextWriter(websocket.TextMessage)
 			if err != nil {
 				logger.Default.Error("failed to create wsWriter")
 				return
 			}
-
+			logger.Default.Info("sending new account info")
 			account.SortOperationsByDate()
 			err = clients.OperationList(account).Render(r.Context(), wsWritter)
 			if err != nil {
@@ -167,10 +168,8 @@ func WsUpdateAccountOperations(
 				logger.Default.Error("error during wsWritter close: ", err)
 			}
 
-		case <-pingTimer.C:
-			err = wsConn.WriteMessage(websocket.PingMessage, nil)
-			if err != nil {
-				logger.Default.Error("ws ping failed")
+		case _, ok := <-answCh:
+			if !ok {
 				return
 			}
 		}
@@ -186,9 +185,7 @@ type wsAnswer struct {
 func wsSendHeartBeat(wsConn *websocket.Conn) {
 	for i := 0; ; i++ {
 		err := wsConn.WriteMessage(websocket.TextMessage, []byte(strconv.Itoa(i)))
-		logger.Default.Debug("sent heartbeat ", i, err)
 		if err != nil {
-			logger.Default.Info("stop sending heartbeat: ", err)
 			return
 		}
 		time.Sleep(5 * time.Second)
@@ -203,7 +200,7 @@ func WsLoadAccountOperations(
 	clientQuit chan bool,
 ) {
 	defer close(updates)
-	logger.Default.Info("new ws connection for ", userId)
+	logger.Default.Info("new ws connection for ", accountId)
 	defer logger.Default.Info("ws connection closed")
 
 	queryParams := url.Values{}
@@ -252,7 +249,7 @@ func WsLoadAccountOperations(
 			err = json.Unmarshal(msg.message, &accountUpdate)
 			if err != nil {
 				logger.Default.Error("failed to unmarshal ws message: ", err)
-			} else {
+			} else if accountUpdate.Id == accountId {
 				updates <- &accountUpdate
 			}
 		case <-clientQuit:
@@ -265,8 +262,8 @@ func WsLoadAccountOperations(
 func readWsMessage(wsConn *websocket.Conn, msgCh chan<- wsAnswer) {
 	for {
 		t, msg, err := wsConn.ReadMessage()
-		if err != nil {
-			logger.Default.Error("recieving msg from ws failed: ", err)
+		if t == websocket.CloseMessage || err != nil {
+			logger.Default.Info("closing websocket: reason - other party")
 			close(msgCh)
 			return
 		}

@@ -6,8 +6,19 @@ script OperationsModalOpenHandler(operationsHeaderId, operationsTbodyId, account
 	const header = document.getElementById(operationsHeaderId)
 	header.innerText =  accountId
 
-	const body = document.getElementById(operationsTbodyId)
-	body.setAttribute("ws-connect", `/api/clients/${userId}/accounts/${accountId}/operations`)
+	try {
+		operationHistorySocket.close()
+	} catch { }
+    let l = window.location;
+    let url = ((l.protocol === "https:") ? "wss://" : "ws://") + l.host + `/api/clients/${userId}/accounts/${accountId}/operations`;
+	operationHistorySocket = new WebSocket(url)
+	operationHistorySocket.addEventListener("message", (event) => {
+		const body = document.getElementById(operationsTbodyId)
+		const template = document.createElement('template')
+		template.innerHTML = event.data
+		body.replaceWith(...template.content.children)
+	})
+
 }
 
 templ AccountList(accounts []models.AccountShort) {
