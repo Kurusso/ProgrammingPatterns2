@@ -3,6 +3,8 @@
     public enum OperationType
     {
         Deposit,
-        Withdraw
+        Withdraw,
+        TransferGet,
+        TransferSend,
     }
 }

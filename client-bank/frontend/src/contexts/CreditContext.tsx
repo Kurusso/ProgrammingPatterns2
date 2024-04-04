@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useState} from "react";
-import {CreditItemProps} from "../components/CreditItem";
+import {CreditItemProps} from "../components/Credits/CreditItem";
 
 type CreditContextType={
     creditItems:CreditItemProps[];

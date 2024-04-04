@@ -1,23 +1,30 @@
+using client_bank_backend.Hubs;
+using client_bank_backend.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-
 var services = builder.Services;
-services.AddControllers();
-services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
+
+services.AddSingleton<IHostedService, AccountHubService>();
+builder.Services.AddHttpClient();
 services.AddCors(options =>
 {
     options.AddDefaultPolicy(
         corsPolicyBuilder =>
         {
             corsPolicyBuilder
-                .AllowAnyOrigin()
+                .WithOrigins("http://localhost:3000")
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
+services.AddSignalR();
+
+services.AddControllers();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -27,10 +34,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.UseCors();
+app.MapHub<BffAccountHub>("/AccountHub");
 app.MapControllers();
 
 app.Run();

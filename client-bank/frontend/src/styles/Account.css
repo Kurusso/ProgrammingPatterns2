@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#title,
+#username,
+#logout-btn,
+#home-btn {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#title {
+    color: #333;
+    text-align: center;
+}
+
+#username {
+    margin: 10px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+#logout-btn {
+    background-color: #f44336;
+}
+
+#home-btn {
+    background-color: #008CBA;
+}
+
+.currency-input {
+    width: 60%; /* Increased from 30% to 60% */
+    padding: 5px;
+    margin: 10px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.currency-selector {
+    width: 20%; /* Decreased from 30% to 20% */
+    padding: 5px;
+    margin: 10px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.history-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}

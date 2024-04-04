@@ -108,7 +108,7 @@ namespace CreditApplication.Services
                     amount -= _options.CreditTakeoutFlat;
                     if (baseSum is not null)
                     {
-                        amount -= baseSum.ConvertMoneyToDollarValue() * _options.CreditTakeoutAmountCoeff;
+                        amount -= CurrencyValues.Instance.ConvertMoneyToDollarValue(baseSum) * _options.CreditTakeoutAmountCoeff;
                     }
                     break;
 
@@ -120,7 +120,7 @@ namespace CreditApplication.Services
                     amount -= _options.CreditPaymentOverdueFlat;
                     if (baseSum is not null)
                     {
-                        amount -= baseSum.ConvertMoneyToDollarValue() * _options.CreditPaymentOverdueAmountCoeff;
+                        amount -= CurrencyValues.Instance.ConvertMoneyToDollarValue(baseSum) * _options.CreditPaymentOverdueAmountCoeff;
                     }
                     break;
 
@@ -132,7 +132,7 @@ namespace CreditApplication.Services
                     amount += _options.CreditPayoffFlat;
                     if (baseSum is not null)
                     {
-                        amount += baseSum.ConvertMoneyToDollarValue() * _options.CreditPayoffAmountCoeff;
+                        amount += CurrencyValues.Instance.ConvertMoneyToDollarValue(baseSum) * _options.CreditPayoffAmountCoeff;
                     }
                     break;
 
