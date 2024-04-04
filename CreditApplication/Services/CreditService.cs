@@ -20,15 +20,23 @@ namespace CreditApplication.Services
     {
         private readonly CreditDbContext _context;
         private readonly HttpClient _coreClient;
-        private readonly string _withdrawMoney;
+        private readonly Guid _bankBaseAccount;
+        private readonly Guid _bankBaseAccountUser;
         private readonly IUserService _userService;
-        public CreditService(IConfiguration configuration, CreditDbContext context, IUserService userService)
+        private readonly ICreditPenaltyService _penaltyService;
+        private readonly ICreditScoreService _creditScoreService;
+        private readonly IRabbitMqService _rabbitMqOperationService;
+        public CreditService(IConfiguration configuration, CreditDbContext context, IUserService userService, ICreditPenaltyService penaltyService, ICreditScoreService creditScoreService, IRabbitMqService rabbitMqService)
         {
             var coreSection = configuration.GetSection("CoreApplication");
-            _context = context;
-            _withdrawMoney = coreSection["WithdrawMoney"];
+            _context = context;            
+            Guid.TryParse(coreSection["BaseAccountId"], out _bankBaseAccount);
+            Guid.TryParse(coreSection["BaseAccountUserId"], out _bankBaseAccountUser);
             _coreClient = new HttpClient();
             _userService = userService;
+            _penaltyService = penaltyService;
+            _creditScoreService = creditScoreService;
+            _rabbitMqOperationService = rabbitMqService;
         }
 
         public async Task<CreditDTO> GetCreditInfo(Guid id, Guid userId)
@@ -38,11 +46,14 @@ namespace CreditApplication.Services
             {
                 throw new ArgumentException($"User with {userId} is blocked!");
             }
-            var credit = await _context.Credits.Include(x=>x.CreditRate).GetUndeleted().FirstOrDefaultAsync(x=>x.UserId==userId && x.Id==id);
+            var credit = await _context.Credits.Include(x => x.CreditRate).GetUndeleted().FirstOrDefaultAsync(x => x.UserId == userId && x.Id == id);
             if (credit == null)
             {
                 throw new KeyNotFoundException($"User with {userId} haven't got credit with {id} id!");
             }
+            await _context.Entry(credit)
+                .Collection(x => x.Penalties)
+                .LoadAsync();
             return new CreditDTO(credit);
         }
 
@@ -53,12 +64,12 @@ namespace CreditApplication.Services
             {
                 throw new ArgumentException($"User with {userId} is blocked!");
             }
-            var credits = await _context.Credits.Where(x=>x.UserId==userId).Include(x=>x.CreditRate).GetUndeleted().Select(x=>new CreditDTO(x)).ToListAsync();
+            var credits = await _context.Credits.Where(x => x.UserId == userId).Include(x => x.CreditRate).GetUndeleted().Select(x => new CreditDTO(x)).ToListAsync();
             return credits;
 
         }
 
-        public async Task RepayCredit(Guid id, Guid userId, decimal moneyAmmount, Guid? accountId, Currency currency, bool monthPay=false) 
+        public async Task RepayCredit(Guid id, Guid userId, decimal moneyAmmount, Guid? accountId, Currency currency, bool monthPay = false)
         {
             var blockedUsers = await _userService.GetBlockedUsers();
             if (blockedUsers.Contains(userId))
@@ -77,19 +88,31 @@ namespace CreditApplication.Services
                 money = credit.RemainingDebt;
             }
 
-            var response = await _coreClient.PostAsync(_withdrawMoney + "?accountId=" + notNullAccountId + "&userId=" +  userId + "&money=" + money.Amount + "&currency=" + currency, null);
-            response.EnsureSuccessStatusCode();
+            //var response = await _coreClient.PostAsync(_transferApiRoute + "?accountId=" + notNullAccountId + "&userId=" + userId + "&money=" + money.Amount + "&currency=" + currency + "&reciveAccountId=" + _bankBaseAccount, null);
+            _rabbitMqOperationService.SendMessage(new OperationPostDTO
+            {
+                AccountId = notNullAccountId,
+                Currency = currency,
+                UserId = userId,
+                MoneyAmmount = money.Amount,
+                RecieverAccount = _bankBaseAccount,                
+            });
+
             credit.RemainingDebt = credit.RemainingDebt - money;
+            await _creditScoreService.UpdateUserCreditScore(credit.UserId, CreditScoreUpdateReason.CreditPaymentMade, baseSum: money);
             if (!monthPay)
             {
                 credit.UnpaidDebt = new Money(Math.Max((credit.UnpaidDebt - money).Amount, 0), credit.UnpaidDebt.Currency);
-            }
-            if (credit.RemainingDebt.Amount == 0) 
-            {
-                _context.Credits.Remove(credit);
-            }
 
-            await _context.SaveChangesAsync();          
+                //var unpaid = credit.UnpaidDebt - money;
+                //if(unpaid.Amount > decimal.Zero)
+                //{
+                //    await _penaltyService.ApplyPenalties(credit, unpaid);
+                //}
+            }
+            await CheckCreditPaidOff(credit, false);
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task TakeCredit(TakeCreditDTO creditDTO)
@@ -110,31 +133,88 @@ namespace CreditApplication.Services
                 RemainingDebt = money,
                 FullMoneyAmount = money,
                 MonthPayAmount = monthPay,
-                UnpaidDebt = new Money { Amount=0, Currency= creditDTO.Currency },
+                UnpaidDebt = new Money { Amount = 0, Currency = creditDTO.Currency },
             };
+
+            //var response = await _coreClient.PostAsync(_transferApiRoute + "?accountId=" + _bankBaseAccount + "&userId=" + _bankBaseAccountUser + "&money=" + money.Amount + "&currency=" + money.Currency + "&reciveAccountId=" + creditDTO.AccountId, null);
+
+            _rabbitMqOperationService.SendMessage(new OperationPostDTO
+            {
+                UserId = _bankBaseAccountUser,
+                AccountId = _bankBaseAccount,
+                MoneyAmmount = money.Amount,
+                Currency = money.Currency,
+                RecieverAccount = creditDTO.AccountId,
+                OperationType = OperationType.TransferSend,
+            });
+
             await _context.Credits.AddAsync(credit);
             await _context.SaveChangesAsync();
+
+            await _creditScoreService.UpdateUserCreditScore(creditDTO.UserId, CreditScoreUpdateReason.CreditTakeout, credit.Id.ToString(), credit.FullMoneyAmount);
         }
+
 
         public async Task UpdateCredits()
         {
             var blockedUsers = await _userService.GetBlockedUsers();
-            var credits = await _context.Credits.Include(x=>x.CreditRate).GetUndeleted().GetUnblocked(blockedUsers).ToListAsync();
-            // var credits = await _context.Credits.Include(x=>x.CreditRate).GetUndeleted().ToListAsync();
-            foreach (var credit in credits) { 
+            var credits = await _context.Credits.Include(x => x.CreditRate).GetUndeleted().GetUnblocked(blockedUsers).ToListAsync();
+            foreach (var credit in credits)
+            {
+                var penaltiesUnpaid = false;
+                foreach (var penalty in await _penaltyService.GetPenalties(credit, true))
+                {
+                    try
+                    {
+                        await _penaltyService.RepayPenalty(penalty.Id, credit.UserId, penalty.Amount.Amount, credit.PayingAccountId, penalty.Amount.Currency);
+                        await _creditScoreService.UpdateUserCreditScore(credit.UserId, CreditScoreUpdateReason.CreditPaymentOverduePayOff);
+                    }
+                    catch
+                    {
+                        penaltiesUnpaid = true;
+                        await _creditScoreService.UpdateUserCreditScore(credit.UserId, CreditScoreUpdateReason.CreditPaymentOverdue, $"{penalty.Id} penalty", penalty.Amount);
+                    }
+                }
+                if (penaltiesUnpaid)
+                {
+                    continue;
+                }
+
                 try
                 {
                     await RepayCredit(credit.Id, credit.UserId, credit.MonthPayAmount.Amount, null, credit.MonthPayAmount.Currency, true);
                 }
                 catch
                 {
-                    credit.UnpaidDebt += credit.MonthPayAmount;
+                    await _penaltyService.ApplyPenalties(credit, credit.MonthPayAmount);
                 }
-                credit.RemainingDebt.Amount =  (credit.RemainingDebt.Amount * (credit.CreditRate.MonthPercent + 1));
+                credit.RemainingDebt.Amount = (credit.RemainingDebt.Amount * (credit.CreditRate.MonthPercent + 1));
                 _context.Credits.Update(credit);
                 // await _context.AddAsync(credit);
             };
-           await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> CheckCreditPaidOff(Credit credit, bool saveChangesOnRemove = true)
+        {
+            if (credit.RemainingDebt.Amount == decimal.Zero)
+            {
+                var unpaidPenalties = await _penaltyService.GetPenalties(credit, unpaidOnly: true);
+
+                if (unpaidPenalties.Any() == false)
+                {
+                    _context.Credits.Remove(credit);
+                    await _creditScoreService.UpdateUserCreditScore(credit.UserId, CreditScoreUpdateReason.CreditPayOff, credit.Id.ToString(), credit.FullMoneyAmount);
+                    if (saveChangesOnRemove)
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    return true;
+                }
+                else return false;
+            }
+
+            return false;
         }
     }
 }

@@ -12,7 +12,11 @@ namespace CreditApplication.Models
     {
         public DbSet<Credit> Credits { get; set; }
         public DbSet<CreditRate> CreditRates { get; set; }
+        public DbSet<CreditScore> CreditScore{ get; set; }
+        public DbSet<CreditScoreUpdate> CreditScoreUpdates{ get; set; }
         public DbSet<BlockedUser> BlockedUsers { get; set; }
+        public DbSet<Penalty> Penalties { get; set; }
+
         public CreditDbContext(DbContextOptions<CreditDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)

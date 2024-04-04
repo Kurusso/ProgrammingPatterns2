@@ -17,6 +17,7 @@ namespace CreditApplication.Models.Dtos
         public Money RemainingDebt { get; set; }
 
         public Money UnpaidDebt { get; set; }
+        public ICollection<PenaltyDTO>? Penalties { get; set; }
 
         public CreditDTO() { }
         public CreditDTO(Credit credit)
@@ -29,6 +30,9 @@ namespace CreditApplication.Models.Dtos
             CreditRate = new CreditRateDTO(credit.CreditRate);
             FullMoneyAmount = credit.FullMoneyAmount;
             MonthPayAmount = credit.MonthPayAmount;
+            Penalties = credit.Penalties.Any() ? 
+                credit.Penalties.Select(x=>new PenaltyDTO(x)).ToList() 
+                : null;
         }
     }
 }
