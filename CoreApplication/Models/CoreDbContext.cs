@@ -17,10 +17,12 @@ namespace CoreApplication.Models
         public CoreDbContext(DbContextOptions<CoreDbContext> options) : base(options){ }
 
         private readonly IHubContext<ClientOperationsHub> _hubContext;
-        public CoreDbContext(DbContextOptions<CoreDbContext> options, IHubContext<ClientOperationsHub> hubContext)
+        private readonly CustomWebSocketManager _customWebSocketManager;
+        public CoreDbContext(DbContextOptions<CoreDbContext> options, IHubContext<ClientOperationsHub> hubContext, CustomWebSocketManager webSocketManager)
         : base(options)
         {
             _hubContext = hubContext;
+            _customWebSocketManager = webSocketManager;
         }
 
         protected override void OnModelCreating(ModelBuilder builder) 
@@ -33,7 +35,7 @@ namespace CoreApplication.Models
         public override int SaveChanges()
         {
             BaseEntityTimestampHelper.SetTimestamps(ChangeTracker);
-            OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this);
+            OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this, _customWebSocketManager);
 
             return base.SaveChanges();
         }
@@ -41,35 +43,35 @@ namespace CoreApplication.Models
         public int SaveChanges(DateTime dateTime)
         {
             BaseEntityTimestampHelper.SetTimestamps(ChangeTracker, dateTime);
-            OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this);
+            OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this, _customWebSocketManager);
             return base.SaveChanges();
         }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             BaseEntityTimestampHelper.SetTimestamps(ChangeTracker);
-            OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this);
+            OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this, _customWebSocketManager);
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
         public int SaveChanges(bool acceptAllChangesOnSuccess, DateTime dateTime)
         {
             BaseEntityTimestampHelper.SetTimestamps(ChangeTracker, dateTime);
-             OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this);
+             OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this, _customWebSocketManager);
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             BaseEntityTimestampHelper.SetTimestamps(ChangeTracker);
-            await OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this);
+            await OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this, _customWebSocketManager);
             return await  base.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<int> SaveChangesAsync(DateTime dateTime, CancellationToken cancellationToken = default)
         {
             BaseEntityTimestampHelper.SetTimestamps(ChangeTracker, dateTime);
-            await OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this);
+            await OperationUpdateHelper.CatchOperationUpdate(ChangeTracker, _hubContext, this, _customWebSocketManager);
             return await base.SaveChangesAsync(cancellationToken);
         }
 
