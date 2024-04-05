@@ -26,26 +26,26 @@ namespace CoreApplication.Hubs
                 }
                 else
                 {
-                    context.Response.StatusCode = 400; // Bad Request
+                    context.Response.StatusCode = 400;
                 }
             }
             else
             {
-                context.Response.StatusCode = 400; // Bad Request
+                context.Response.StatusCode = 400; 
             }
         }
 
         private async Task ListenSocket(WebSocket socket, string userId, string socketId)
         {
-            byte[] buffer = new byte[1024 * 4];
-            WebSocketReceiveResult result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), System.Threading.CancellationToken.None);
+            byte[] buffer = new byte[4096];
+            WebSocketReceiveResult result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
             while (!result.CloseStatus.HasValue)
             {
-                result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), System.Threading.CancellationToken.None);
+                result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             }
 
-            await socket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, System.Threading.CancellationToken.None);
+            await socket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
             _sockets[userId].Remove(socketId, out _);
         }
 
@@ -54,8 +54,7 @@ namespace CoreApplication.Hubs
             var buffer = new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(message));
             foreach (var userSocket in _sockets[userId])
             {
-                await userSocket.Value.SendAsync(buffer, WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
-                
+                await userSocket.Value.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);  
             }
         }
     }
