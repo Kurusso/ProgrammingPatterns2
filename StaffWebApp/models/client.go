@@ -10,7 +10,16 @@ type OperationType int
 const (
 	Deposit OperationType = iota
 	Withdraw
+	TransferGet
+	TransferSend
 )
+
+func (op OperationType) OperationSign() string {
+	if op == Deposit || op == TransferGet {
+		return "+"
+	}
+	return "-"
+}
 
 type CurrencyType int
 

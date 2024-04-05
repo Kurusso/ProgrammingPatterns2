@@ -15,17 +15,27 @@ templ OperationList(accountInfo *models.AccountDetailed) {
 		for _, operation := range accountInfo.Operations {
 			<tr
 				class={ templ.KV("table-success", operation.Type == models.Deposit),
-					templ.KV("table-danger", operation.Type == models.Withdraw) }
+					templ.KV("table-danger", operation.Type == models.Withdraw),
+					"table-primary" }
 			>
 				<td>{ models.PrettifyDate(operation.Date) } </td>
-				<td>{ operation.Money.String() } </td>
-				<td>{ fmt.Sprintf("%g%s", operation.ConvertedMoney, accountInfo.Money.Currency.ToIcon()) } </td>
+				<td>{ operation.Type.OperationSign() + operation.Money.String() } </td>
+				<td>{ fmt.Sprintf("%s%g%s", 
+						operation.Type.OperationSign(), 
+						operation.ConvertedMoney, 
+						accountInfo.Money.Currency.ToIcon(),
+					)} 
+				</td>
 				<td>
 					switch operation.Type {
 						case models.Deposit:
 							{ "Пополнение" }
 						case models.Withdraw:
 							{ "Снятие" }
+						case models.TransferGet:
+							{ "Входящий перевод" }
+						case models.TransferSend:
+							{ "Исходящий перевод" }
 					}
 				</td>
 			</tr>
