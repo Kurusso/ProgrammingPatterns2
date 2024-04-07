@@ -2,19 +2,23 @@
 import {useUser} from "../contexts/UserContext";
 import {UserService} from "../api/user";
 import {useEffect} from "react";
+import {getAccessToken} from "../api/auth";
 
 
 export const UsernameDisplay = () => {
     const { user, setUser } = useUser();
 
-    const storedToken = localStorage.getItem('token');
-    const parsedToken = storedToken ? JSON.parse(storedToken).token : null;
+
 
     useEffect(() => {
         const fetchUser = async () => {
-            if (!user && parsedToken) {
+
+            let token = getAccessToken()
+
+            if (!user && token) {
                 try {
-                    let userData = await UserService.getUser(parsedToken);
+                    console.log(`user ${user} token:${token}`)
+                    let userData = await UserService.getUser(token);
                     setUser(userData);
                 } catch (error) {
                     console.error('An error occurred while getting user data:', error);
@@ -23,7 +27,7 @@ export const UsernameDisplay = () => {
         };
 
         fetchUser();
-    }, [user, parsedToken, setUser]);
+    }, [user]);
 
     return (
         <div id={"username"}>

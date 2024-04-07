@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -26,7 +27,8 @@ public class ClientsController(UsersService us) : Controller
     {
         try
         {
-            var guid = await _userService.Register(reginfo.Username, reginfo.Password, [IdentityConfigurator.ClientRole]);
+            var guid = await _userService.Register(reginfo.Username, reginfo.Password,
+                [IdentityConfigurator.ClientRole]);
             return Ok(guid);
         }
         catch (BackendException be)
@@ -41,7 +43,7 @@ public class ClientsController(UsersService us) : Controller
 
     [HttpGet]
     [Authorize(
-        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
+        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme,
         Roles = IdentityConfigurator.StaffRole
     )]
     public async Task<ActionResult<Page<UserDTO>>> ListClients(string searchPattern, int page = 1)
@@ -61,17 +63,25 @@ public class ClientsController(UsersService us) : Controller
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("info")]
     [Authorize(
-        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
+        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme,
         Roles = IdentityConfigurator.ClientRole
     )]
-    public async Task<ActionResult<UserDTO>> ClientInfo(Guid id)
+    public async Task<ActionResult<UserDTO>> ClientInfo()
     {
+
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+            return Unauthorized();
+
+        if (!Guid.TryParse(userIdClaim.Value, out var id))
+            return Unauthorized();
+
         var auth = await HttpContext.AuthenticateAsync();
         if (!_userService.CanSeeUser(auth, id))
             return Forbid();
-    
+
         try
         {
             var client = await _userService.UserInfo(id);
@@ -89,7 +99,7 @@ public class ClientsController(UsersService us) : Controller
 
     [HttpDelete("{id}")]
     [Authorize(
-        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
+        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme,
         Roles = IdentityConfigurator.StaffRole
     )]
     public async Task<ActionResult> BlockClient(Guid id)
@@ -109,3 +119,4 @@ public class ClientsController(UsersService us) : Controller
         }
     }
 }
+ 

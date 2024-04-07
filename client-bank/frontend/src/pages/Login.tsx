@@ -1,6 +1,6 @@
 import React from 'react';
 import "../styles/Login.css";
-import {makeOauth2AuthUrl, sendOAuthRequest} from "../api/auth";
+import {makeOauth2AuthUrl} from "../api/auth";
 import {useNavigate} from "react-router-dom";
 
 export enum Role {

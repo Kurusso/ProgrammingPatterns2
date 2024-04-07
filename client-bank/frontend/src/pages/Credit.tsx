@@ -1,4 +1,4 @@
-import {UsernameDisplay} from "../components/UserameDisplay";
+import {UsernameDisplay} from "../components/UsernameDisplay";
 import {LogoutButton} from "../components/Buttons/LogoutButton";
 import {HomeButton} from "../components/Buttons/HomeButton";
 import React, {useEffect, useState} from "react";
@@ -81,4 +81,4 @@ export const Credit = () => {
             </AccountsProvider>
         </div>
     );
-};
+}

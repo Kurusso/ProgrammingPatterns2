@@ -13,7 +13,7 @@ services.AddCors(options =>
         corsPolicyBuilder =>
         {
             corsPolicyBuilder
-                .WithOrigins("http://localhost:3000")
+                .WithOrigins("https://localhost:3000")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -34,9 +34,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
-app.UseAuthorization();
 app.UseCors();
+app.UseAuthorization();
+
 app.MapHub<BffAccountHub>("/AccountHub");
 app.MapControllers();
 

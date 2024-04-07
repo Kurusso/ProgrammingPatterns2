@@ -1,4 +1,4 @@
-import {User, UserManager, UserManagerSettings, WebStorageStateStore} from 'oidc-client-ts';
+import {UserManagerSettings, WebStorageStateStore} from 'oidc-client-ts';
 import {Role} from "../pages/Login";
 
 
@@ -13,14 +13,6 @@ export const config: UserManagerSettings = {
     userStore: new WebStorageStateStore({store: window.localStorage}),
 };
 
-
-export const userManager = new UserManager(config);
-
-
-export async function getUser() {
-    const user = await userManager.getUser();
-    return user;
-}
 
 export async function isAuthenticated(role: Role) {
     let token = await getAccessToken();
@@ -47,54 +39,31 @@ export function makeOauth2AuthUrl(role: Role): string {
 
 }
 
-export const RetrieveOauth2Token = async (): Promise<User> => {
 
-    try {
-        const user: User | void = await userManager.signinCallback();
-        if (!user) {
-            throw new Error('User is undefined');
-        }
-        console.log(`Token:${user.access_token}`);
-        return user;
-    } catch (error) {
-        console.error(error);
-        throw error;
+export function getAccessToken(): string {
+    let storedToken = localStorage.getItem('token');
+
+    if (!storedToken) {
+        console.error('Token not found');
+        throw new Error('Failed to get access_token');
     }
-};
 
-
-
-export async function handleOAuthCallback(callbackUrl: string) {
-    try {
-        const user = await userManager.signinRedirectCallback(callbackUrl);
-        return user;
-    } catch (e) {
-        alert(e);
-        console.log(`error while handling oauth callback: ${e}`);
-    }
+    // Remove the double quotes from the token
+    storedToken = storedToken.replace(/"/g, '');
+    console.log(`token get:   ${storedToken}`)
+    return storedToken;
 }
 
 
-export async function sendOAuthRequest() {
-    console.log("sending OAuth req")
-    //return await userManager.signinRedirect();
+export function setAccessToken(token: string) {
+    localStorage.setItem('token', JSON.stringify(token));
+    console.log(`token set: ${token}`)
+}
 
+export function delAccessToken(){
+    localStorage.removeItem('token')
 
 }
 
-// renews token using refresh token
-export async function renewToken() {
-    const user = await userManager.signinSilent();
 
-    return user;
-}
 
-export async function getAccessToken() {
-    const user = await getUser();
-    return user?.access_token;
-}
-
-export async function logout() {
-    await userManager.clearStaleState()
-    await userManager.signoutRedirect();
-}

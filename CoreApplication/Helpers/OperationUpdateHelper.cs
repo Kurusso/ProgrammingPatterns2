@@ -10,7 +10,9 @@ namespace CoreApplication.Helpers
 
     public static class OperationUpdateHelper
     {
-        public static async Task CatchOperationUpdate(ChangeTracker changeTracker, IHubContext<ClientOperationsHub> _hubContext, CoreDbContext context)
+        public static async Task CatchOperationUpdate(ChangeTracker changeTracker,
+            IHubContext<ClientOperationsHub> _hubContext, CoreDbContext context,
+            CustomWebSocketManager customWebSocketManager)
         {
             var modifiedEntries = changeTracker.Entries()
             .Where(e => e.State == EntityState.Added && e.Entity.GetType() == typeof(Operation))

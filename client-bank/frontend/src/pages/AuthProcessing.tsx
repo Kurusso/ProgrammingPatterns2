@@ -1,11 +1,15 @@
-import {config, userManager} from "../api/auth";
+import {config, setAccessToken} from "../api/auth";
 import {useEffect} from "react";
+import {useNavigate} from "react-router-dom";
+import {useAuth} from "../contexts/AuthContext";
 
 export const AuthProcessing = () => {
 
+    const navigate=useNavigate();
+    const {handleLogin}=useAuth()
 
     useEffect(() => {
-        const RetrieveOauth2Token = async (code: string): Promise<string> => {
+        const RetrieveOauth2Token = async (code: string) => {
             const requestUrl = `${config.authority}/auth/token`;
 
             const headers = {
@@ -38,11 +42,11 @@ export const AuthProcessing = () => {
                 if (!access_token) {
                     throw new Error('Failed to get access_token');
                 }
-                console.log(access_token)
-                return access_token;
+                handleLogin(access_token)
+                navigate("/")
             } catch (error) {
                 console.error(error);
-                return '';
+                throw  error;
             }
         };
 
@@ -57,7 +61,7 @@ export const AuthProcessing = () => {
 
     }, []);
 
-    console.log(1)
 
-    return <div>sssss...</div>;
+
+    return <div>Signing in</div>;
 }
