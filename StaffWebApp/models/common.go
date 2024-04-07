@@ -16,7 +16,7 @@ type Money struct {
 }
 
 func (m *Money) String() string {
-	return fmt.Sprintf("%g%s", m.Amount, m.Currency.ToIcon())
+	return fmt.Sprintf("%.2f%s", m.Amount, m.Currency.ToIcon())
 }
 
 type PageInfo struct {

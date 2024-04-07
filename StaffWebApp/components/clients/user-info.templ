@@ -1,6 +1,7 @@
 package clients
 
 import "staff-web-app/models"
+import "fmt"
 
 script OperationsModalOpenHandler(operationsHeaderId, operationsTbodyId, accountId, userId string) {
 	const header = document.getElementById(operationsHeaderId)
@@ -49,8 +50,9 @@ templ AccountList(accounts []models.AccountShort) {
 
 
 
-templ CreditsList(credits []models.CreditShort) {
+templ CreditsList(credits []models.CreditShort, rating float64) {
 	<div class="list-group p-4">
+		<span>Кредитный рейтинг: { fmt.Sprintf("%g", rating)  } </span>
 		if len(credits) == 0 {
 			<span>Нет ни одного кредита</span>
 		} 

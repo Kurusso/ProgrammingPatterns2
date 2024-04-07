@@ -37,6 +37,32 @@ func LoadUserCredits(ctx context.Context, userId string) ([]models.CreditShort, 
 	return credits, err
 }
 
+func LoadUserCreditRating(ctx context.Context, userId string) (float64, error) {
+	queryParams := url.Values{}
+	queryParams.Set("userId", userId)
+	var output map[string]any
+	err := makeRequestParseBody(
+		ctx,
+		http.MethodGet,
+		config.Default.CreditsApiUrl+"Credit/GetUserCreditScore?"+queryParams.Encode(),
+		nil,
+		&output,
+	)
+	if err != nil {
+		return 0, err
+	}
+	scoreRaw, ok := output["score"]
+	if !ok {
+		return 0, fmt.Errorf("response body has no field 'score'")
+	}
+	score, ok := scoreRaw.(float64)
+	if !ok {
+		return 0, fmt.Errorf("'score' field is not of type float64")
+	}
+
+	return score, nil
+}
+
 func LoadCreditDetailedInfo(ctx context.Context, userId string, creditId string) (*models.CreditDetailed, error) {
 	queryParams := url.Values{}
 	queryParams.Set("userId", userId)
