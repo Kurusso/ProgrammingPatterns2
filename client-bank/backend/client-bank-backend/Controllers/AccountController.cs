@@ -1,20 +1,29 @@
 ﻿
 using System.Text;
 using client_bank_backend.DTOs;
+using client_bank_backend.Heplers;
 using CoreApplication.Models.Enumeration;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using OpenIddict.Validation.AspNetCore;
 
 namespace client_bank_backend.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+
 public class AccountController:ControllerBase
 {
     private readonly HttpClient _coreClient = new();
 
 
-    [HttpGet("User/{userId}")]
-    public async Task<IActionResult> GetUserAccounts(Guid userId)
+    [HttpGet("User")]
+    
+    public async Task<IActionResult> GetUserAccounts()
     {
+        
+        var userId =await AuthHelper.Validate(_coreClient,Request);
+        if (userId == null) return Unauthorized();
         try
         {
             var requestUrl = $"{MagicConstants.GetAccountsEndpoint}{userId}";
@@ -35,8 +44,11 @@ public class AccountController:ControllerBase
     }
     
     [HttpGet("GetInfo/{accountId}")]
-    public async Task<IActionResult> GetAccountInfo(Guid userId, Guid accountId)
+    public async Task<IActionResult> GetAccountInfo( Guid accountId)
     {
+        var userId =await AuthHelper.Validate(_coreClient,Request);
+        if (userId.IsNullOrEmpty()) return Unauthorized();
+        
         try
         {
             var requestUrl = $"{MagicConstants.GetAccountEndpoint}{accountId}?userId={userId}";
@@ -56,8 +68,10 @@ public class AccountController:ControllerBase
     }
 
     [HttpPost("Create")]
-    public async Task<IActionResult> CreateAccount(Guid userId, Currency currency)
+    public async Task<IActionResult> CreateAccount( Currency currency)
     {
+        var userId =await AuthHelper.Validate(_coreClient,Request);
+        if (userId == null) return Unauthorized();
         try
         {
             var requestUrl = $"{MagicConstants.CreateAccountEndpoint}?userId={userId}&currency={currency}";
@@ -81,8 +95,10 @@ public class AccountController:ControllerBase
     
     [HttpDelete]
     [Route("Close")]
-    public async Task<IActionResult> CloseAccount(Guid userId, Guid accountId)
+    public async Task<IActionResult> CloseAccount( Guid accountId)
     {
+        var userId = await AuthHelper.Validate(_coreClient, Request);
+        if (userId == null) return Unauthorized();
         try
         {
             var requestUrl = $"{MagicConstants.CloseAccountEndpoint}?userId={userId}&accountId={accountId}";
@@ -95,13 +111,10 @@ public class AccountController:ControllerBase
             return StatusCode((int)response.StatusCode, errorContent);
             
         }
-        catch (HttpRequestException ex)
+        catch (Exception e)
         {
-            return Problem(statusCode: 503, detail: "Service Unavailable!");
-        }
-        catch (Exception ex)
-        {
-            return Problem(statusCode: 500, detail: "An unexpected error occurred!");
+            Console.WriteLine(e);
+            return StatusCode(500, "An error occurred while closing the account.");
         }
     }
     

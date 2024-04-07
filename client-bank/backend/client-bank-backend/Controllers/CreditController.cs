@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using client_bank_backend.Heplers;
 using CoreApplication.Models.Enumeration;
 using CreditApplication.Models.Dtos;
 using CreditApplication.Models.DTOs;
@@ -17,15 +18,17 @@ public class CreditController : ControllerBase
     [Route("Take")]
     public async Task<IActionResult> TakeCredit(TakeCreditDTO credit)
     {
+        var userId = await AuthHelper.Validate(_coreClient, Request);
+        if (userId == null) return Unauthorized();
+        credit.UserId = new Guid(userId);
         try
         {
             var requestUrl = $"{MagicConstants.TakeCreditEndpoint}";
 
-            // Serialize the credit object to a JSON string
             var jsonContent = JsonConvert.SerializeObject(credit);
 
-            // Pass the JSON string into the StringContent constructor
-            var response = await _coreClient.PostAsync(requestUrl, new StringContent(jsonContent, Encoding.UTF8, "application/json"));
+            var response = await _coreClient.PostAsync(requestUrl,
+                new StringContent(jsonContent, Encoding.UTF8, "application/json"));
 
             if (response.IsSuccessStatusCode)
             {
@@ -45,8 +48,10 @@ public class CreditController : ControllerBase
 
     [HttpGet]
     [Route("GetUserCredits")]
-    public async Task<IActionResult> GetUserCredits(Guid userId)
+    public async Task<IActionResult> GetUserCredits()
     {
+        var userId = await AuthHelper.Validate(_coreClient, Request);
+        if (userId == null) return Unauthorized();
         try
         {
             var requestUrl =
@@ -70,8 +75,10 @@ public class CreditController : ControllerBase
 
     [HttpGet]
     [Route("GetInfo")]
-    public async Task<IActionResult> GetCreditInfo(Guid id, Guid userId)
+    public async Task<IActionResult> GetCreditInfo(Guid id)
     {
+        var userId = await AuthHelper.Validate(_coreClient, Request);
+        if (userId == null) return Unauthorized();
         try
         {
             var requestUrl =
@@ -94,9 +101,11 @@ public class CreditController : ControllerBase
 
     [HttpPost]
     [Route("Repay")]
-    public async Task<IActionResult> RepayCredit(Guid id, Guid userId, int moneyAmmount, Currency currency,
+    public async Task<IActionResult> RepayCredit(Guid id, int moneyAmmount, Currency currency,
         Guid? accountId = null)
     {
+        var userId = await AuthHelper.Validate(_coreClient, Request);
+        if (userId == null) return Unauthorized();
         try
         {
             var requestUrl =

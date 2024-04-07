@@ -1,13 +1,15 @@
 import {Currency, AccountService} from "../../api/account";
 import React, {useCallback} from 'react';
 import {useNavigate} from "react-router-dom";
+import {isAuthenticated} from "../../api/auth";
 
 export interface AccountItemProps {
-    AccountId:string,
-    Amount:number,
-    CurrencyValue:Currency
+    AccountId: string,
+    Amount: number,
+    CurrencyValue: Currency
 }
-export const AccountItem:React.FC<AccountItemProps> = ({ AccountId, Amount, CurrencyValue }) => {
+
+export const AccountItem: React.FC<AccountItemProps> = ({AccountId, Amount, CurrencyValue}) => {
     const navigate = useNavigate();
     const [closed, setClosed] = React.useState(false);
 
@@ -16,14 +18,13 @@ export const AccountItem:React.FC<AccountItemProps> = ({ AccountId, Amount, Curr
     }, [navigate, AccountId]);
 
     const handleClickClose = useCallback(async () => {
-        const storedToken = localStorage.getItem('token');
-        if (!storedToken) {
-            console.error('Token not found');
+
+
+        if (!isAuthenticated())
             return;
-        }
-        const parsedToken = JSON.parse(storedToken).token;
+
         try {
-            await AccountService.closeAccount(parsedToken, AccountId);
+            await AccountService.closeAccount(AccountId);
             setClosed(true);
         } catch (error) {
             console.error('Error closing account:', error);

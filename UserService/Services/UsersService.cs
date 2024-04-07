@@ -81,7 +81,7 @@ public class UsersService(
     }
 
     public bool CanSeeUser(ClaimsPrincipal authUser, Guid userId) {
-        var id = authUser.FindFirstValue(ClaimTypes.NameIdentifier);
+        var id = authUser.FindFirstValue("sub");
         if (id == null)
             return false;
         

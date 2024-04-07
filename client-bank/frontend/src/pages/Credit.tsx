@@ -30,7 +30,7 @@ export const Credit = () => {
                     throw new Error('Invalid creditId');
                 }
 
-                const credit = await CreditService.getCredit(parsedToken, creditId);
+                const credit = await CreditService.getCredit( creditId);
                 setCreditData(credit);
                 console.log('fetched credit:', credit)
             } catch (error) {

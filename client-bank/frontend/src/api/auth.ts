@@ -14,13 +14,6 @@ export const config: UserManagerSettings = {
 };
 
 
-export async function isAuthenticated(role: Role) {
-    let token = await getAccessToken();
-
-    return !!token;
-}
-
-
 export function makeOauth2AuthUrl(role: Role): string {
     // depending on role specifying callback url
 
@@ -41,29 +34,33 @@ export function makeOauth2AuthUrl(role: Role): string {
 
 
 export function getAccessToken(): string {
-    let storedToken = localStorage.getItem('token');
+    let token = localStorage.getItem('token');
 
-    if (!storedToken) {
+    if (!token) {
         console.error('Token not found');
         throw new Error('Failed to get access_token');
     }
 
     // Remove the double quotes from the token
-    storedToken = storedToken.replace(/"/g, '');
-    console.log(`token get:   ${storedToken}`)
-    return storedToken;
+    token = token.replace(/"/g, '');
+
+    token = `Bearer ${token}`
+    console.log("token get")
+    return token;
 }
 
 
 export function setAccessToken(token: string) {
     localStorage.setItem('token', JSON.stringify(token));
-    console.log(`token set: ${token}`)
+    console.log(`token set`)
 }
 
-export function delAccessToken(){
+export function delAccessToken() {
     localStorage.removeItem('token')
-
 }
 
-
+export function isAuthenticated(): boolean {
+    const token = getAccessToken();
+    return !!token;
+}
 

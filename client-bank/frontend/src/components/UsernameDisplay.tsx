@@ -2,7 +2,7 @@
 import {useUser} from "../contexts/UserContext";
 import {UserService} from "../api/user";
 import {useEffect} from "react";
-import {getAccessToken} from "../api/auth";
+import {getAccessToken, isAuthenticated} from "../api/auth";
 
 
 export const UsernameDisplay = () => {
@@ -13,12 +13,9 @@ export const UsernameDisplay = () => {
     useEffect(() => {
         const fetchUser = async () => {
 
-            let token = getAccessToken()
-
-            if (!user && token) {
+            if (!user && isAuthenticated()) {
                 try {
-                    console.log(`user ${user} token:${token}`)
-                    let userData = await UserService.getUser(token);
+                    let userData = await UserService.getUser();
                     setUser(userData);
                 } catch (error) {
                     console.error('An error occurred while getting user data:', error);

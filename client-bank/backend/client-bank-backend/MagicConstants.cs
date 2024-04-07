@@ -25,6 +25,8 @@ public static class MagicConstants
     public static readonly string GetUserProfileEndpoint = BaseUrlUserService + "/api/clients/info";
     public static readonly string AuthorizeEndpoint = BaseUrlUserService + "/auth";
     public static readonly string AuthorizeTokenEndpoint = BaseUrlUserService + "/auth/token";
+    
+    public static readonly string ValidateTokenEndpoint = BaseUrlUserService + "/auth/validate";//?role=Client   https://localhost:7212/auth/validate?role=Client
 
     public static readonly string AccountHub = BaseUrlCore + "/client";
 

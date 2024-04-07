@@ -34,7 +34,7 @@ export const RepayCredit:React.FC<RepayCreditProps> = ({creditId,accountId}) => 
                 throw new Error('Account wasnt selected')
 
             console.log("paying for credit")
-            await CreditService.repayCredit(creditId,parsedToken,amount,selectedCurrency,selectedAccount);
+            await CreditService.repayCredit(creditId,amount,selectedCurrency,selectedAccount);
         }
         catch (e) {
 

@@ -2,6 +2,7 @@ import {
     magicConsts
 } from "./magicConst";
 import {Currency, Money} from "./account";
+import {getAccessToken} from "./auth";
 
 export interface CreditRate {
     id: string;
@@ -21,9 +22,11 @@ export interface CreditData {
 }
 
 export class CreditService {
-    static async getCredits(token: string) {
+    static async getCredits() {
         try {
-            const response = await fetch(`${magicConsts.getCreditsEndpoint}?userId=${token}`)
+            const response = await fetch(`${magicConsts.getCreditsEndpoint}`, {
+                headers: {'Authorization': getAccessToken(),}
+            })
             let data: CreditData[] = await response.json();
             console.log(data);
             return data
@@ -32,10 +35,11 @@ export class CreditService {
         }
     }
 
-    static async getCredit(token: string, creditId: string) {
+    static async getCredit( creditId: string) {
         try {
-            console.log("getting credit")
-            const response = await fetch(`${magicConsts.getCreditEndpoint}?id=${creditId}&userId=${token}`)
+            const response = await fetch(`${magicConsts.getCreditEndpoint}?id=${creditId}`, {
+                headers: {'Authorization': getAccessToken()}
+            })
             let data: CreditData = await response.json();
             console.log(data);
             return data
@@ -44,16 +48,16 @@ export class CreditService {
         }
     }
 
-    static async takeCredit(creditRateId: string, userId: string, accountId: string, currency: Currency, moneyAmount: number, monthPay: number) {
+    static async takeCredit(creditRateId: string, accountId: string, currency: Currency, moneyAmount: number, monthPay: number) {
         try {
             const response = await fetch(magicConsts.takeCreditEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': getAccessToken()
                 },
                 body: JSON.stringify({
                     creditRateId,
-                    userId,
                     accountId,
                     currency: Number(currency),
                     moneyAmount,
@@ -76,14 +80,15 @@ export class CreditService {
         }
     }
 
-    static async repayCredit(creditId: string, userId: string, moneyAmmount: number, currency: Currency, accountId: string) {
+    static async repayCredit(creditId: string, moneyAmmount: number, currency: Currency, accountId: string) {
         try {
             console.log()
 
-            const response = await fetch(`${magicConsts.repayCreditEndpoint}?id=${creditId}&userId=${userId}&moneyAmmount=${moneyAmmount}&currency=${currency}&accountId=${accountId}`, {
+            const response = await fetch(`${magicConsts.repayCreditEndpoint}?id=${creditId}&moneyAmmount=${moneyAmmount}&currency=${currency}&accountId=${accountId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': getAccessToken()
                 },
             })
 

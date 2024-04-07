@@ -6,6 +6,7 @@ import {CurrencySelect} from "../Selects/CurrencySelect";
 import {CreditRate,  CreditService} from "../../api/credit";
 import {mapCreditDataToItemProps} from "./Credits";
 import {AccountSelect} from "../Selects/AccountSelect";
+import {isAuthenticated} from "../../api/auth";
 
 export const TakeCredit = () => {
     const {setCreditItems} = useCredits();
@@ -44,13 +45,8 @@ export const TakeCredit = () => {
 
     const HandleTakingCredit = async () => {
         try {
-            const storedToken = localStorage.getItem('token');
-            if (!storedToken) {
-                throw new Error('No token found');
-            }
 
-            const parsedToken = JSON.parse(storedToken).token;
-            if (!parsedToken) {
+            if (!isAuthenticated()) {
                 throw new Error('Invalid token');
             }
 
@@ -62,8 +58,8 @@ export const TakeCredit = () => {
                 throw new Error('Incorrect amount of money')
             }
 
-            await CreditService.takeCredit(selectedCreditRate, parsedToken, selectedAccount, selectedCurrency, totalMoney, moneyPerMonth);
-            const credits = await CreditService.getCredits(parsedToken);
+            await CreditService.takeCredit(selectedCreditRate, selectedAccount, selectedCurrency, totalMoney, moneyPerMonth);
+            const credits = await CreditService.getCredits();
             const creditItemsData = mapCreditDataToItemProps(credits);
             setCreditItems(creditItemsData);
         } catch (error) {

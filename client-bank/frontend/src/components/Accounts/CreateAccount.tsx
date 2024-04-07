@@ -1,8 +1,9 @@
 import {ChangeEvent, useState} from "react";
-import {AccountService, Currency } from "../../api/account";
+import {AccountService, Currency} from "../../api/account";
 import {useAccounts} from "../../contexts/AccountsContext";
 import {mapAccountDataToElementProps} from "./Accounts";
 import {CurrencySelect} from "../Selects/CurrencySelect";
+import {isAuthenticated} from "../../api/auth";
 
 type OptionType = {
     value: string;
@@ -24,17 +25,14 @@ export const CreateAccount = () => {
             setSelectedCurrency(event.target.value as unknown as Currency);
         };
 
-    const storedToken = localStorage.getItem('token');
-    const parsedToken = storedToken ? JSON.parse(storedToken).token : null;
 
     const handleCreate = async () => {
-        if (!parsedToken || !selectedCurrency) {
+        if (!isAuthenticated() || !selectedCurrency)
             return;
-        }
 
         try {
-            await AccountService.createAccount(parsedToken, selectedCurrency!);
-            const accounts = await AccountService.getAccounts(parsedToken);
+            await AccountService.createAccount(selectedCurrency!);
+            const accounts = await AccountService.getAccounts();
             let AccountsElementsData = mapAccountDataToElementProps(accounts);
             setAccountElements(AccountsElementsData);
         } catch (error) {
@@ -46,7 +44,7 @@ export const CreateAccount = () => {
         <div className={"new-account-form"}>
             <h3>Create Account</h3>
             <button className={"create-account-btn"} type={"button"} onClick={handleCreate}>Create Account</button>
-            <CurrencySelect  selectedCurrency={selectedCurrency}
+            <CurrencySelect selectedCurrency={selectedCurrency}
                             setSelectedCurrency={setSelectedCurrency}/>
         </div>
     );

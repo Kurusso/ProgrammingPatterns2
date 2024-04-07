@@ -1,15 +1,16 @@
 import {User} from "../contexts/UserContext";
 import {magicConsts} from "./magicConst";
+import {getAccessToken} from "./auth";
 
 
 
 export class UserService{
-    static async  getUser(token: string): Promise<User> {
+    static async  getUser(): Promise<User> {
         const response = await fetch(`${magicConsts.getUserEndpoint}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
+                'Authorization': getAccessToken(),
             }
         });
 

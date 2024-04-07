@@ -1,6 +1,5 @@
-﻿using client_bank_backend.DTOs;
+﻿using client_bank_backend.Heplers;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using UserService.Models.DTO;
 
 namespace client_bank_backend.Controllers;
@@ -16,19 +15,16 @@ public class ProfileController : ControllerBase
         {
             var requestUri = new Uri(MagicConstants.GetUserProfileEndpoint);
 
-            foreach (var header in Request.Headers)
-            {
-                if (header.Key != "Origin" && header.Key != "Referer" && header.Key != "Host")
-                {
-                    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value.ToArray());
-                }
-            }
+            // foreach (var header in Request.Headers)
+            // {
+            //     if (header.Key != "Origin" && header.Key != "Referer" && header.Key != "Host")
+            //     {
+            //         _httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+            //     }
+            // }
 
-            // Set the Origin and Referer headers to the desired values
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Origin", "https://localhost:3000");
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Referer", "https://localhost:3000/");
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Host", "localhost:3000");
-
+            AuthHelper.CopyHeaders(Request,_httpClient);
+            
             var response = await _httpClient.GetAsync(requestUri);
 
             if (response.IsSuccessStatusCode)

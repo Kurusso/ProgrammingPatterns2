@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using client_bank_backend.Heplers;
 using CoreApplication.Models.Enumeration;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +12,11 @@ public class OperationsController:ControllerBase
     
     [HttpPost]
     [Route("Deposit")]
-    public async Task<IActionResult> Deposit(Guid accountId, Guid userId, int money, Currency currency)
+    public async Task<IActionResult> Deposit(Guid accountId, int money, Currency currency)
     {
+        var userId =await AuthHelper.Validate(_coreClient,Request);
+        if (userId == null) return Unauthorized();
+        
         try
         {
             var requestUrl = $"{MagicConstants.DepositEndpoint}?accountId={accountId}&userId={userId}&money={money}&currency={currency}";
@@ -36,8 +40,11 @@ public class OperationsController:ControllerBase
 
     [HttpPost]
     [Route("Withdraw")]
-    public async Task<IActionResult> Withdraw(Guid accountId, Guid userId, int money, Currency currency)
+    public async Task<IActionResult> Withdraw(Guid accountId, int money, Currency currency)
     {
+        var userId =await AuthHelper.Validate(_coreClient,Request);
+        if (userId == null) return Unauthorized();
+        
         try
         {
             var requestUrl = $"{MagicConstants.WithdrawEndpoint}?accountId={accountId}&userId={userId}&money={money}&currency={currency}";

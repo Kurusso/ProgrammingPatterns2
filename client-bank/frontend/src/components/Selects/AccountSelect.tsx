@@ -25,7 +25,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({selectedAccount, se
                     throw new Error('Invalid token');
                 }
 
-                const accounts = await AccountService.getAccounts(parsedToken);//getAccounts
+                const accounts = await AccountService.getAccounts();//getAccounts
                 let AccountsElementsData = mapAccountDataToElementProps(accounts);
                 setAccountElements(AccountsElementsData);
             } catch (e) {

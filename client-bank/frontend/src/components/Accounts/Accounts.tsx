@@ -2,27 +2,25 @@ import {useEffect} from "react";
 import {AccountData, AccountService} from "../../api/account";
 import {AccountItem, AccountItemProps} from "./AccountItem";
 import {useAccounts} from "../../contexts/AccountsContext";
+import {isAuthenticated} from "../../api/auth";
 
 export const Accounts = () => {
 
-    const { accountElements, setAccountElements } = useAccounts();
+    const {accountElements, setAccountElements} = useAccounts();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const storedToken = localStorage.getItem('token');
-                if (storedToken) {
-                    const parsedToken = JSON.parse(storedToken).token;
-                    if (parsedToken) {
 
-                        const accounts = await AccountService.getAccounts(parsedToken);//getAccounts
-                        let AccountsElementsData = mapAccountDataToElementProps(accounts);
-                        setAccountElements(AccountsElementsData);
-                        console.log('Fetched accounts:', accounts);
-                    }
-                } else {
-                    console.log('No token found');
-                }
+                if (!isAuthenticated())
+                    return;
+
+                const accounts = await AccountService.getAccounts();
+                let AccountsElementsData = mapAccountDataToElementProps(accounts);
+                setAccountElements(AccountsElementsData);
+                console.log('Fetched accounts:', accounts);
+
+
             } catch (error) {
                 console.error('Error fetching accounts:', error);
             }
@@ -30,13 +28,14 @@ export const Accounts = () => {
 
         fetchData()
 
-        }, []);
+    }, []);
 
 
     return (
-        <div className={"accounts"}><h5>Accounts</h5>
+        <div className={"accounts"}>
+            <h3>Accounts</h3>
             <div className={"accounts-items"}>{
-                accountElements.map(item=>(
+                accountElements.map(item => (
                     <AccountItem
                         key={item.AccountId} // Set a unique key
                         AccountId={item.AccountId}
@@ -49,10 +48,10 @@ export const Accounts = () => {
     );
 };
 
-export function mapAccountDataToElementProps(accountDataArray: AccountData[]): AccountItemProps[]{
+export function mapAccountDataToElementProps(accountDataArray: AccountData[]): AccountItemProps[] {
     return accountDataArray.map(accountData => {
-        const { id, money, } = accountData;
-        const { amount, currency } = money;
+        const {id, money,} = accountData;
+        const {amount, currency} = money;
 
         return {
             AccountId: id,

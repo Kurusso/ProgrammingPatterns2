@@ -75,8 +75,7 @@ public class AuthController(
 
     [HttpGet("validate")]
     [Authorize(
-        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
-        Roles = IdentityConfigurator.StaffRole
+        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme
     )]
     public ActionResult<string> Validate(string role) {
         if (role != null && User.IsInRole(role)) {

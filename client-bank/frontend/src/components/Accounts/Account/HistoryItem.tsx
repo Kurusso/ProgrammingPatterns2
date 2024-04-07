@@ -1,12 +1,12 @@
 import {Currency, OperationsHistory, OperationType} from "../../../api/account";
 
 export const HistoryItem: React.FC<OperationsHistory> = ({
-                                                            id,
-                                                            accountId,
-                                                            operationType,
-                                                            moneyAmmountInAccountCurrency,
-                                                            moneyAmmount
-                                                        }) => {
+                                                             id,
+                                                             accountId,
+                                                             operationType,
+                                                             moneyAmmountInAccountCurrency,
+                                                             moneyAmmount
+                                                         }) => {
     return (
         <div className={"history-item"}>
             <div>OperationType: {OperationType[operationType]}</div>
