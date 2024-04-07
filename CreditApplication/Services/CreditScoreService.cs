@@ -37,6 +37,7 @@ namespace CreditApplication.Services
         public CreditScoreService(IConfiguration configuration, CreditDbContext context)
         {
             _context = context;
+            _options = new CreditScoreOptions();
             configuration.GetSection("CreditScoreOptions").Bind(_options);
         }
 
