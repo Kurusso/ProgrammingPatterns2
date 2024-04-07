@@ -78,8 +78,12 @@ public class AuthController(
         AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
         Roles = IdentityConfigurator.StaffRole
     )]
-    public async Task<ActionResult<string>> Validate() {
-        return Ok(User.FindFirstValue("sub").ToString());
+    public ActionResult<string> Validate(string role) {
+        if (role != null && User.IsInRole(role)) {
+            return Ok(User.FindFirstValue("sub").ToString());
+        }
+
+        return Problem("Forbidden", statusCode: 403);
     } 
 
 }

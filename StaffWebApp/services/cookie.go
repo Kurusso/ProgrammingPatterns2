@@ -59,7 +59,7 @@ func GetUserId(ctx context.Context, accessToken string) (string, error) {
 	userId, err := makeRequestWithHeaders(
 		ctx,
 		"GET",
-		reqUrl,
+		reqUrl+"?role=Staff",
 		headers,
 	)
 	return userId, err
