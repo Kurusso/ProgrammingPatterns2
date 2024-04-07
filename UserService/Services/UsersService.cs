@@ -80,14 +80,11 @@ public class UsersService(
         await _dbcontext.SaveChangesAsync();
     }
 
-    public bool CanSeeUser(AuthenticateResult authResult, Guid userId) {
-        if (!authResult.Succeeded)
-            return false;
-
-        var id = authResult.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+    public bool CanSeeUser(ClaimsPrincipal authUser, Guid userId) {
+        var id = authUser.FindFirstValue(ClaimTypes.NameIdentifier);
         if (id == null)
             return false;
         
-        return authResult.Principal.IsInRole(IdentityConfigurator.StaffRole) || userId.ToString() == id;       
+        return authUser.IsInRole(IdentityConfigurator.StaffRole) || userId.ToString() == id;       
     }
 }
