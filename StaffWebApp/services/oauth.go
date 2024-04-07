@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/url"
 	"staff-web-app/config"
-	"staff-web-app/logger"
 	"strings"
 )
 
@@ -36,8 +35,6 @@ func RetrieveOauth2Token(ctx context.Context, code string) (string, error) {
 	queryParams.Add("redirect_uri", redirectCallback)
 
 	buffer := strings.NewReader(queryParams.Encode())
-	logger.Default.Debug(requestUrl)
-	logger.Default.Debug(buffer)
 	err := makeRequestParseBodyWithHeaders(
 		ctx,
 		"POST",
@@ -46,7 +43,6 @@ func RetrieveOauth2Token(ctx context.Context, code string) (string, error) {
 		&value,
 		headers,
 	)
-	logger.Default.Info(value)
 	if err != nil {
 		return "", err
 	}

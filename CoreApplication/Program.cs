@@ -4,7 +4,9 @@ using CoreApplication.Hubs;
 using CoreApplication.Initialization;
 using CoreApplication.Models;
 using CoreApplication.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,7 @@ services.AddScoped<IMoneyOperationsService, MoneyOperationsService>();
 services.AddScoped<IUserService, UserService>();
 services.AddSwaggerGen();
 services.AddSignalR();
+services.AddSingleton<CustomWebSocketManager>();
 services.AddHostedService<OperationsListener>();
 services.AddDbContext<CoreDbContext>(options =>
     options.UseNpgsql(
@@ -39,9 +42,16 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection();
-
+app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<ClientOperationsHub>("/api/client");
+app.MapHub<ClientOperationsHub>($"/client");//{configuration.GetSection("SignalRPath")}/client
+
+app.UseWebSockets();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("/ws", app.Services.GetRequiredService<CustomWebSocketManager>().HandleWebSocket);
+});
+
 BankAccountInitializer.InitializeBankAccount( app.Services, configuration);
 app.Run();

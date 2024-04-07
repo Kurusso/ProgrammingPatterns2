@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"staff-web-app/components/clients"
@@ -141,8 +140,8 @@ func WsUpdateAccountOperations(
 	}
 	defer wsConn.Close()
 
-	pingTimer := time.NewTicker(30 * time.Second)
-	defer pingTimer.Stop()
+	answCh := make(chan wsAnswer)
+	go readWsMessage(wsConn, answCh)
 
 	for {
 		select {
@@ -150,12 +149,14 @@ func WsUpdateAccountOperations(
 			if !ok {
 				return
 			}
+
 			wsWritter, err := wsConn.NextWriter(websocket.TextMessage)
 			if err != nil {
 				logger.Default.Error("failed to create wsWriter")
 				return
 			}
-
+			logger.Default.Info("sending new account info")
+			account.SortOperationsByDate()
 			err = clients.OperationList(account).Render(r.Context(), wsWritter)
 			if err != nil {
 				logger.Default.Error("failed to write html template to ws: ", err)
@@ -167,10 +168,8 @@ func WsUpdateAccountOperations(
 				logger.Default.Error("error during wsWritter close: ", err)
 			}
 
-		case <-pingTimer.C:
-			err = wsConn.WriteMessage(websocket.PingMessage, nil)
-			if err != nil {
-				logger.Default.Error("ws ping failed")
+		case _, ok := <-answCh:
+			if !ok {
 				return
 			}
 		}
@@ -178,36 +177,98 @@ func WsUpdateAccountOperations(
 	}
 }
 
+type wsAnswer struct {
+	message     []byte
+	messageType int
+}
+
+func wsSendHeartBeat(wsConn *websocket.Conn) {
+	for i := 0; ; i++ {
+		err := wsConn.WriteMessage(websocket.TextMessage, []byte(strconv.Itoa(i)))
+		if err != nil {
+			return
+		}
+		time.Sleep(5 * time.Second)
+	}
+}
+
 func WsLoadAccountOperations(
 	r *http.Request,
+	userId string,
+	accountId string,
 	updates chan *models.AccountDetailed,
 	clientQuit chan bool,
 ) {
 	defer close(updates)
+	logger.Default.Info("new ws connection for ", accountId)
+	defer logger.Default.Info("ws connection closed")
 
-	var account = models.AccountDetailed{}
-	account.Id = "test"
-	account.UserId = "userId"
-	account.Money.Amount = 1200
-	account.Money.Currency = models.Ruble
+	queryParams := url.Values{}
+	queryParams.Add("userId", userId)
+	requestUrl := config.Default.CoreWsUrl + "?" + queryParams.Encode()
 
-	for i := 100; i < 110; i++ {
-		time.Sleep(2 * time.Second)
-		i := rand.Int() % 2
-		var t models.OperationType
-		if i == 0 {
-			t = models.Deposit
-		} else {
-			t = models.Withdraw
+	wsConn, _, err := websocket.DefaultDialer.DialContext(r.Context(), requestUrl, nil)
+	if err != nil {
+		logger.Default.Error("failed to connect to websocket: ", err)
+		return
+	}
+	defer func() {
+		wsConn.WriteMessage(
+			websocket.CloseMessage,
+			websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
+		)
+		time.Sleep(3 * time.Second)
+		wsConn.Close()
+	}()
+
+	wsConn.SetPongHandler(func(appData string) error {
+		wsConn.WriteControl(websocket.PongMessage, []byte{}, time.Now().Add(35*time.Second))
+		logger.Default.Debug("PONG")
+		return nil
+	})
+
+	msgCh := make(chan wsAnswer)
+	go readWsMessage(wsConn, msgCh)
+	go wsSendHeartBeat(wsConn)
+
+	account, err := LoadAccountOperationHistory(r.Context(), accountId, userId)
+	if err != nil {
+		logger.Default.Error("failed to load accounts details: ", err)
+		return
+	}
+	updates <- account
+
+	for {
+		select {
+		case msg, ok := <-msgCh:
+			if !ok {
+				logger.Default.Info("msg channel closed")
+				return
+			}
+			var accountUpdate models.AccountDetailed
+			err = json.Unmarshal(msg.message, &accountUpdate)
+			if err != nil {
+				logger.Default.Error("failed to unmarshal ws message: ", err)
+			} else if accountUpdate.Id == accountId {
+				updates <- &accountUpdate
+			}
+		case <-clientQuit:
+			logger.Default.Info("client quit, closing socket")
+			return
+		}
+	}
+}
+
+func readWsMessage(wsConn *websocket.Conn, msgCh chan<- wsAnswer) {
+	for {
+		t, msg, err := wsConn.ReadMessage()
+		if t == websocket.CloseMessage || err != nil {
+			logger.Default.Info("closing websocket: reason - other party")
+			close(msgCh)
+			return
 		}
 
-		account.Operations = append(account.Operations, models.Operation{
-			Type:           t,
-			Money:          models.Money{float64(100 + i), models.Euro},
-			ConvertedMoney: float64(100 + i),
-			Date:           "2024-03-31",
-		})
-		updates <- &account
+		msgCh <- wsAnswer{message: msg, messageType: t}
 	}
 
 }

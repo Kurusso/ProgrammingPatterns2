@@ -13,20 +13,24 @@ import (
 
 const CookieName = "StaffWebAppSession"
 
-func CheckSessionCookie(r *http.Request) bool {
+func CheckSessionCookie(r *http.Request) string {
 	cookie, err := r.Cookie(CookieName)
 	if err != nil {
-		return false
+		return ""
 	}
 
 	dbctx := repository.NewDbContext(r.Context())
 	accessToken, err := dbctx.GetTokenBySessionId(r.Context(), cookie.Value)
 	if err != nil {
-		return false
+		return ""
 	}
 
-	_, err = GetUserId(r.Context(), accessToken.String)
-	return err == nil
+	userId, err := GetUserId(r.Context(), accessToken.String)
+	if err != nil {
+		return ""
+	}
+
+	return userId
 }
 
 func RandomString(length int) string {

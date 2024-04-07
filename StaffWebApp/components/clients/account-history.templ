@@ -15,17 +15,27 @@ templ OperationList(accountInfo *models.AccountDetailed) {
 		for _, operation := range accountInfo.Operations {
 			<tr
 				class={ templ.KV("table-success", operation.Type == models.Deposit),
-					templ.KV("table-danger", operation.Type == models.Withdraw) }
+					templ.KV("table-danger", operation.Type == models.Withdraw),
+					"table-primary" }
 			>
 				<td>{ models.PrettifyDate(operation.Date) } </td>
-				<td>{ operation.Money.String() } </td>
-				<td>{ fmt.Sprintf("%g%s", operation.ConvertedMoney, accountInfo.Money.Currency.ToIcon()) } </td>
+				<td>{ operation.Type.OperationSign() + operation.Money.String() } </td>
+				<td>{ fmt.Sprintf("%s%g%s", 
+						operation.Type.OperationSign(), 
+						operation.ConvertedMoney, 
+						accountInfo.Money.Currency.ToIcon(),
+					)} 
+				</td>
 				<td>
 					switch operation.Type {
 						case models.Deposit:
 							{ "Пополнение" }
 						case models.Withdraw:
 							{ "Снятие" }
+						case models.TransferGet:
+							{ "Входящий перевод" }
+						case models.TransferSend:
+							{ "Исходящий перевод" }
 					}
 				</td>
 			</tr>
@@ -54,11 +64,7 @@ templ accountHistoryModal() {
 								<th scope="col">Тип операции</th>
 							</tr>
 						</thead>
-						<tbody
-							id={ operationsTbodyId }
-							hx-ext="ws"
-							ws-connect="/api/clients/7cb47af1-a516-43f4-9702-35c5a08c5e61/accounts/e988170e-c53f-4e2d-80a0-4e963e38adf6/operations"
-						>
+						<tbody id={ operationsTbodyId } >
 							//OperationList will be loaded here
 							<tr>
 								<td colspan="3" class="text-center">
