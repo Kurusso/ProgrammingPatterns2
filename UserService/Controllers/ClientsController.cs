@@ -68,9 +68,8 @@ public class ClientsController(UsersService us) : Controller
     )]
     public async Task<ActionResult<UserDTO>> ClientInfo(Guid id)
     {
-        var auth = await HttpContext.AuthenticateAsync();
-        if (!_userService.CanSeeUser(auth, id))
-            return Forbid();
+        if (!_userService.CanSeeUser(User, id))
+            return Problem("Forbidden", statusCode: 403);
     
         try
         {
