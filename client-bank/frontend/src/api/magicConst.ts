@@ -8,7 +8,7 @@ export class magicConsts {
     static getAccountEndpoint = this.base_url + "/api/Account/GetInfo/";
     static createAccountEndpoint = this.base_url + "/api/Account/Create";
     static closeAccountEndpoint = this.base_url + "/api/Account/Close";
-    static getUserEndpoint = this.base_url + "/api/Profile";
+    static getUserEndpoint = this.base_url + "/api/Profile/clientinfo";
 
     //Operations
     static depositEndpoint = this.base_url + "/api/Operations/Deposit";

@@ -8,12 +8,12 @@ using UserService.Helpers;
 using UserService.Models.DTO;
 using UserService.Services;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
+
 // using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
 
 namespace UserService.Controllers;
 
 [Route("api/clients")]
-
 public class ClientsController(UsersService us) : Controller
 {
     private readonly UsersService _userService = us;
@@ -63,28 +63,22 @@ public class ClientsController(UsersService us) : Controller
         }
     }
 
-    [HttpGet("info")]
+    [HttpGet("info/{id:guid?}")]
     [Authorize(
         AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme,
         Roles = IdentityConfigurator.ClientRole
     )]
-    public async Task<ActionResult<UserDTO>> ClientInfo()
+    public async Task<ActionResult<UserDTO>> ClientInfo(Guid? id)
     {
-
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-            return Unauthorized();
-
-        if (!Guid.TryParse(userIdClaim.Value, out var id))
-            return Unauthorized();
-
+        id ??= new Guid(User.FindFirstValue("sub"));
+        
         var auth = await HttpContext.AuthenticateAsync();
-        if (!_userService.CanSeeUser(auth, id))
+        if (!_userService.CanSeeUser(auth, id.Value))
             return Forbid();
 
         try
         {
-            var client = await _userService.UserInfo(id);
+            var client = await _userService.UserInfo(id.Value);
             return Ok(client);
         }
         catch (BackendException be)
@@ -96,6 +90,8 @@ public class ClientsController(UsersService us) : Controller
             return Problem("Unknown server error", statusCode: 500);
         }
     }
+
+   
 
     [HttpDelete("{id}")]
     [Authorize(
@@ -119,4 +115,3 @@ public class ClientsController(UsersService us) : Controller
         }
     }
 }
- 

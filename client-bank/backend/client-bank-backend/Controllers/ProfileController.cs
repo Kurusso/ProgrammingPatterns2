@@ -11,33 +11,38 @@ public class ProfileController : ControllerBase
 {
     private readonly HttpClient _httpClient = new();
 
-    [HttpGet("clientinfo")]
-    public async Task<IActionResult> GetClientInfo()
-    {
-        var requestUri = new Uri(MagicConstants.GetUserProfileEndpoint);
-
-        foreach (var header in Request.Headers)
+        [HttpGet("clientinfo")]
+        public async Task<IActionResult> GetClientInfo()
         {
-            if (header.Key != "Origin" && header.Key != "Referer" && header.Key != "Host")
+            var requestUri = new Uri(MagicConstants.GetUserProfileEndpoint);
+
+            foreach (var header in Request.Headers)
             {
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+                if (header.Key != "Origin" && header.Key != "Referer" && header.Key != "Host")
+                {
+                    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+                }
             }
+
+            // Set the Origin and Referer headers to the desired values
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Origin", "https://localhost:3000");
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Referer", "https://localhost:3000/");
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Host", "localhost:3000");
+
+            var response = await _httpClient.GetAsync(requestUri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var userDto = await response.Content.ReadFromJsonAsync<UserDTO>();
+                if (userDto != null)
+                {
+                    return Ok(userDto);
+                }
+            }
+
+            // Return the status code and message from the endpoint
+            var message = await response.Content.ReadAsStringAsync();
+            return StatusCode((int)response.StatusCode, message);
         }
-
-        // Set the Origin and Referer headers to the desired values
-        _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Origin", "https://localhost:3000");
-        _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Referer", "https://localhost:3000/");
-        _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Host", "localhost:3000");
-
-        var userDto = await _httpClient.GetFromJsonAsync<UserDTO>(requestUri);
-
-        if (userDto != null)
-        {
-            return Ok(userDto);
-        }
-
-        return StatusCode(StatusCodes.Status500InternalServerError);
-    }
 
 }
-       
