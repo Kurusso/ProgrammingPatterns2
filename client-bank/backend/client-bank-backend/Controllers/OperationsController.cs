@@ -66,6 +66,40 @@ public class OperationsController:ControllerBase
         }
     }
     
-    
+    [HttpPost]
+    [Route("transfer")]
+    public async Task<IActionResult> Transfer(Guid accountId, int money, Currency currency, Guid reciveAccountId)
+    {
+        var userId =await AuthHelper.Validate(_coreClient,Request);
+        if (userId == null) return Unauthorized();
+        
+        
+        using (var client = new HttpClient())
+        {
+            client.BaseAddress = new Uri(MagicConstants.TransferEndpoint);
+
+            var content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("accountId", accountId.ToString()),
+                new KeyValuePair<string, string>("userId", userId.ToString()),
+                new KeyValuePair<string, string>("money", money.ToString()),
+                new KeyValuePair<string, string>("currency", currency.ToString()),
+                new KeyValuePair<string, string>("reciveAccountId", reciveAccountId.ToString())
+            });
+
+            var result = await client.PostAsync("/Transfer", content);
+            string resultContent = await result.Content.ReadAsStringAsync();
+
+            if (result.IsSuccessStatusCode)
+            {
+                return Ok(resultContent);
+            }
+            else
+            {
+                return Problem(statusCode: (int)result.StatusCode, detail: resultContent);
+            }
+        }
+    }
+
     
 }

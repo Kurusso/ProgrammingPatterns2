@@ -12,6 +12,10 @@ public static class MagicConstants
     public static readonly string CloseAccountEndpoint = BaseUrlCore +"/api/Account/Close";
     public static readonly string DepositEndpoint = BaseUrlCore +"/api/Operations/Deposit";
     public static readonly string WithdrawEndpoint = BaseUrlCore +"/api/Operations/Withdraw";
+    public static readonly string TransferEndpoint = BaseUrlCore +"/api/Operations/Transfer";
+    
+    //https://localhost:7143/api/Operations/Transfer
+    
     
     public static readonly string GetCreditRatesEndpoint = BaseUrlCredit +"/api/CreditRates/GetAll"; 
     public static readonly string TakeCreditEndpoint = BaseUrlCredit +"/api/Credit/Take"; 
