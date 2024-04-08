@@ -100,6 +100,7 @@ namespace CreditApplication.Services
                 UserId = userId,
                 MoneyAmmount = money.Amount,
                 RecieverAccount = _bankBaseAccount,
+                OperationType = OperationType.TransferSend,
             });
             await tracker.WaitFor(trackingId.ToString(), TimeSpan.FromSeconds(10));
             var message = tracker.Get(trackingId.ToString())!;
@@ -151,9 +152,12 @@ namespace CreditApplication.Services
             };
 
             //var response = await _coreClient.PostAsync(_transferApiRoute + "?accountId=" + _bankBaseAccount + "&userId=" + _bankBaseAccountUser + "&money=" + money.Amount + "&currency=" + money.Currency + "&reciveAccountId=" + creditDTO.AccountId, null);
-
+            var trackingId = Guid.NewGuid();
+            var tracker = new ScopedConfirmationMessageFeedbackTracker();
+            tracker.Track(trackingId.ToString());
             _rabbitMqOperationService.SendMessage(new OperationPostDTO
             {
+                Id = trackingId,
                 UserId = _bankBaseAccountUser,
                 AccountId = _bankBaseAccount,
                 MoneyAmmount = money.Amount,
@@ -161,6 +165,16 @@ namespace CreditApplication.Services
                 RecieverAccount = creditDTO.AccountId,
                 OperationType = OperationType.TransferSend,
             });
+            await tracker.WaitFor(trackingId.ToString(), TimeSpan.FromSeconds(10));
+            var message = tracker.Get(trackingId.ToString())!;
+            if (message.Status != 200)
+            {
+                if (message.Status == 400)
+                {
+                    throw new InvalidOperationException(message.Message);
+                }
+                throw new TransactionException(message.Message);
+            }
 
             await _context.Credits.AddAsync(credit);
             await _context.SaveChangesAsync();

@@ -56,11 +56,6 @@ namespace CreditApplication.Services
                            routingKey: _queueTransactions,
                            basicProperties: null,
                            body: body);
-                //channel.WaitForConfirmsOrDie();
-                if (!channel.WaitForConfirms())
-                {
-                    throw new TransactionException();
-                }
             }
         }
     }
