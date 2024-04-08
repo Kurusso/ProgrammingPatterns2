@@ -9,7 +9,7 @@
         {
             UserId = record.UserId;
             Score = record.Score;
-            UpdateHistory = record.ScoreUpdateHistory.Any() ?
+            UpdateHistory = record.ScoreUpdateHistory?.Any() == true ?
                 record.ScoreUpdateHistory.Select(x => new CreditScoreUpdateDTO(x)).ToList()
                 : null;
         }

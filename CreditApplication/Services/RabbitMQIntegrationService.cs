@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text;
 using Microsoft.Extensions.Options;
+using System.Transactions;
 
 namespace CreditApplication.Services
 {
@@ -10,6 +11,14 @@ namespace CreditApplication.Services
         void SendMessage(object obj);
         void SendMessage(string message);
     }
+
+    public class ConfirmationMessage
+    {
+        public int Status { get; set; }
+        public string MessageTrackNumber { get; set; }
+        public string Message { get; set; }
+    }
+
     public class RabbitMQIntegrationService : IRabbitMqService
     {
         private readonly string _rabbitMQConnection;
@@ -19,7 +28,7 @@ namespace CreditApplication.Services
         public RabbitMQIntegrationService(IConfiguration configuration, IOptions<JsonSerializerOptions> jsonSerializerOptions)
         {
             var section = configuration.GetSection("RabbitMQ");
-            _rabbitMQConnection = section["HostName"];
+            _rabbitMQConnection = section["Connection"];
             _queueTransactions = section["TransactionQueue"];
             _jsonSerializerOptions = jsonSerializerOptions.Value;
         }
@@ -32,7 +41,7 @@ namespace CreditApplication.Services
 
         public void SendMessage(string message)
         {
-            var factory = new ConnectionFactory() { HostName = _rabbitMQConnection };
+            var factory = new ConnectionFactory() { Uri = new Uri(_rabbitMQConnection) };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -43,11 +52,15 @@ namespace CreditApplication.Services
                                arguments: null);
 
                 var body = Encoding.UTF8.GetBytes(message);
-
                 channel.BasicPublish(exchange: "",
                            routingKey: _queueTransactions,
                            basicProperties: null,
                            body: body);
+                //channel.WaitForConfirmsOrDie();
+                if (!channel.WaitForConfirms())
+                {
+                    throw new TransactionException();
+                }
             }
         }
     }

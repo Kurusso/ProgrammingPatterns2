@@ -6,6 +6,7 @@ using CreditApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using System.Transactions;
 
 namespace CreditApplication.Controllers
 {
@@ -77,6 +78,10 @@ namespace CreditApplication.Controllers
             catch (ArgumentException ex)
             {
                 return Problem(statusCode: 401, detail: ex.Message);
+            }
+            catch (TransactionException)
+            {
+                return Problem(statusCode: 401, detail: nameof(TransactionException));
             }
             catch (Exception ex)
             {

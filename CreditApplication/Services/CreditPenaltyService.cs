@@ -1,10 +1,12 @@
 ﻿using Common.Helpers;
 using Common.Models;
 using Common.Models.Enumeration;
+using CreditApplication.Helpers;
 using CreditApplication.Models;
 using CreditApplication.Models.Dtos;
 using CreditApplication.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace CreditApplication.Services
 {
@@ -119,15 +121,25 @@ namespace CreditApplication.Services
             }
 
             //var response = await _coreClient.PostAsync(_transferApiRoute + "?accountId=" + accountId + "&userId=" + userId + "&money=" + money.Amount + "&currency=" + currency + "&reciveAccountId=" + _bankBaseAccount, null);
+            var trackingId = Guid.NewGuid();
+            var tracker = new ScopedConfirmationMessageFeedbackTracker();
+            tracker.Track(trackingId.ToString());
             _rabbitMqOperationService.SendMessage(new OperationPostDTO
             {
+                Id = trackingId,
                 AccountId = accountId ?? penalty.Credit.PayingAccountId,
                 UserId = userId,
                 MoneyAmmount = money.Amount,
                 Currency = currency,
                 RecieverAccount = _bankBaseAccount,
-            });
+            }) ;
 
+            await tracker.WaitFor(trackingId.ToString(), TimeSpan.FromSeconds(10));
+            var message = tracker.Get(trackingId.ToString())!;
+            if(message.Status != 200)
+            {
+                throw new TransactionException(message.Message);
+            }
             //TODO: penalty.PayoffOperationId = await response.Content.ReadAsStringAsync();
             penalty.IsPaidOff = true;
             credit.UnpaidDebt -= penalty.Amount;
