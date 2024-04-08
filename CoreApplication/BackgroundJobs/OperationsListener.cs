@@ -33,7 +33,7 @@ namespace CoreApplication.BackgroundJobs
             _channel = _connection.CreateModel();
             _deliveryConfirmationChannel = _connection.CreateModel();
             _channel.QueueDeclare(queue: _rabbitMqConfigurations.QueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            _deliveryConfirmationChannel.QueueDeclare(queue: _rabbitMqConfigurations.SecondQueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            _deliveryConfirmationChannel.ExchangeDeclare(exchange: _rabbitMqConfigurations.SecondQueName, type: "direct", durable: false, autoDelete: false, arguments: null);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
