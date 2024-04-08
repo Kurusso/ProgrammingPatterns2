@@ -4,7 +4,7 @@ namespace CreditApplication.Models.DTOs
 {
     public class OperationPostDTO
     {
-        //public Guid Id { get; set; }
+        public Guid Id { get; set; }
         public Guid AccountId { get; set; }
         public Guid UserId { get; set; }
         public Guid? RecieverAccount { get; set; }

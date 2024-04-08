@@ -1,6 +1,8 @@
+using CoreApplication.BackgroundJobs;
 using CreditApplication.Models;
 using CreditApplication.Quartz;
 using CreditApplication.Services;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json.Serialization;
@@ -19,6 +21,7 @@ services.AddScoped<IUserService, UserService>();
 services.AddScoped<ICreditPenaltyService, CreditPenaltyService>();
 services.AddScoped<ICreditScoreService, CreditScoreService>();
 services.AddScoped<IRabbitMqService, RabbitMQIntegrationService>();
+services.AddHostedService<RabbitMQFeedbackListener>();
 services.AddSwaggerGen();
 services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
         configuration.GetConnectionString("DefaultConnection")

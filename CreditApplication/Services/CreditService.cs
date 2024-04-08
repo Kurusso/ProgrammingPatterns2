@@ -5,6 +5,8 @@ using CreditApplication.Models.Dtos;
 using CreditApplication.Models.DTOs;
 using Common.Helpers;
 using Microsoft.EntityFrameworkCore;
+using CreditApplication.Helpers;
+using System.Transactions;
 
 namespace CreditApplication.Services
 {
@@ -19,7 +21,6 @@ namespace CreditApplication.Services
     public class CreditService : ICreditService
     {
         private readonly CreditDbContext _context;
-        private readonly HttpClient _coreClient;
         private readonly Guid _bankBaseAccount;
         private readonly Guid _bankBaseAccountUser;
         private readonly IUserService _userService;
@@ -29,10 +30,9 @@ namespace CreditApplication.Services
         public CreditService(IConfiguration configuration, CreditDbContext context, IUserService userService, ICreditPenaltyService penaltyService, ICreditScoreService creditScoreService, IRabbitMqService rabbitMqService)
         {
             var coreSection = configuration.GetSection("CoreApplication");
-            _context = context;            
+            _context = context;
             Guid.TryParse(coreSection["BaseAccountId"], out _bankBaseAccount);
             Guid.TryParse(coreSection["BaseAccountUserId"], out _bankBaseAccountUser);
-            _coreClient = new HttpClient();
             _userService = userService;
             _penaltyService = penaltyService;
             _creditScoreService = creditScoreService;
@@ -89,14 +89,28 @@ namespace CreditApplication.Services
             }
 
             //var response = await _coreClient.PostAsync(_transferApiRoute + "?accountId=" + notNullAccountId + "&userId=" + userId + "&money=" + money.Amount + "&currency=" + currency + "&reciveAccountId=" + _bankBaseAccount, null);
+            var trackingId = Guid.NewGuid();
+            var tracker = new ScopedConfirmationMessageFeedbackTracker();
+            tracker.Track(trackingId.ToString());
             _rabbitMqOperationService.SendMessage(new OperationPostDTO
             {
+                Id = trackingId,
                 AccountId = notNullAccountId,
                 Currency = currency,
                 UserId = userId,
                 MoneyAmmount = money.Amount,
-                RecieverAccount = _bankBaseAccount,                
+                RecieverAccount = _bankBaseAccount,
             });
+            await tracker.WaitFor(trackingId.ToString(), TimeSpan.FromSeconds(10));
+            var message = tracker.Get(trackingId.ToString())!;
+            if (message.Status != 200)
+            {
+                if (message.Status == 400)
+                {
+                    throw new InvalidOperationException(message.Message);
+                }
+                throw new TransactionException(message.Message);
+            }
 
             credit.RemainingDebt = credit.RemainingDebt - money;
             await _creditScoreService.UpdateUserCreditScore(credit.UserId, CreditScoreUpdateReason.CreditPaymentMade, baseSum: money);
@@ -184,9 +198,13 @@ namespace CreditApplication.Services
                 {
                     await RepayCredit(credit.Id, credit.UserId, credit.MonthPayAmount.Amount, null, credit.MonthPayAmount.Currency, true);
                 }
-                catch
+                catch (InvalidOperationException)
                 {
                     await _penaltyService.ApplyPenalties(credit, credit.MonthPayAmount);
+                }
+                catch (Exception)
+                {
+
                 }
                 credit.RemainingDebt.Amount = (credit.RemainingDebt.Amount * (credit.CreditRate.MonthPercent + 1));
                 _context.Credits.Update(credit);
