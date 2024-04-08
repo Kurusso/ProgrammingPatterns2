@@ -29,5 +29,28 @@ export class TransactionService {
 
     }
 
-    static async TransferMoney(){}
+    static async TransferMoney(accountId: string, money: number, currency: Currency, reciveAccountId: string) {
+
+        try {
+            let requestUrl = `${magicConsts.transferEndpoint}?accountId=${accountId}&money=${money}&currency=${currency}&reciveAccountId=${reciveAccountId}`
+
+            const response = await fetch(requestUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': getAccessToken(),
+                }
+            });
+
+            console.log(response)
+            if (!response.ok) {
+                const message = `An error has occurred: ${response.status}`;
+                throw new Error(message);
+            }
+        } catch (error) {
+            console.error('An error occurred while performing transaction')
+            throw error;
+        }
+
+    }
 }

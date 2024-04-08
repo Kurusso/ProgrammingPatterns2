@@ -3,6 +3,8 @@ import {AccountSelect} from "../Selects/AccountSelect";
 import {CurrencyInput} from "../Input/CurrencyInput";
 import {Currency} from "../../api/account";
 import {CurrencySelect} from "../Selects/CurrencySelect";
+import {isAuthenticated} from "../../api/auth";
+import {TransactionService} from "../../api/transaction";
 
 export const TransferMoney = () => {
     const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -15,7 +17,20 @@ export const TransferMoney = () => {
     };
 
     function handleTransfer() {
+        if(!isAuthenticated())
+            return;
+        if(!selectedCurrency)
+            throw new Error('Currency not selected')
+        if(!selectedAccount)
+            throw new Error ('Account not selected')
 
+        if(accountToTransfer=='')
+            throw new Error('Empty Account to Transfer ')
+
+        if(transferMoney<=0||!transferMoney)
+            throw new Error('Incorrect Money amount')
+
+        TransactionService.TransferMoney(selectedAccount,transferMoney,selectedCurrency,accountToTransfer);
     }
 
     return (

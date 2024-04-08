@@ -13,6 +13,7 @@ export class magicConsts {
     //Operations
     static depositEndpoint = this.base_url + "/api/Operations/Deposit";
     static withdrawEndpoint = this.base_url + "/api/Operations/Withdraw";
+    static transferEndpoint = this.base_url + "/api/Operations/transfer";
 
     //Credits
     static getCreditsEndpoint = this.base_url + "/api/Credit/GetUserCredits";
