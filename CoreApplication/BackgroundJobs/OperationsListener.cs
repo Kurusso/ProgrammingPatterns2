@@ -47,6 +47,7 @@ namespace CoreApplication.BackgroundJobs
                 {
                     var scopedService = scope.ServiceProvider.GetRequiredService<IMoneyOperationsService>();
                     var confirmationMessage = new ConfirmationDTO();
+                    confirmationMessage.MessageTrackNumber = message?.Id.ToString() ?? ea.DeliveryTag.ToString();
                     try
                     {
                         if (message != null)
@@ -69,33 +70,27 @@ namespace CoreApplication.BackgroundJobs
                         }
 
                         confirmationMessage.Message = "";
-                        confirmationMessage.MessageTrackNumber = ea.DeliveryTag;
                         confirmationMessage.Status = 200;
-                        
                         
                     }
                     catch (InvalidOperationException ex)
                     {
                         confirmationMessage.Message = ex.Message;
-                        confirmationMessage.MessageTrackNumber = ea.DeliveryTag;
                         confirmationMessage.Status = 400;
                     }
                     catch (ArgumentException ex)
                     {
                         confirmationMessage.Message = ex.Message;
-                        confirmationMessage.MessageTrackNumber = ea.DeliveryTag;
                         confirmationMessage.Status = 400;
                     }
                     catch(KeyNotFoundException ex)
                     {
                         confirmationMessage.Message = ex.Message;
-                        confirmationMessage.MessageTrackNumber = ea.DeliveryTag;
                         confirmationMessage.Status = 404;
                     }
                     catch (Exception ex)
                     {
                         confirmationMessage.Message = ex.Message;
-                        confirmationMessage.MessageTrackNumber = ea.DeliveryTag;
                         confirmationMessage.Status = 500;
                     }
                     var deliveryConfirmationMessage = JsonConvert.SerializeObject(confirmationMessage);

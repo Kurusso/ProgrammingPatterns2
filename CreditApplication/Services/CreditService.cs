@@ -30,7 +30,7 @@ namespace CreditApplication.Services
         public CreditService(IConfiguration configuration, CreditDbContext context, IUserService userService, ICreditPenaltyService penaltyService, ICreditScoreService creditScoreService, IRabbitMqService rabbitMqService)
         {
             var coreSection = configuration.GetSection("CoreApplication");
-            _context = context;            
+            _context = context;
             Guid.TryParse(coreSection["BaseAccountId"], out _bankBaseAccount);
             Guid.TryParse(coreSection["BaseAccountUserId"], out _bankBaseAccountUser);
             _userService = userService;
@@ -99,12 +99,16 @@ namespace CreditApplication.Services
                 Currency = currency,
                 UserId = userId,
                 MoneyAmmount = money.Amount,
-                RecieverAccount = _bankBaseAccount,                
+                RecieverAccount = _bankBaseAccount,
             });
             await tracker.WaitFor(trackingId.ToString(), TimeSpan.FromSeconds(10));
             var message = tracker.Get(trackingId.ToString())!;
             if (message.Status != 200)
             {
+                if (message.Status == 400)
+                {
+                    throw new InvalidOperationException(message.Message);
+                }
                 throw new TransactionException(message.Message);
             }
 
@@ -194,9 +198,13 @@ namespace CreditApplication.Services
                 {
                     await RepayCredit(credit.Id, credit.UserId, credit.MonthPayAmount.Amount, null, credit.MonthPayAmount.Currency, true);
                 }
-                catch
+                catch (InvalidOperationException)
                 {
                     await _penaltyService.ApplyPenalties(credit, credit.MonthPayAmount);
+                }
+                catch (Exception)
+                {
+
                 }
                 credit.RemainingDebt.Amount = (credit.RemainingDebt.Amount * (credit.CreditRate.MonthPercent + 1));
                 _context.Credits.Update(credit);

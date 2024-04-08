@@ -30,7 +30,7 @@ namespace CreditApplication.Models.Dtos
             CreditRate = new CreditRateDTO(credit.CreditRate);
             FullMoneyAmount = credit.FullMoneyAmount;
             MonthPayAmount = credit.MonthPayAmount;
-            Penalties = credit.Penalties.Any() ? 
+            Penalties = credit.Penalties?.Any() == true ? 
                 credit.Penalties.Select(x=>new PenaltyDTO(x)).ToList() 
                 : null;
         }
