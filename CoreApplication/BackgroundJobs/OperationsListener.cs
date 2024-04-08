@@ -20,13 +20,15 @@ namespace CoreApplication.BackgroundJobs
         private IModel _channel;
         private IModel _deliveryConfirmationChannel;
         private IServiceProvider _provider;
+        private Uri _rabbitMqConnection;
         private readonly RabbitMqConfigurations _rabbitMqConfigurations;
         public OperationsListener(IServiceProvider provider, IOptions<RabbitMqConfigurations> rabbitMqConfigurations)
         {
 
             _rabbitMqConfigurations = rabbitMqConfigurations.Value;
+            _rabbitMqConnection = rabbitMqConfigurations.Value.Connection;
             _provider = provider;
-            var factory = new ConnectionFactory { HostName = rabbitMqConfigurations.Value.HostName };
+            var factory = new ConnectionFactory { Uri = _rabbitMqConnection };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
             _deliveryConfirmationChannel = _connection.CreateModel();

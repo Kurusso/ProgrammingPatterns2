@@ -28,7 +28,11 @@ namespace CoreApplication.Helpers
                 var accountForSend = await context.Accounts.Include(x => x.Operations).FirstOrDefaultAsync(x => x.Id == account.Id);
                 string json = JsonConvert.SerializeObject(new AccountDTO(accountForSend));
                 await _hubContext.Clients.All.SendAsync("ReceiveAccount", new AccountDTO(accountForSend));
-                await webSocketManager.SendMessageToUser(accountForSend.UserId.ToString(), json);
+                try
+                {
+                    await webSocketManager.SendMessageToUser(accountForSend.UserId.ToString(), json);
+                }
+                catch { }
                 //await _hubContext.Clients.User(accountForSend.UserId.ToString()).SendAsync("ReceiveAccount", new AccountDTO(accountForSend));
             }
 

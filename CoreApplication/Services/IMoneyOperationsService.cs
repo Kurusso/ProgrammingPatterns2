@@ -104,7 +104,7 @@ namespace CoreApplication.Services
         {
             try
             {
-                var reciverAccount = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Id == accountId);
+                var reciverAccount = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Id == reciveAccountId);
                 if (reciverAccount == null)
                 {
                     throw new KeyNotFoundException($"There is no account with this {reciveAccountId} Id!");
