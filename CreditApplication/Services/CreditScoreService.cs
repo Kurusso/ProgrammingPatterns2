@@ -4,7 +4,6 @@ using Common.Models.Enumeration;
 using CreditApplication.Models;
 using CreditApplication.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using System.Runtime.CompilerServices;
 
 namespace CreditApplication.Services
@@ -35,11 +34,11 @@ namespace CreditApplication.Services
     {
         private readonly CreditDbContext _context;
         private readonly CreditScoreOptions _options;
-        public CreditScoreService(IOptions<CreditScoreOptions> options, CreditDbContext context)
+        public CreditScoreService(IConfiguration configuration, CreditDbContext context)
         {
             _context = context;
-            //configuration.GetSection("CreditScoreOptions").Bind(_options);
-            _options = options.Value;
+            _options = new CreditScoreOptions();
+            configuration.GetSection("CreditScoreOptions").Bind(_options);
         }
 
         public async Task<bool> HasScoreRecord(Guid userId)
@@ -110,8 +109,7 @@ namespace CreditApplication.Services
                     amount -= _options.CreditTakeoutFlat;
                     if (baseSum is not null)
                     {
-                        //TODO: Apply amount correction with currency conversion
-                        //amount -= CurrencyValues.Instance.ConvertMoneyToDollarValue(baseSum) * _options.CreditTakeoutAmountCoeff;
+                        amount -= CurrencyValues.Instance.ConvertMoneyToDollarValue(baseSum) * _options.CreditTakeoutAmountCoeff;
                     }
                     break;
 
@@ -123,8 +121,7 @@ namespace CreditApplication.Services
                     amount -= _options.CreditPaymentOverdueFlat;
                     if (baseSum is not null)
                     {
-                        //TODO: Apply amount correction with currency conversion
-                        //amount -= CurrencyValues.Instance.ConvertMoneyToDollarValue(baseSum) * _options.CreditPaymentOverdueAmountCoeff;
+                        amount -= CurrencyValues.Instance.ConvertMoneyToDollarValue(baseSum) * _options.CreditPaymentOverdueAmountCoeff;
                     }
                     break;
 
@@ -136,8 +133,7 @@ namespace CreditApplication.Services
                     amount += _options.CreditPayoffFlat;
                     if (baseSum is not null)
                     {
-                        //TODO: Apply amount correction with currency conversion
-                        //amount += CurrencyValues.Instance.ConvertMoneyToDollarValue(baseSum) * _options.CreditPayoffAmountCoeff;
+                        amount += CurrencyValues.Instance.ConvertMoneyToDollarValue(baseSum) * _options.CreditPayoffAmountCoeff;
                     }
                     break;
 

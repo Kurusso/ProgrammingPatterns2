@@ -69,7 +69,12 @@ func ListUserCredits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	clients.CreditsList(credits).Render(r.Context(), w)
+	score, err := services.LoadUserCreditRating(r.Context(), userId)
+	if err != nil {
+		score = 0
+	}
+
+	clients.CreditsList(credits, score).Render(r.Context(), w)
 }
 
 const DetailedUserInfoUrlPattern = "GET /api/clients/{userId}/credits/{creditId}"

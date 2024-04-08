@@ -20,7 +20,7 @@ templ OperationList(accountInfo *models.AccountDetailed) {
 			>
 				<td>{ models.PrettifyDate(operation.Date) } </td>
 				<td>{ operation.Type.OperationSign() + operation.Money.String() } </td>
-				<td>{ fmt.Sprintf("%s%g%s", 
+				<td>{ fmt.Sprintf("%s%.2f%s", 
 						operation.Type.OperationSign(), 
 						operation.ConvertedMoney, 
 						accountInfo.Money.Currency.ToIcon(),

@@ -21,12 +21,12 @@ func (op OperationType) OperationSign() string {
 	return "-"
 }
 
-type CurrencyType int
+type CurrencyType string
 
 const (
-	Ruble CurrencyType = iota
-	Dollar
-	Euro
+	Ruble  CurrencyType = "Ruble"
+	Dollar CurrencyType = "Dollar"
+	Euro   CurrencyType = "Euro"
 )
 
 func (c CurrencyType) ToIcon() string {
