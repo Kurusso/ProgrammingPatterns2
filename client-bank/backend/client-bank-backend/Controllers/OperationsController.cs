@@ -79,8 +79,8 @@ public class OperationsController : ControllerBase
         OperationType operationType, Guid? reciveAccountId)
     {
         var trackingId = Guid.NewGuid();
-        var tracker = new ScopedConfirmationMessageFeedbackTracker();
-        tracker.Track(trackingId.ToString());
+        // var tracker = new ScopedConfirmationMessageFeedbackTracker();
+        // tracker.Track(trackingId.ToString());
         _rabbitMqOperationService.SendMessage(new OperationPostDTO
         {
             Id = trackingId,
@@ -91,16 +91,16 @@ public class OperationsController : ControllerBase
             RecieverAccount = reciveAccountId,
             OperationType = operationType,
         });
-        await tracker.WaitFor(trackingId.ToString(), TimeSpan.FromSeconds(10));
-        var message = tracker.Get(trackingId.ToString())!;
-        if (message.Status != 200)
-        {
-            if (message.Status == 400)
-            {
-                throw new InvalidOperationException(message.Message);
-            }
-
-            throw new TransactionException(message.Message);
-        }
+        // await tracker.WaitFor(trackingId.ToString(), TimeSpan.FromSeconds(10));
+        // var message = tracker.Get(trackingId.ToString())!;
+        // if (message.Status != 200)
+        // {
+        //     if (message.Status == 400)
+        //     {
+        //         throw new InvalidOperationException(message.Message);
+        //     }
+        //
+        //     throw new TransactionException(message.Message);
+        // }
     }
 }

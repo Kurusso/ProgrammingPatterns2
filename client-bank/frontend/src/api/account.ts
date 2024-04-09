@@ -43,6 +43,7 @@ export class AccountService {
                         }
                 })
             let data: AccountData[] = await response.json()
+            console.log(`accounts:`)
             console.log(data)
             return data
         } catch (error) {

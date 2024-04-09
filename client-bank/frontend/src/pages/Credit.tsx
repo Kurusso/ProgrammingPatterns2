@@ -7,6 +7,7 @@ import {CreditData, CreditService} from "../api/credit";
 import {Currency, Money} from "../api/account";
 import {RepayCredit} from "../components/Credits/Credit/RepayCredit";
 import {AccountsProvider} from "../contexts/AccountsContext";
+import {isAuthenticated} from "../api/auth";
 
 export const Credit = () => {
     const {creditId} = useParams<{ creditId: string }>();
@@ -17,13 +18,8 @@ export const Credit = () => {
         const fetchData = async () => {
             try {
                 console.log("works?")
-                const storedToken = localStorage.getItem('token');
-                if (!storedToken) {
-                    throw new Error('No token found');
-                }
 
-                const parsedToken = JSON.parse(storedToken).token;
-                if (!parsedToken) {
+                if (!isAuthenticated()) {
                     throw new Error('Invalid token');
                 }
                 if (!creditId) {

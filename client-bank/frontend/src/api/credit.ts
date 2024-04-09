@@ -11,14 +11,23 @@ export interface CreditRate {
 }
 
 export interface CreditData {
+    id: string;
     creditRate: CreditRate;
     fullMoneyAmount: Money;
-    id: string;
+    userId: string;
     monthPayAmount: Money;
     payingAccountId: string;
     remainingDebt: Money;
     unpaidDebt: Money;
-    userId: string;
+    penalties:Penalties[];
+}
+
+
+export interface Penalties{
+    isPaidOff: boolean;
+    creditId: string;
+    amount: Money;
+
 }
 
 export class CreditService {

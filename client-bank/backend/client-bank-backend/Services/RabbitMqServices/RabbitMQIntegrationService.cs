@@ -51,7 +51,7 @@ namespace client_bank_backend.Services.RabbitMqServices
         public void SendMessage(string message)
         {
             var body = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish(exchange: "ClientApplication",//ClientApplication
+            _channel.BasicPublish(exchange: "",//ClientApplication
                        routingKey: _queueTransactions,
                        basicProperties: null,
                        body: body);
