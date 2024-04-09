@@ -19,11 +19,11 @@ export interface CreditData {
     payingAccountId: string;
     remainingDebt: Money;
     unpaidDebt: Money;
-    penalties:Penalties[];
+    penalties: Penalties[];
 }
 
 
-export interface Penalties{
+export interface Penalties {
     isPaidOff: boolean;
     creditId: string;
     amount: Money;
@@ -44,7 +44,7 @@ export class CreditService {
         }
     }
 
-    static async getCredit( creditId: string) {
+    static async getCredit(creditId: string) {
         try {
             const response = await fetch(`${magicConsts.getCreditEndpoint}?id=${creditId}`, {
                 headers: {'Authorization': getAccessToken()}
@@ -108,7 +108,12 @@ export class CreditService {
 
     static async getCreditRates() {
         try {
-            const response = await fetch(magicConsts.getCreditRatesEndpoint)
+            const response = await fetch(magicConsts.getCreditRatesEndpoint, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': getAccessToken()
+                }
+            })
             let data: CreditRate[] = await response.json();
             console.log(data);
             return data
