@@ -24,9 +24,11 @@ public class AccountHubService:IHostedService
             .WithUrl(MagicConstants.AccountHub)
             .Build();
 
-        _backendHubConnection.On<AccountDTO,string>("ReceiveAccount", (accountInfo,userId) =>
+        _backendHubConnection.On<AccountDTO>("ReceiveAccount", 
+            
+            (accountInfo) =>
         {
-            ForwardAccountInfoToClients(accountInfo,userId);
+            ForwardAccountInfoToClients(accountInfo);
         });
 
         return _backendHubConnection.StartAsync(cancellationToken);
@@ -37,8 +39,8 @@ public class AccountHubService:IHostedService
         return _backendHubConnection?.DisposeAsync().AsTask() ?? Task.CompletedTask;
     }
 
-    private void ForwardAccountInfoToClients(AccountDTO accountInfo, string userId)
+    private void ForwardAccountInfoToClients(AccountDTO accountInfo)
     {
-        _bffAccountHubContext.Clients.User(userId).SendAsync("ReceiveAccount", accountInfo);
+        _bffAccountHubContext.Clients.All.SendAsync("ReceiveAccount", accountInfo);
     }
 }
