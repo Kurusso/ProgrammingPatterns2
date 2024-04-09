@@ -23,7 +23,7 @@ public class AccountController:ControllerBase
     {
         
         var userId =await AuthHelper.Validate(_coreClient,Request);
-        if (userId == null) return Unauthorized();
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl = $"{MagicConstants.GetAccountsEndpoint}{userId}";
@@ -71,7 +71,7 @@ public class AccountController:ControllerBase
     public async Task<IActionResult> CreateAccount( Currency currency)
     {
         var userId =await AuthHelper.Validate(_coreClient,Request);
-        if (userId == null) return Unauthorized();
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl = $"{MagicConstants.CreateAccountEndpoint}?userId={userId}&currency={currency}";
@@ -98,7 +98,7 @@ public class AccountController:ControllerBase
     public async Task<IActionResult> CloseAccount( Guid accountId)
     {
         var userId = await AuthHelper.Validate(_coreClient, Request);
-        if (userId == null) return Unauthorized();
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl = $"{MagicConstants.CloseAccountEndpoint}?userId={userId}&accountId={accountId}";

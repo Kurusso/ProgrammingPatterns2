@@ -35,7 +35,6 @@ export const useAccountData = (accountId: string | undefined) => {
                 accessTokenFactory: () => {
                     return getAccessToken();
                 }
-
             })
             .withAutomaticReconnect()
             .build();

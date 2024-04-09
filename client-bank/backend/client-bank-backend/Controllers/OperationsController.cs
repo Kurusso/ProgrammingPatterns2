@@ -3,6 +3,7 @@ using System.Web;
 using client_bank_backend.Heplers;
 using CoreApplication.Models.Enumeration;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace client_bank_backend.Controllers;
 
@@ -17,7 +18,7 @@ public class OperationsController : ControllerBase
     public async Task<IActionResult> Deposit(Guid accountId, int money, Currency currency)
     {
         var userId = await AuthHelper.Validate(_coreClient, Request);
-        if (userId == null) return Unauthorized();
+        if (userId.IsNullOrEmpty()) return Unauthorized();
 
         try
         {
@@ -46,7 +47,7 @@ public class OperationsController : ControllerBase
     public async Task<IActionResult> Withdraw(Guid accountId, int money, Currency currency)
     {
         var userId = await AuthHelper.Validate(_coreClient, Request);
-        if (userId == null) return Unauthorized();
+        if (userId.IsNullOrEmpty()) return Unauthorized();
 
         try
         {
@@ -75,7 +76,7 @@ public class OperationsController : ControllerBase
     public async Task<IActionResult> Transfer(Guid accountId, int money, Currency currency, Guid reciveAccountId)
     {
         var userId = await AuthHelper.Validate(_coreClient, Request);
-        if (userId == null) return Unauthorized();
+        if (userId.IsNullOrEmpty()) return Unauthorized();
 
         var builder = new UriBuilder(MagicConstants.TransferEndpoint);
         var query = HttpUtility.ParseQueryString(builder.Query);

@@ -4,6 +4,7 @@ using CoreApplication.Models.Enumeration;
 using CreditApplication.Models.Dtos;
 using CreditApplication.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace client_bank_backend.Controllers;
@@ -19,7 +20,7 @@ public class CreditController : ControllerBase
     public async Task<IActionResult> TakeCredit(TakeCreditDTO credit)
     {
         var userId = await AuthHelper.Validate(_coreClient, Request);
-        if (userId == null) return Unauthorized();
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         credit.UserId = new Guid(userId);
         try
         {
@@ -51,7 +52,7 @@ public class CreditController : ControllerBase
     public async Task<IActionResult> GetUserCredits()
     {
         var userId = await AuthHelper.Validate(_coreClient, Request);
-        if (userId == null) return Unauthorized();
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl =
@@ -78,7 +79,7 @@ public class CreditController : ControllerBase
     public async Task<IActionResult> GetCreditInfo(Guid id)
     {
         var userId = await AuthHelper.Validate(_coreClient, Request);
-        if (userId == null) return Unauthorized();
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl =
@@ -105,7 +106,7 @@ public class CreditController : ControllerBase
         Guid? accountId = null)
     {
         var userId = await AuthHelper.Validate(_coreClient, Request);
-        if (userId == null) return Unauthorized();
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl =

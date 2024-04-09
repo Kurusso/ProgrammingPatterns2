@@ -12,12 +12,19 @@ public static class AuthHelper
 
         CopyHeaders(request, _httpClient);
 
+        var userId = await GetUserId(_httpClient, requestUri);
+        
+        return userId;
+    }
+
+    public static async Task<string> GetUserId(HttpClient _httpClient, Uri requestUri)
+    {
         var response = await _httpClient.GetAsync(requestUri);
-        
-        var userId = await response.Content.ReadAsStringAsync();
-        
+
         Console.WriteLine($"{(int)response.StatusCode}");
-        
+
+        var userId = await response.Content.ReadAsStringAsync();
+
         if (userId == null)
         {
             throw new ArgumentException("User not found");
