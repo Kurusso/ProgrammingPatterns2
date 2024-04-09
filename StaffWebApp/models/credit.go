@@ -14,9 +14,15 @@ type CreditShort struct {
 	UnpaidDebt    Money      `json:"unpaidDebt"`
 }
 
+type Penalty struct {
+	PaidOff bool  `json:"isPaidOff"`
+	Amount  Money `json:"amount"`
+}
+
 type CreditDetailed struct {
 	CreditShort
-	LinkedAccount  string `json:"payingAccountId"`
-	MoneyTaken     Money  `json:"fullMoneyAmount"`
-	MonthlyPayment Money  `json:"monthPayAmount"`
+	LinkedAccount  string    `json:"payingAccountId"`
+	MoneyTaken     Money     `json:"fullMoneyAmount"`
+	MonthlyPayment Money     `json:"monthPayAmount"`
+	Penalties      []Penalty `json:"penalties"`
 }

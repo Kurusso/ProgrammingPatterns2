@@ -72,6 +72,7 @@ templ blockButton(id string) {
 templ ClientsList(clients *models.Page[models.ClientShort]) {
 	<script>
 		unrolledElements = new Map()
+		operationHistorySocket = 1
 	</script>
 	<div class="accordion " id="usersAccordion">
 		for _, client := range clients.Items {

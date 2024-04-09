@@ -5,7 +5,7 @@ namespace CoreApplication.Hubs
 {
     public class CustomWebSocketManager
     {
-        private readonly ConcurrentDictionary<string, WebSocket> _sockets = new ConcurrentDictionary<string, WebSocket>();
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, WebSocket>> _sockets = new();
 
         public async Task HandleWebSocket(HttpContext context)
         {
@@ -15,8 +15,14 @@ namespace CoreApplication.Hubs
                 string userId = context.Request.Query["userId"];
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    _sockets.TryAdd(userId, socket);
-                    await ListenSocket(socket, userId);
+                    if (!_sockets.ContainsKey(userId)) {
+                        _sockets[userId] = new();
+                    }
+                    var socketId = new Guid().ToString();
+
+                    _sockets[userId][socketId] = socket;
+                    // _sockets.TryAdd(userId, socket);
+                    await ListenSocket(socket, userId, socketId);
                 }
                 else
                 {
@@ -29,30 +35,26 @@ namespace CoreApplication.Hubs
             }
         }
 
-        private async Task ListenSocket(WebSocket socket, string userId)
+        private async Task ListenSocket(WebSocket socket, string userId, string socketId)
         {
             byte[] buffer = new byte[4096];
             WebSocketReceiveResult result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
             while (!result.CloseStatus.HasValue)
             {
-
-                await socket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
-
                 result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             }
 
             await socket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
-            WebSocket removedSocket;
-            _sockets.TryRemove(userId, out removedSocket);
+            _sockets[userId].Remove(socketId, out _);
         }
 
         public async Task SendMessageToUser(string userId, string message)
         {
-            if (_sockets.TryGetValue(userId, out WebSocket socket))
+            var buffer = new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(message));
+            foreach (var userSocket in _sockets[userId])
             {
-                var buffer = new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(message));
-                await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                await userSocket.Value.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);  
             }
         }
     }

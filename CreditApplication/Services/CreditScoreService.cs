@@ -35,11 +35,11 @@ namespace CreditApplication.Services
     {
         private readonly CreditDbContext _context;
         private readonly CreditScoreOptions _options;
-        public CreditScoreService(IOptions<CreditScoreOptions> options, CreditDbContext context)
+        public CreditScoreService(IConfiguration configuration, CreditDbContext context)
         {
             _context = context;
-            //configuration.GetSection("CreditScoreOptions").Bind(_options);
-            _options = options.Value;
+            _options = new CreditScoreOptions();
+            configuration.GetSection("CreditScoreOptions").Bind(_options);
         }
 
         public async Task<bool> HasScoreRecord(Guid userId)

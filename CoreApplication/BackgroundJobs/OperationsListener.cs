@@ -20,18 +20,20 @@ namespace CoreApplication.BackgroundJobs
         private IModel _channel;
         private IModel _deliveryConfirmationChannel;
         private IServiceProvider _provider;
+        private Uri _rabbitMqConnection;
         private readonly RabbitMqConfigurations _rabbitMqConfigurations;
         public OperationsListener(IServiceProvider provider, IOptions<RabbitMqConfigurations> rabbitMqConfigurations)
         {
 
             _rabbitMqConfigurations = rabbitMqConfigurations.Value;
+            _rabbitMqConnection = rabbitMqConfigurations.Value.Connection;
             _provider = provider;
-            var factory = new ConnectionFactory { HostName = rabbitMqConfigurations.Value.HostName };
+            var factory = new ConnectionFactory { Uri = _rabbitMqConnection };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
             _deliveryConfirmationChannel = _connection.CreateModel();
             _channel.QueueDeclare(queue: _rabbitMqConfigurations.QueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            _deliveryConfirmationChannel.QueueDeclare(queue: _rabbitMqConfigurations.SecondQueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            _deliveryConfirmationChannel.ExchangeDeclare(exchange: _rabbitMqConfigurations.SecondQueName, type: "direct", durable: false, autoDelete: false, arguments: null);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)

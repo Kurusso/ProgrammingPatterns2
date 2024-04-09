@@ -8,39 +8,50 @@ const operationsTbodyId = "operationsBody"
 const operationsHeaderId = "operationsHeader"
 
 templ OperationList(accountInfo *models.AccountDetailed) {
-	if len(accountInfo.Operations) == 0 {
-		<tr ><td colspan="4" class="text-center">Пусто...</td></tr>
-	}
-	for _, operation := range accountInfo.Operations {
-		<tr
-			class={ templ.KV("table-success", operation.Type == models.Deposit),
-					templ.KV("table-danger", operation.Type == models.Withdraw) }
-		>
-			<td>{ models.PrettifyDate(operation.Date) } </td>
-			<td>{ operation.Money.String() } </td>
-			<td>{ fmt.Sprintf("%g%s", operation.ConvertedMoney, accountInfo.Money.Currency.ToIcon()) } </td>
-			<td>
-				switch operation.Type {
-					case models.Deposit:
-						{ "Пополнение" }
-					case models.Withdraw:
-						{ "Снятие" }
-				}
-			</td>
-		</tr>
-	}
+	<tbody id={operationsTbodyId} hx-swap-oob="innerHTML">
+		if len(accountInfo.Operations) == 0 {
+			<tr><td colspan="4" class="text-center">Пусто...</td></tr>
+		}
+		for _, operation := range accountInfo.Operations {
+			<tr
+				class={ templ.KV("table-success", operation.Type == models.Deposit),
+					templ.KV("table-danger", operation.Type == models.Withdraw),
+					"table-primary" }
+			>
+				<td>{ models.PrettifyDate(operation.Date) } </td>
+				<td>{ operation.Type.OperationSign() + operation.Money.String() } </td>
+				<td>{ fmt.Sprintf("%s%.2f%s", 
+						operation.Type.OperationSign(), 
+						operation.ConvertedMoney, 
+						accountInfo.Money.Currency.ToIcon(),
+					)} 
+				</td>
+				<td>
+					switch operation.Type {
+						case models.Deposit:
+							{ "Пополнение" }
+						case models.Withdraw:
+							{ "Снятие" }
+						case models.TransferGet:
+							{ "Входящий перевод" }
+						case models.TransferSend:
+							{ "Исходящий перевод" }
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
 }
-
 
 templ accountHistoryModal() {
 	<div class="modal modal-lg" id={ accountHistoryModalId } tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5>История операций по счету 
-					<strong id={ operationsHeaderId }></strong>
+					<h5>
+						История операций по счету 
+						<strong id={ operationsHeaderId }></strong>
 					</h5>
-					
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
@@ -53,7 +64,7 @@ templ accountHistoryModal() {
 								<th scope="col">Тип операции</th>
 							</tr>
 						</thead>
-						<tbody id={ operationsTbodyId }>
+						<tbody id={ operationsTbodyId } >
 							//OperationList will be loaded here
 							<tr>
 								<td colspan="3" class="text-center">

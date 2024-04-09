@@ -1,10 +1,25 @@
 package clients
 
 import "staff-web-app/models"
+import "fmt"
 
-script OperationsModalOpenHandler(headerId string, accountId string) {
-	const header = document.getElementById(headerId)
+script OperationsModalOpenHandler(operationsHeaderId, operationsTbodyId, accountId, userId string) {
+	const header = document.getElementById(operationsHeaderId)
 	header.innerText =  accountId
+
+	try {
+		operationHistorySocket.close()
+	} catch { }
+    let l = window.location;
+    let url = ((l.protocol === "https:") ? "wss://" : "ws://") + l.host + `/api/clients/${userId}/accounts/${accountId}/operations`;
+	operationHistorySocket = new WebSocket(url)
+	operationHistorySocket.addEventListener("message", (event) => {
+		const body = document.getElementById(operationsTbodyId)
+		const template = document.createElement('template')
+		template.innerHTML = event.data
+		body.replaceWith(...template.content.children)
+	})
+
 }
 
 templ AccountList(accounts []models.AccountShort) {
@@ -18,9 +33,7 @@ templ AccountList(accounts []models.AccountShort) {
 				class="list-group-item list-group-item-action"
 				data-bs-toggle="modal"
 				data-bs-target={ "#" + accountHistoryModalId }
-				hx-get={ "/api/clients/"+ account.UserId + "/accounts/" + account.Id + "/operations" }
-				hx-target={ "#" + operationsTbodyId }
-				onclick={ OperationsModalOpenHandler(operationsHeaderId, account.Id) }
+				onclick={ OperationsModalOpenHandler(operationsHeaderId, operationsTbodyId, account.Id, account.UserId) }
 			>
 				<div class="d-flex flex-row">
 					<div>
@@ -37,8 +50,9 @@ templ AccountList(accounts []models.AccountShort) {
 
 
 
-templ CreditsList(credits []models.CreditShort) {
+templ CreditsList(credits []models.CreditShort, rating float64) {
 	<div class="list-group p-4">
+		<span>Кредитный рейтинг: { fmt.Sprintf("%g", rating)  } </span>
 		if len(credits) == 0 {
 			<span>Нет ни одного кредита</span>
 		} 

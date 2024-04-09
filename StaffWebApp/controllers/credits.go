@@ -6,11 +6,9 @@ import (
 	"staff-web-app/logger"
 	"staff-web-app/services"
 	"strconv"
-
-	"github.com/julienschmidt/httprouter"
 )
 
-func RenderCreditsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func RenderCreditsPage(w http.ResponseWriter, r *http.Request) {
 	rates, err := services.LoadCreditRates(r.Context())
 	if err != nil {
 		logger.Default.Error("Failed to render credits page: ", err)
@@ -21,9 +19,9 @@ func RenderCreditsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 	credits.CreditsPage(rates).Render(r.Context(), w)
 }
 
-const CreateCreditRateUrlPattern = "/api/credits/rates"
+const CreateCreditRateUrlPattern = "POST /api/credits/rates"
 
-func CreateCreditRate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func CreateCreditRate(w http.ResponseWriter, r *http.Request) {
 	creditRateName := r.FormValue("creditRateName")
 	percentStr := r.FormValue("creditRatePercent")
 	if creditRateName == "" {

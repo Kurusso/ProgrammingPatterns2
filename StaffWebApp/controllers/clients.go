@@ -4,16 +4,15 @@ import (
 	"net/http"
 	"staff-web-app/components/clients"
 	"staff-web-app/logger"
+	"staff-web-app/models"
 	"staff-web-app/services"
 	"strconv"
-
-	"github.com/julienschmidt/httprouter"
 )
 
-const ListUserAccountUrlPattern = "/api/clients/:userId/accounts"
+const ListUserAccountUrlPattern = "GET /api/clients/{userId}/accounts"
 
-func ListUserAccounts(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	id := ps.ByName("userId")
+func ListUserAccounts(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("userId")
 	if id == "" {
 		logger.Default.Error("bad url!: ", r.URL.String())
 		w.WriteHeader(http.StatusNotFound)
@@ -29,37 +28,34 @@ func ListUserAccounts(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	clients.AccountList(accounts).Render(r.Context(), w)
 }
 
-const ListAccountOperationsUrlPattern = "/api/clients/:userId/accounts/:accountId/operations"
+const ListAccountOperationsUrlPattern = "GET /api/clients/{userId}/accounts/{accountId}/operations"
 
-func ListAccountOperations(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId := ps.ByName("userId")
+func ListAccountOperations(w http.ResponseWriter, r *http.Request) {
+	userId := r.PathValue("userId")
 	if userId == "" {
 		logger.Default.Error("bad url!: ", r.URL.String())
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	accountId := ps.ByName("accountId")
+	accountId := r.PathValue("accountId")
 	if accountId == "" {
 		logger.Default.Error("bad url!: ", r.URL.String())
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	account, err := services.LoadAccountOperationHistory(r.Context(), accountId, userId)
-	if err != nil {
-		logger.Default.Error("failed to load account operation history: ", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	updates := make(chan *models.AccountDetailed)
+	clientQuit := make(chan bool)
+	go services.WsLoadAccountOperations(r, userId, accountId, updates, clientQuit)
+	services.WsUpdateAccountOperations(w, r, updates, clientQuit)
 
-	clients.OperationList(account).Render(r.Context(), w)
 }
 
-const ListUserCreditsUrlPattern = "/api/clients/:userId/credits"
+const ListUserCreditsUrlPattern = "GET /api/clients/{userId}/credits"
 
-func ListUserCredits(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId := ps.ByName("userId")
+func ListUserCredits(w http.ResponseWriter, r *http.Request) {
+	userId := r.PathValue("userId")
 	if userId == "" {
 		logger.Default.Error("bad url!: ", r.URL.String())
 		w.WriteHeader(http.StatusNotFound)
@@ -73,20 +69,25 @@ func ListUserCredits(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 		return
 	}
 
-	clients.CreditsList(credits).Render(r.Context(), w)
+	score, err := services.LoadUserCreditRating(r.Context(), userId)
+	if err != nil {
+		score = 0
+	}
+
+	clients.CreditsList(credits, score).Render(r.Context(), w)
 }
 
-const DetailedUserInfoUrlPattern = "/api/clients/:userId/credits/:creditId"
+const DetailedUserInfoUrlPattern = "GET /api/clients/{userId}/credits/{creditId}"
 
-func DetailedCreditInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId := ps.ByName("userId")
+func DetailedCreditInfo(w http.ResponseWriter, r *http.Request) {
+	userId := r.PathValue("userId")
 	if userId == "" {
 		logger.Default.Error("bad url!: ", r.URL.String())
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	creditId := ps.ByName("creditId")
+	creditId := r.PathValue("creditId")
 	if creditId == "" {
 		logger.Default.Error("bad url!: ", r.URL.String())
 		w.WriteHeader(http.StatusNotFound)
@@ -103,9 +104,9 @@ func DetailedCreditInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	clients.DetailedCreditInfo(creditInfo).Render(r.Context(), w)
 }
 
-const ListClientsPageUrlPattern = "/api/clients"
+const ListClientsPageUrlPattern = "GET /api/clients"
 
-func ListClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func ListClientsPage(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 	pageNumber, err := strconv.Atoi(params.Get("page"))
 	if err != nil {
@@ -114,8 +115,9 @@ func ListClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 		return
 	}
 	searchTerm := params.Get("searchTerm")
+	sessionId := services.GetSeessionId(r)
 
-	page, err := services.LoadClientsPage(r.Context(), searchTerm, pageNumber)
+	page, err := services.LoadClientsPage(r.Context(), searchTerm, pageNumber, sessionId)
 	if err != nil {
 		logger.Default.Error("failed to load clients page: ", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -125,9 +127,9 @@ func ListClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	clients.ClientsList(page).Render(r.Context(), w)
 }
 
-const CreateClientProfileUrlPattern = "/api/clients"
+const CreateClientProfileUrlPattern = "POST /api/clients"
 
-func CreateClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func CreateClientProfile(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 	if username == "" {
@@ -151,10 +153,10 @@ func CreateClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.P
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-const BlockClientProfileUrlPattern = "/api/clients/:userId"
+const BlockClientProfileUrlPattern = "DELETE /api/clients/{userId}"
 
-func BlockClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId := ps.ByName("userId")
+func BlockClientProfile(w http.ResponseWriter, r *http.Request) {
+	userId := r.PathValue("userId")
 	if userId == "" {
 		logger.Default.Error("bad url!: ", r.URL.String())
 		w.WriteHeader(http.StatusNotFound)
@@ -168,9 +170,9 @@ func BlockClientProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 		return
 	}
 
-	ListClientsPage(w, r, ps)
+	ListClientsPage(w, r)
 }
 
-func RenderClientsPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func RenderClientsPage(w http.ResponseWriter, r *http.Request) {
 	clients.ClientsPage().Render(r.Context(), w)
 }

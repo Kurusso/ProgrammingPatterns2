@@ -9,9 +9,12 @@ import (
 var Default ApplicationConfig
 
 type ApplicationConfig struct {
-	CreditsApiUrl string
-	CoreApiUrl    string
-	UserApiUrl    string
+	CreditsApiUrl      string
+	CoreApiUrl         string
+	CoreWsUrl          string
+	UserApiUrl         string
+	AuthApiUrl         string
+	DbConnectionString string
 }
 
 func ReadConfig(path string) error {
