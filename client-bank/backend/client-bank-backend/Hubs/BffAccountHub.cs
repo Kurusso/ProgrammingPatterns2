@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Collections.Concurrent;
+using System.Net.Http.Headers;
 using client_bank_backend.DTOs;
 using client_bank_backend.Heplers;
 using Microsoft.AspNetCore.SignalR;
@@ -7,6 +8,7 @@ namespace client_bank_backend.Hubs;
 
 public class BffAccountHub:Hub
 {
+    public static readonly ConcurrentDictionary<string, List<string>> _userConnectionMap = new();
     public override async Task OnConnectedAsync()
     {
         HttpClient _httpClient = new HttpClient();
@@ -22,5 +24,31 @@ public class BffAccountHub:Hub
         
         string userId = await AuthHelper.Validate(_httpClient, request);
         Console.WriteLine($"userId on WebSocket is: {userId}");
+        
+        // Store the userId and connectionId mapping
+        if (_userConnectionMap.TryGetValue(userId, out var value))
+        {
+            value.Add(Context.ConnectionId);
+        }
+        else
+        {
+            _userConnectionMap[userId] = new List<string> { Context.ConnectionId };
+        }
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        foreach (var pair in _userConnectionMap)
+        {
+            pair.Value.Remove(Context.ConnectionId);
+            if (!pair.Value.Any())
+            {
+                _userConnectionMap.TryRemove(pair.Key, out _);
+            }
+        }
+
+        await base.OnDisconnectedAsync(exception);
     }
 }
+   
+    

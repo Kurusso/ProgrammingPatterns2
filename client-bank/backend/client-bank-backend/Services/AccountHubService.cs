@@ -4,6 +4,7 @@ using client_bank_backend.Hubs;
 using Microsoft.AspNetCore.Http.Connections.Client;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.IdentityModel.Tokens;
 
 namespace client_bank_backend.Services;
 
@@ -41,6 +42,10 @@ public class AccountHubService:IHostedService
 
     private void ForwardAccountInfoToClients(AccountDTO accountInfo)
     {
-        _bffAccountHubContext.Clients.All.SendAsync("ReceiveAccount", accountInfo);
+        // Get connections from map
+        if (BffAccountHub._userConnectionMap.TryGetValue(accountInfo.UserId.ToString(), out List<string> connectionsId)&&connectionsId.Any())
+        {
+            _bffAccountHubContext.Clients.Clients(connectionsId).SendAsync("ReceiveAccount", accountInfo);
+        }
     }
 }
