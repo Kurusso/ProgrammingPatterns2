@@ -1,4 +1,5 @@
-﻿using CreditApplication.Quartz.Jobs;
+﻿using Common.BackgroundJobs;
+using CreditApplication.Quartz.Jobs;
 using Quartz;
 
 namespace CreditApplication.Quartz
@@ -33,6 +34,23 @@ namespace CreditApplication.Quartz
                
             });
 
+            var quartzSection2 = serviceProvider.GetSection("CurrencyJob");
+            var interval2 = quartzSection["IntervalInMinutes"];
+            int _interval2 = int.Parse(interval);
+            builder.Services.AddQuartz(q =>
+            {
+                q.UseMicrosoftDependencyInjectionJobFactory();
+
+                q.AddJob<CurrencyJob>(opts => opts.WithIdentity(nameof(CurrencyJob)));
+                q.AddTrigger(opts => opts
+                .ForJob(nameof(CurrencyJob))
+                .WithIdentity($"{nameof(CurrencyJob)}Trigger", $"{nameof(CurrencyJob)}Group")
+                .StartNow()
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInMinutes(_interval2)
+                    .RepeatForever()));
+
+            });
             builder.Services.AddQuartzHostedService(x => x.WaitForJobsToComplete = true);
         }
     }
