@@ -2,11 +2,9 @@
 using System.Text;
 using client_bank_backend.DTOs;
 using client_bank_backend.Heplers;
-using CoreApplication.Models.Enumeration;
-using Microsoft.AspNetCore.Authorization;
+using Common.Models.Enumeration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using OpenIddict.Validation.AspNetCore;
 
 namespace client_bank_backend.Controllers;
 [Route("api/[controller]")]
@@ -95,6 +93,7 @@ public class AccountController:ControllerBase
     
     [HttpDelete]
     [Route("Close")]
+    
     public async Task<IActionResult> CloseAccount( Guid accountId)
     {
         var userId = await AuthHelper.Validate(_coreClient, Request);

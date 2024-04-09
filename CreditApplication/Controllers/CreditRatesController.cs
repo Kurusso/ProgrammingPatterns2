@@ -1,9 +1,11 @@
-﻿using CreditApplication.Models;
+﻿using Common.Models.Dto;
+using CreditApplication.Models;
 using CreditApplication.Models.Dtos;
 using CreditApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using CreditRateDTO = CreditApplication.Models.DTOs.CreditRateDTO;
 
 namespace CreditApplication.Controllers
 {

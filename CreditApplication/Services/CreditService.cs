@@ -1,12 +1,12 @@
 ﻿using Common.Models;
 using Common.Models.Enumeration;
 using CreditApplication.Models;
-using CreditApplication.Models.Dtos;
-using CreditApplication.Models.DTOs;
 using Common.Helpers;
 using Microsoft.EntityFrameworkCore;
 using CreditApplication.Helpers;
 using System.Transactions;
+using Common.Models.Dto;
+using CreditDTO = CreditApplication.Models.DTOs.CreditDTO;
 
 namespace CreditApplication.Services
 {

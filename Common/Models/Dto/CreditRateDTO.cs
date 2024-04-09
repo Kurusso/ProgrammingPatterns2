@@ -1,4 +1,4 @@
-﻿namespace client_bank_backend.DTOs
+﻿namespace Common.Models.Dto
 {
     public class CreditRateDTO
     {

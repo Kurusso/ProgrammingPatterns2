@@ -1,8 +1,6 @@
-﻿using client_bank_backend.DTOs;
-using Common.Models;
+﻿using CreditApplication.Models.Dtos;
 
-
-namespace CreditApplication.Models.Dtos
+namespace Common.Models.Dto
 {
     public class CreditDTO
     {
@@ -19,7 +17,8 @@ namespace CreditApplication.Models.Dtos
         public Money RemainingDebt { get; set; }
 
         public Money UnpaidDebt { get; set; }
+        public ICollection<PenaltyDTO>? Penalties { get; set; }
 
-        public CreditDTO() { }
+
     }
 }

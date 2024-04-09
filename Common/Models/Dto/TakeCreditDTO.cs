@@ -1,14 +1,14 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-using CoreApplication.Models.Enumeration;
+﻿using System.ComponentModel.DataAnnotations;
+using Common.Models.Enumeration;
 
-namespace CreditApplication.Models.DTOs
+namespace Common.Models.Dto
 {
     public class TakeCreditDTO
     {
         [Required]
         public Guid CreditRateId { get; set; }
-        public Guid? UserId { get; set; }
+        [Required]
+        public Guid UserId { get; set; }
         [Required]
         public Guid AccountId { get; set; }
         [Required]

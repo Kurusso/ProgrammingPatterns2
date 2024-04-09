@@ -1,6 +1,6 @@
-﻿using client_bank_backend.Heplers;
+﻿using client_bank_backend.DTOs;
+using client_bank_backend.Heplers;
 using Microsoft.AspNetCore.Mvc;
-using UserService.Models.DTO;
 
 namespace client_bank_backend.Controllers;
 

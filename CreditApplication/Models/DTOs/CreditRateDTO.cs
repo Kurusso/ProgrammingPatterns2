@@ -1,4 +1,4 @@
-﻿namespace CreditApplication.Models.Dtos
+﻿namespace CreditApplication.Models.DTOs
 {
     public class CreditRateDTO
     {

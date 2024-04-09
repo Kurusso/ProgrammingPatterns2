@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using UserService.Models.DTO;
-
-namespace client_bank_backend.Heplers;
+﻿namespace client_bank_backend.Heplers;
 
 public static class AuthHelper
 {

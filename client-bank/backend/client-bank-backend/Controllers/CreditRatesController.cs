@@ -1,4 +1,4 @@
-﻿using CreditApplication.Models.Dtos;
+﻿using client_bank_backend.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace client_bank_backend.Controllers;

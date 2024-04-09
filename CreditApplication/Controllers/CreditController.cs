@@ -1,11 +1,10 @@
-﻿using Common.Models.Enumeration;
-using CreditApplication.Models;
+﻿using Common.Models.Dto;
+using Common.Models.Enumeration;
 using CreditApplication.Models.Dtos;
 using CreditApplication.Models.DTOs;
 using CreditApplication.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
+using CreditDTO = CreditApplication.Models.DTOs.CreditDTO;
 
 namespace CreditApplication.Controllers
 {
