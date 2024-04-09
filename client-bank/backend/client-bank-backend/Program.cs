@@ -8,7 +8,7 @@ var services = builder.Services;
 
 services.AddSingleton<IHostedService, AccountHubService>();
 services.AddScoped<IRabbitMqService, RabbitMQIntegrationService>();
-services.AddHostedService< RabbitMQFeedbackListener>();
+    //services.AddHostedService< RabbitMQFeedbackListener>();
 
 
 builder.Services.AddHttpClient();

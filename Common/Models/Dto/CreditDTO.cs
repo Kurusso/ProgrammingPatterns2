@@ -19,6 +19,6 @@ namespace Common.Models.Dto
         public Money UnpaidDebt { get; set; }
         public ICollection<PenaltyDTO>? Penalties { get; set; }
 
-
+    
     }
 }

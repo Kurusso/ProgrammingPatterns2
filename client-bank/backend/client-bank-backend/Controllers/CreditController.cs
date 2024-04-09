@@ -68,90 +68,6 @@ public class CreditController : ControllerBase
                 }
             }
             
-            /*
-         [
-  {
-    "id": "9f20d3dc-55f3-4f91-b86b-c748676acb01",
-    "creditRate": {
-      "id": "30292e03-05f4-45a7-b072-c2878771702e",
-      "name": "string",
-      "monthPercent": 5
-    },
-    "userId": "d5819cd8-81b5-45ca-8602-ef29b2dff37e",
-    "payingAccountId": "2581d646-963c-4a1c-85e2-37e93bc358c5",
-    "fullMoneyAmount": {
-      "amount": 123,
-      "currency": "Ruble"
-    },
-    "monthPayAmount": {
-      "amount": 12,
-      "currency": "Ruble"
-    },
-    "remainingDebt": {
-      "amount": 123,
-      "currency": "Ruble"
-    },
-    "unpaidDebt": {
-      "amount": 0,
-      "currency": "Ruble"
-    }
-  },
-  {
-    "id": "a13c5794-9aa5-4647-94e6-e696a401f69e",
-    "creditRate": {
-      "id": "30292e03-05f4-45a7-b072-c2878771702e",
-      "name": "string",
-      "monthPercent": 5
-    },
-    "userId": "d5819cd8-81b5-45ca-8602-ef29b2dff37e",
-    "payingAccountId": "2581d646-963c-4a1c-85e2-37e93bc358c5",
-    "fullMoneyAmount": {
-      "amount": 123,
-      "currency": "Ruble"
-    },
-    "monthPayAmount": {
-      "amount": 12,
-      "currency": "Ruble"
-    },
-    "remainingDebt": {
-      "amount": 123,
-      "currency": "Ruble"
-    },
-    "unpaidDebt": {
-      "amount": 0,
-      "currency": "Ruble"
-    }
-  },
-  {
-    "id": "ae472781-1f97-432a-962e-88ec7f04447a",
-    "creditRate": {
-      "id": "30292e03-05f4-45a7-b072-c2878771702e",
-      "name": "string",
-      "monthPercent": 5
-    },
-    "userId": "d5819cd8-81b5-45ca-8602-ef29b2dff37e",
-    "payingAccountId": "2581d646-963c-4a1c-85e2-37e93bc358c5",
-    "fullMoneyAmount": {
-      "amount": 123,
-      "currency": "Ruble"
-    },
-    "monthPayAmount": {
-      "amount": 12,
-      "currency": "Ruble"
-    },
-    "remainingDebt": {
-      "amount": 123,
-      "currency": "Ruble"
-    },
-    "unpaidDebt": {
-      "amount": 0,
-      "currency": "Ruble"
-    }
-  }
-]
-             */
-            
-            
             
             if (response != null)
             {
@@ -196,7 +112,7 @@ public class CreditController : ControllerBase
 
     [HttpPost]
     [Route("Repay")]
-    public async Task<IActionResult> RepayCredit(Guid id, int moneyAmmount, Currency currency,
+    public async Task<IActionResult> RepayCredit(Guid id, decimal moneyAmmount, Currency currency,
         Guid? accountId = null)
     {
         var userId = await AuthHelper.Validate(_httpClient, Request);
