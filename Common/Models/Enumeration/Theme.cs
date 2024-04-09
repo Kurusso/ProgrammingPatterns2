@@ -1,4 +1,4 @@
-﻿namespace UserSettings.Models.Enums;
+﻿namespace Common.Models.Enumeration;
 
 public enum Theme
 {

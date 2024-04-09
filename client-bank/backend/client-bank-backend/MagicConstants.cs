@@ -5,6 +5,7 @@ public static class MagicConstants
     private static readonly string BaseUrlCore = "https://localhost:7143";
     private static readonly string BaseUrlCredit = "https://localhost:7186";
     private static readonly string BaseUrlUserService = "https://localhost:7212";
+    private static readonly string BaseUrlUserSettings = "https://localhost:7059";
     
     public static readonly string GetAccountsEndpoint = BaseUrlCore +"/api/Account/User/";
     public static readonly string GetAccountEndpoint = BaseUrlCore +"/api/Account/GetInfo/";
@@ -30,8 +31,15 @@ public static class MagicConstants
     public static readonly string AuthorizeEndpoint = BaseUrlUserService + "/auth";
     public static readonly string AuthorizeTokenEndpoint = BaseUrlUserService + "/auth/token";
     
-    public static readonly string ValidateTokenEndpoint = BaseUrlUserService + "/auth/validate";//?role=Client   https://localhost:7212/auth/validate?role=Client
+    public static readonly string ValidateTokenEndpoint = BaseUrlUserService + "/auth/validate";
+    
+    public static readonly string GetThemeEndpoint = BaseUrlUserSettings + "/api/theme";
+    public static readonly string ChangeThemeEndpoint = BaseUrlUserSettings + "/api/theme";
+    public static readonly string GetHiddenAccountsEndpoint = BaseUrlUserSettings + "/auth/validate";
+    public static readonly string ChangeHiddenAccountsEndpoint = BaseUrlUserSettings + "/api/hiddenAccount/Visibility";
 
+    
+    
     public static readonly string AccountHub = BaseUrlCore + "/client";
 
 }

@@ -19,7 +19,12 @@
 
     <ItemGroup>
       <Folder Include="Models\Dto\" />
+      <Folder Include="Models\Enums\" />
       <Folder Include="Services\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Common\Common.csproj" />
     </ItemGroup>
 
 </Project>

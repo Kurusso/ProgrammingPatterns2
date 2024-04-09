@@ -1,35 +1,113 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using client_bank_backend.Heplers;
+using Common.Models.Dto;
+using Common.Models.Enumeration;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace client_bank_backend.Controllers;
 
 [ApiController]
 [Route("api/settings")]
-public class UserSettings:ControllerBase
+public class UserSettings : ControllerBase
 {
-    private readonly HttpClient _httpClient= new HttpClient();
+    private readonly HttpClient _httpClient = new HttpClient();
 
     [HttpGet("Accounts")]
-    public async Task<IActionResult> GetHiddenAccounts()
+    public async Task<IActionResult> GetHiddenAccounts() 
     {
-        return Ok();
+        try
+        {
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
+            var response = await _httpClient.GetAsync($"{MagicConstants.GetHiddenAccountsEndpoint}?userId={userId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode((int)response.StatusCode);
+            }
+
+            var hiddenAccounts = await response.Content.ReadFromJsonAsync<List<HiddenAccountDto>>();
+            return Ok(hiddenAccounts);
+        }
+        catch (Exception e)
+        {
+            // Log the exception here
+            return StatusCode(500, "Internal server error. Please try again later.");
+        }
     }
-    
+
     [HttpPut("Visibility")]
-    public async Task<IActionResult> ChangeVisibility()
+    public async Task<IActionResult> ChangeVisibility(Guid accountId)
     {
-        return Ok();
+        try
+        {
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
+            var response =
+                await _httpClient.PutAsync(
+                    $"{MagicConstants.ChangeHiddenAccountsEndpoint}?userId={userId}&accountId={accountId}", null);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode((int)response.StatusCode);
+            }
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, "Internal server error. Please try again later.");
+        }
     }
 
-
+    [HttpGet("theme")]
     public async Task<IActionResult> GetTheme()
     {
-        return Ok();
+        try
+        {
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
+
+            var response = await _httpClient.GetAsync($"{MagicConstants.GetThemeEndpoint}/{userId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode((int)response.StatusCode);
+            }
+
+            var theme = await response.Content.ReadFromJsonAsync<Theme>();
+            return Ok(theme);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
+    [HttpPut("theme")]
     public async Task<IActionResult> ChangeTheme()
     {
-        return Ok();
+        try
+        {
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
+
+
+            var response = await _httpClient.PutAsync($"{MagicConstants.ChangeThemeEndpoint}/{userId}", null);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode((int)response.StatusCode);
+            }
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, "Internal server error. Please try again later.");
+        }
     }
-    
-    
 }
+
+

@@ -18,7 +18,7 @@ namespace CreditApplication.Controllers
         {
             _creditService = creditService;
             _creditScoreService = creditScoreService;
-        }
+        } 
 
 
         [HttpPost]

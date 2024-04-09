@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Models.Dto;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UserSettings.Models;
 using UserSettings.Models.Entities;
@@ -14,8 +15,8 @@ public class HiddenAccountController(UserSettingsDbContext settingsDb) : Control
     {
         try
         {
-            List<HiddenAccount>? hiddenAccounts =
-                await settingsDb.HiddenAccount.Where(acc => acc.User.Id.Equals(userId)).ToListAsync();
+            List<HiddenAccountDto>? hiddenAccounts =
+                await settingsDb.HiddenAccount.Where(acc => acc.User.Id.Equals(userId)).Select(acc=>new HiddenAccountDto{AccountId = acc.Id}).ToListAsync();
             return Ok(hiddenAccounts);
         }
         catch (Exception e)

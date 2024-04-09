@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Models.Enumeration;
+using Microsoft.AspNetCore.Mvc;
 using UserSettings.Models;
 using UserSettings.Models.Entities;
-using UserSettings.Models.Enums;
 
 namespace UserSettings.Controllers;
 

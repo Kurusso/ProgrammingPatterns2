@@ -1,4 +1,4 @@
-﻿using UserSettings.Models.Enums;
+﻿using Common.Models.Enumeration;
 
 namespace UserSettings.Models.Entities;
 
