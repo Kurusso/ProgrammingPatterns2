@@ -20,20 +20,20 @@ namespace CoreApplication.BackgroundJobs
         private IModel _channel;
         private IModel _deliveryConfirmationChannel;
         private IServiceProvider _provider;
+        private Uri _rabbitMqConnection;
         private readonly RabbitMqConfigurations _rabbitMqConfigurations;
-
         public OperationsListener(IServiceProvider provider, IOptions<RabbitMqConfigurations> rabbitMqConfigurations)
         {
+
             _rabbitMqConfigurations = rabbitMqConfigurations.Value;
+            _rabbitMqConnection = rabbitMqConfigurations.Value.Connection;
             _provider = provider;
-            var factory = new ConnectionFactory { HostName = rabbitMqConfigurations.Value.HostName };
+            var factory = new ConnectionFactory { Uri = _rabbitMqConnection };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
             _deliveryConfirmationChannel = _connection.CreateModel();
-            _channel.QueueDeclare(queue: _rabbitMqConfigurations.QueName, durable: false, exclusive: false,
-                autoDelete: false, arguments: null);
-            _deliveryConfirmationChannel.QueueDeclare(queue: _rabbitMqConfigurations.SecondQueName, durable: false,
-                exclusive: false, autoDelete: false, arguments: null);
+            _channel.QueueDeclare(queue: _rabbitMqConfigurations.QueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            _deliveryConfirmationChannel.ExchangeDeclare(exchange: _rabbitMqConfigurations.SecondQueName, type: "direct", durable: false, autoDelete: false, arguments: null);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -54,25 +54,26 @@ namespace CoreApplication.BackgroundJobs
                     {
                         if (message != null)
                         {
+
                             switch (message.OperationType)
                             {
                                 case OperationType.Deposit:
-                                    await scopedService.Deposit(message.MoneyAmmount, message.Currency,
-                                        message.AccountId, message.UserId);
+                                    await scopedService.Deposit(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId);
                                     break;
                                 case OperationType.Withdraw:
-                                    await scopedService.Withdraw(message.MoneyAmmount, message.Currency,
-                                        message.AccountId, message.UserId);
+                                    await scopedService.Withdraw(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId);
                                     break;
                                 case OperationType.TransferSend:
-                                    await scopedService.TransferMoney(message.MoneyAmmount, message.Currency,
-                                        message.AccountId, message.UserId, (Guid)message.RecieverAccount);
+                                    await scopedService.TransferMoney(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId, (Guid)message.RecieverAccount);
                                     break;
+
                             }
+
                         }
 
                         confirmationMessage.Message = "";
                         confirmationMessage.Status = 200;
+                        
                     }
                     catch (InvalidOperationException ex)
                     {
@@ -84,7 +85,7 @@ namespace CoreApplication.BackgroundJobs
                         confirmationMessage.Message = ex.Message;
                         confirmationMessage.Status = 400;
                     }
-                    catch (KeyNotFoundException ex)
+                    catch(KeyNotFoundException ex)
                     {
                         confirmationMessage.Message = ex.Message;
                         confirmationMessage.Status = 404;
@@ -94,15 +95,14 @@ namespace CoreApplication.BackgroundJobs
                         confirmationMessage.Message = ex.Message;
                         confirmationMessage.Status = 500;
                     }
-
                     var deliveryConfirmationMessage = JsonConvert.SerializeObject(confirmationMessage);
                     _deliveryConfirmationChannel.BasicPublish(exchange: "",
-                        routingKey: _rabbitMqConfigurations.SecondQueName,
-                        basicProperties: null,
-                        body: Encoding.UTF8.GetBytes(deliveryConfirmationMessage));
+                                                                  routingKey: _rabbitMqConfigurations.SecondQueName,
+                                                                  basicProperties: null,
+                                                                  body: Encoding.UTF8.GetBytes(deliveryConfirmationMessage));
                 }
-
                 _channel.BasicAck(ea.DeliveryTag, false);
+
             };
 
             _channel.BasicConsume(_rabbitMqConfigurations.QueName, false, consumer);

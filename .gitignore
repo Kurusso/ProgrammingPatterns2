@@ -57,3 +57,4 @@ msbuild.wrn
 TSU.Medical/appsettings.Development.json
 logs/
 .vscode
+appsettings.*.json

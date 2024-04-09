@@ -33,10 +33,34 @@ templ DetailedCreditInfo(creditInfo *models.CreditDetailed) {
 		<span>Сумма долга: </span>
 		<strong>{ creditInfo.RemainingDebt.String() }</strong>
 	</div>
-	<div class={templ.KV("text-danger", creditInfo.UnpaidDebt.Amount > 0)}>
-		<span >Сумма просроченных платежей:</span>
+	<div class={ templ.KV("text-danger", creditInfo.UnpaidDebt.Amount > 0) }>
+		<span>Сумма просроченных платежей:</span>
 		<strong>{ creditInfo.UnpaidDebt.String() }</strong>
 	</div>
+	if len(creditInfo.Penalties) > 0 {
+		<span class="mt-3">Просроченные платежи</span>
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">Оплачено</th>
+					<th scope="col">Сумма</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, penalty := range creditInfo.Penalties {
+					<tr class={templ.KV("table-success", penalty.PaidOff), templ.KV("table-danger", !penalty.PaidOff)}>
+						if penalty.PaidOff {
+							<td>Да</td>
+						} else {
+							<td>Нет</td>
+						}
+						
+						<td>{ penalty.Amount.String() }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
 }
 
 templ detailedCreditInfoModal() {
