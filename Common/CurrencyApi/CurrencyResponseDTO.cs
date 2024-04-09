@@ -1,4 +1,6 @@
-﻿namespace CoreApplication.Models.CurrencyApi
+﻿using CoreApplication.CurrencyApi;
+
+namespace Common.CurrencyApi
 {
     public class CurrencyResponseDTO
     {

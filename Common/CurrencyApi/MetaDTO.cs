@@ -1,4 +1,4 @@
-﻿namespace CoreApplication.Models.CurrencyApi
+﻿namespace Common.CurrencyApi
 {
     public class MetaDTO
     {

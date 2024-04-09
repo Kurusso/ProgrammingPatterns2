@@ -1,12 +1,12 @@
 ﻿using Common.Helpers;
-using CoreApplication.Models;
-using CoreApplication.Models.CurrencyApi;
+using Common.CurrencyApi;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quartz;
 
-namespace CoreApplication.BackgroundJobs
+namespace Common.BackgroundJobs
 {
     public class CurrencyJob : IJob
     {

@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using Common.BackgroundJobs;
+using Quartz;
 
 namespace CoreApplication.BackgroundJobs
 {
