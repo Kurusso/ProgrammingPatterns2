@@ -3,6 +3,7 @@ import {AccountData, AccountService} from "../../api/account";
 import {AccountItem, AccountItemProps} from "./AccountItem";
 import {useAccounts} from "../../contexts/AccountsContext";
 import {isAuthenticated} from "../../api/auth";
+import {userSettings} from "../../api/userSettings";
 
 export const Accounts = () => {
 
@@ -41,6 +42,7 @@ export const Accounts = () => {
                         AccountId={item.AccountId}
                         Amount={item.Amount}
                         CurrencyValue={item.CurrencyValue}
+                        IsHidden={item.IsHidden}
                     />
                 ))
             }</div>
@@ -50,13 +52,14 @@ export const Accounts = () => {
 
 export function mapAccountDataToElementProps(accountDataArray: AccountData[]): AccountItemProps[] {
     return accountDataArray.map(accountData => {
-        const {id, money,} = accountData;
+        const {id, money,isHidden} = accountData;
         const {amount, currency} = money;
 
         return {
             AccountId: id,
             Amount: amount,
             CurrencyValue: currency,
+            IsHidden:isHidden
         };
     });
 

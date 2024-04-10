@@ -12,29 +12,6 @@ public class UserSettings : ControllerBase
 {
     private readonly HttpClient _httpClient = new HttpClient();
 
-    [HttpGet("Accounts")]
-    public async Task<IActionResult> GetHiddenAccounts() 
-    {
-        try
-        {
-            var userId = await AuthHelper.Validate(_httpClient, Request);
-            if (userId.IsNullOrEmpty()) return Unauthorized();
-            var response = await _httpClient.GetAsync($"{MagicConstants.GetHiddenAccountsEndpoint}?userId={userId}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return StatusCode((int)response.StatusCode);
-            }
-
-            var hiddenAccounts = await response.Content.ReadFromJsonAsync<List<HiddenAccountDto>>();
-            return Ok(hiddenAccounts);
-        }
-        catch (Exception e)
-        {
-            // Log the exception here
-            return StatusCode(500, "Internal server error. Please try again later.");
-        }
-    }
 
     [HttpPut("Visibility")]
     public async Task<IActionResult> ChangeVisibility(Guid accountId)
@@ -67,8 +44,8 @@ public class UserSettings : ControllerBase
         {
             var userId = await AuthHelper.Validate(_httpClient, Request);
             if (userId.IsNullOrEmpty()) return Unauthorized();
-
-            var response = await _httpClient.GetAsync($"{MagicConstants.GetThemeEndpoint}/{userId}");
+            var requestUrl = $"{MagicConstants.GetThemeEndpoint}/{userId}";
+            var response = await _httpClient.GetAsync(requestUrl);
 
             if (!response.IsSuccessStatusCode)
             {

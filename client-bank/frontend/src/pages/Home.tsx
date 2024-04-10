@@ -7,6 +7,7 @@ import {Credits} from "../components/Credits/Credits";
 import {CreditProvider} from "../contexts/CreditContext";
 import {TakeCredit} from "../components/Credits/TakeCredit";
 import {TransferMoney} from "../components/Accounts/TransferMoney";
+import ThemeButton from "../components/Buttons/ThemeButton";
 export const Home = () => {
 
 
@@ -15,6 +16,7 @@ export const Home = () => {
             <h1>Home</h1>
             <UsernameDisplay/>
             <LogoutButton/>
+            <ThemeButton/>
             <AccountsProvider>
                 <CreateAccount/>
                 <TransferMoney/>

@@ -21,6 +21,7 @@ export interface AccountData {
     id: string,
     money: Money,
     operationsHistory: OperationsHistory[]
+    isHidden:boolean
 }
 
 export interface OperationsHistory {

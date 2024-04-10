@@ -2,14 +2,16 @@ import {Currency, AccountService} from "../../api/account";
 import React, {useCallback} from 'react';
 import {useNavigate} from "react-router-dom";
 import {isAuthenticated} from "../../api/auth";
+import {HideAccountButton} from "../Buttons/HideAccountButton";
 
 export interface AccountItemProps {
     AccountId: string,
     Amount: number,
     CurrencyValue: Currency
+    IsHidden:boolean
 }
 
-export const AccountItem: React.FC<AccountItemProps> = ({AccountId, Amount, CurrencyValue}) => {
+export const AccountItem: React.FC<AccountItemProps> = ({AccountId, Amount, CurrencyValue,IsHidden}) => {
     const navigate = useNavigate();
     const [closed, setClosed] = React.useState(false);
 
@@ -38,6 +40,7 @@ export const AccountItem: React.FC<AccountItemProps> = ({AccountId, Amount, Curr
     return (
         <div>
             <button className={"account-btn"} onClick={handleClickAccountDetails}>Account: {AccountId}</button>
+            <HideAccountButton accountId={AccountId} IsHidden={IsHidden}/>
             <div>Amount: {Amount}</div>
             <div>Currency: {Currency[CurrencyValue]}</div>
             <button className={"close-account-btn"} onClick={handleClickClose}>Close Account</button>

@@ -29,5 +29,12 @@ export class magicConsts {
     static authService_url = "https://localhost:7212"
     static LoginRedirectUrl = this.authService_url + "/auth"
 
+    //UserSettings
+    static getHiddenAccountsEndpoint =this.base_url+""
+    static changeAccountVisibilityEndpoint =this.base_url+"/api/settings/Visibility"
+    static getThemeEndpoint =this.base_url+"/api/settings/theme"
+    static ChangeThemeEndpoint =this.base_url+"/api/settings/theme"
+
+
 }
 

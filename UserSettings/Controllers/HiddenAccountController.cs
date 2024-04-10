@@ -43,6 +43,10 @@ public class HiddenAccountController(UserSettingsDbContext settingsDb) : Control
             {
                 settingsDb.HiddenAccount.Add(new HiddenAccount { Id = accountId, User = user });
             }
+            else
+            {
+                settingsDb.HiddenAccount.Remove(account);
+            }
 
             await settingsDb.SaveChangesAsync();
 

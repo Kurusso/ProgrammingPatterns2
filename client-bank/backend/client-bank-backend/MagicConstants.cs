@@ -35,7 +35,7 @@ public static class MagicConstants
     
     public static readonly string GetThemeEndpoint = BaseUrlUserSettings + "/api/theme";
     public static readonly string ChangeThemeEndpoint = BaseUrlUserSettings + "/api/theme";
-    public static readonly string GetHiddenAccountsEndpoint = BaseUrlUserSettings + "/auth/validate";
+    public static readonly string GetHiddenAccountsEndpoint = BaseUrlUserSettings + "/api/hiddenAccount/Accounts";
     public static readonly string ChangeHiddenAccountsEndpoint = BaseUrlUserSettings + "/api/hiddenAccount/Visibility";
 
     
