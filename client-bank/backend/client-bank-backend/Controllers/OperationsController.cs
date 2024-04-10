@@ -13,7 +13,7 @@ namespace client_bank_backend.Controllers;
 public class OperationsController : ControllerBase
 {
     private readonly IRabbitMqService _rabbitMqOperationService;
-    private readonly HttpClient _coreClient = new();
+    private readonly HttpClient _httpClient = new();
 
     public OperationsController(IRabbitMqService rabbitMqOperationService)
     {
@@ -26,7 +26,7 @@ public class OperationsController : ControllerBase
     {
         try
         {
-            var userId = await AuthHelper.Validate(_coreClient, Request);
+            var userId = await AuthHelper.Validate(_httpClient, Request);
             if (userId.IsNullOrEmpty()) return Unauthorized();
             await QueueOperation(accountId, currency, new Guid(userId), money, OperationType.Deposit, null);
             return Ok();
@@ -44,7 +44,7 @@ public class OperationsController : ControllerBase
     {
         try
         {
-            var userId = await AuthHelper.Validate(_coreClient, Request);
+            var userId = await AuthHelper.Validate(_httpClient, Request);
             if (userId.IsNullOrEmpty()) return Unauthorized();
             await QueueOperation(accountId, currency, new Guid(userId), money, OperationType.Withdraw, null);
             return Ok();
@@ -62,7 +62,7 @@ public class OperationsController : ControllerBase
     {
         try
         {
-            var userId = await AuthHelper.Validate(_coreClient, Request);
+            var userId = await AuthHelper.Validate(_httpClient, Request);
             if (userId.IsNullOrEmpty()) return Unauthorized();
             await QueueOperation(accountId, currency, new Guid(userId), money, OperationType.TransferSend,
                 reciveAccountId);

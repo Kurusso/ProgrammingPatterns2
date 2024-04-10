@@ -1,6 +1,4 @@
-﻿using Common.Models;
-
-namespace CreditApplication.Models.Dtos
+﻿namespace Common.Models.Dto
 {
     public class PenaltyDTO
     {

@@ -37,6 +37,10 @@ public static class MagicConstants
     public static readonly string ChangeThemeEndpoint = BaseUrlUserSettings + "/api/theme";
     public static readonly string GetHiddenAccountsEndpoint = BaseUrlUserSettings + "/api/hiddenAccount/Accounts";
     public static readonly string ChangeHiddenAccountsEndpoint = BaseUrlUserSettings + "/api/hiddenAccount/Visibility";
+    
+    public static readonly string GetUserPenaltiesEndpoint = BaseUrlCredit + "/api/Penalty/GetUserPenalties";
+    public static readonly string GetCreditPenaltiesEndpoint = BaseUrlCredit + "/api/Penalty/GetCreditPenalties";
+    public static readonly string RepayPenaltyEndpoint = BaseUrlCredit + "/api/Penalty/Repay";
 
     
     
