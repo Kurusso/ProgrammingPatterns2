@@ -44,7 +44,7 @@ func LoadClientsPage(
 	return &clientsPage, err
 }
 
-func CreateClientProfile(ctx context.Context, username, password string) error {
+func CreateClientProfile(ctx context.Context, username, password, sessionId string) error {
 	body := map[string]string{
 		"username": username,
 		"password": password,
@@ -53,15 +53,16 @@ func CreateClientProfile(ctx context.Context, username, password string) error {
 	if err != nil {
 		return fmt.Errorf("body encoding failed: %v", err)
 	}
-	err = makeRequestParseBody(
+	err = makeRequestParseBodyWithHeaders(
 		ctx,
 		http.MethodPost,
 		config.Default.UserApiUrl+"clients/register",
 		bytes.NewReader(output),
 		nil,
+		makeAccessTokenHeader(ctx, sessionId),
 	)
 	if err != nil {
-		return fmt.Errorf("register new staff profile request failed: %v", err)
+		return fmt.Errorf("register new client profile request failed: %v", err)
 	}
 
 	return nil
@@ -104,18 +105,19 @@ func LoadAccountOperationHistory(ctx context.Context, accountId string, userId s
 	return &account, err
 }
 
-func BlockClientProfile(ctx context.Context, userId string) error {
+func BlockClientProfile(ctx context.Context, userId, sessionId string) error {
 	requestUrl, err := url.JoinPath(config.Default.UserApiUrl, "clients/", userId)
 	if err != nil {
 		return fmt.Errorf("invalid url: %v", err)
 	}
 
-	err = makeRequestParseBody(
+	err = makeRequestParseBodyWithHeaders(
 		ctx,
 		http.MethodDelete,
 		requestUrl,
 		nil,
 		nil,
+		makeAccessTokenHeader(ctx, sessionId),
 	)
 	if err != nil {
 		return fmt.Errorf("block client profile requeset failed: %v", err)

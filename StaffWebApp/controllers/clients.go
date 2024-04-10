@@ -143,7 +143,8 @@ func CreateClientProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := services.CreateClientProfile(r.Context(), username, password)
+	sessionId := services.GetSeessionId(r)
+	err := services.CreateClientProfile(r.Context(), username, password, sessionId)
 	if err != nil {
 		logger.Default.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -163,7 +164,8 @@ func BlockClientProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := services.BlockClientProfile(r.Context(), userId)
+	sessionId := services.GetSeessionId(r)
+	err := services.BlockClientProfile(r.Context(), userId, sessionId)
 	if err != nil {
 		logger.Default.Error(err)
 		w.WriteHeader(http.StatusNotFound)
