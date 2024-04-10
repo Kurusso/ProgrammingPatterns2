@@ -45,7 +45,6 @@ export function getAccessToken(): string {
     token = token.replace(/"/g, '');
 
     token = `Bearer ${token}`
-    console.log("token get")
     return token;
 }
 

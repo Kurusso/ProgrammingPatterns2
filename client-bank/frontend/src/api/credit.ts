@@ -4,6 +4,30 @@ import {
 import {Currency, Money} from "./account";
 import {getAccessToken} from "./auth";
 
+export interface CreditScoreDTO {
+    userId: string;
+    score: number;
+    updateHistory?: CreditScoreUpdateDTO[];
+}
+
+interface CreditScoreUpdateDTO {
+    creditScoreId: string;
+    dateTime: string; // or Date if you prefer
+    change: number;
+    reason: CreditScoreUpdateReason;
+    comment: string;
+}
+
+enum CreditScoreUpdateReason {
+    Other,
+    CreditTakeout,
+    CreditPayOff,
+    CreditPaymentMade,
+    CreditPaymentOverdue,
+    CreditPaymentOverduePayOff
+}
+
+
 export interface CreditRate {
     id: string;
     name: string;
@@ -120,6 +144,21 @@ export class CreditService {
         } catch (error) {
             throw error;
         }
+    }
+
+    static async getUserCreditScore(withUpdateHistory: boolean = false) {
+        let requestUrl = `${magicConsts.GetUserCreditScoreEndpoint}?withUpdateHistory=${withUpdateHistory}`
+        const response = await fetch(requestUrl, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getAccessToken()
+            }});
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        console.log(response)
+        let data: CreditScoreDTO = await response.json()
+        return data;
     }
 
 }

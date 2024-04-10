@@ -139,4 +139,30 @@ public class CreditController : ControllerBase
             return StatusCode(500, "An error occurred while taking credit.");
         }
     }
+    
+    [HttpGet]
+    [Route("GetUserCreditScore")]
+    public async Task<ActionResult<CreditScoreDTO>> GetUserCreditScore( bool withUpdateHistory = false)
+    {
+        try
+        {
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
+            var requestUrl =
+                $"{MagicConstants.GetUserCreditScoreEndpoint}?userId={userId}&withUpdateHistory={withUpdateHistory}";
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+                return StatusCode((int)response.StatusCode);
+
+            var score = await response.Content.ReadFromJsonAsync<CreditScoreDTO>();
+            return Ok(score);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return StatusCode(500, "An error occurred while getting the credit score. Please try again later.");
+        }
+    }
+    
 }

@@ -39,7 +39,7 @@ public class PenaltyController:ControllerBase
 
     
     [HttpGet]
-    [Route("GetUserPenalties")]
+    [Route("GetCreditPenalties")]
     public async Task<ActionResult<ICollection<PenaltyDTO>>> GetCreditPenalties()
     {
         try

@@ -21,6 +21,8 @@ export class magicConsts {
     static repayCreditEndpoint = this.base_url + "/api/Credit/Repay";
     static getCreditRatesEndpoint = this.base_url + "/api/CreditRates/GetAll";
     static takeCreditEndpoint = this.base_url + "/api/Credit/Take"
+    static GetUserCreditScoreEndpoint = this.base_url + "/api/Credit/GetUserCreditScore"
+
 
     //WebSocket
     static AccountInfoHub = this.base_url + "/AccountHub";
@@ -30,11 +32,15 @@ export class magicConsts {
     static LoginRedirectUrl = this.authService_url + "/auth"
 
     //UserSettings
-    static getHiddenAccountsEndpoint =this.base_url+""
     static changeAccountVisibilityEndpoint =this.base_url+"/api/settings/Visibility"
     static getThemeEndpoint =this.base_url+"/api/settings/theme"
     static ChangeThemeEndpoint =this.base_url+"/api/settings/theme"
 
 
+    //Penalties
+
+    static getUserPenaltiesEndpoint=this.base_url +"/api/penalty/GetUserPenalties" ;
+    static  getCreditPenaltiesEndpoint= this.base_url +"/api/penalty/GetCreditPenalties";
+    static repayPenaltyEndpoint=this.base_url+"/api/penalty/Repay";
 }
 

@@ -9,6 +9,7 @@ import PrivateRoute from "./other/PrivateRoute";
 import {UserProvider} from "./contexts/UserContext";
 import {Credit} from "./pages/Credit";
 import {AuthProcessing} from "./pages/AuthProcessing";
+import {UserPenalties} from "./pages/UserPenalties";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
                             <Route path='/' element={<PrivateRoute/>}>
                                 <Route path="/" element={<Home/>}/>
                                 <Route path="*" element={<Home/>}/>
+                                <Route path="/penalties" element={<UserPenalties/>}/>
                                 <Route path="/account/:accountId" element={<Account/>}/>
                                 <Route path="/credit/:creditId" element={<Credit/>}/>
                             </Route>
@@ -32,6 +34,7 @@ function App() {
             </BrowserRouter>
         </div>
     );
+
 }
 
 export default App;

@@ -17,7 +17,6 @@ export const Credit = () => {
 
         const fetchData = async () => {
             try {
-                console.log("works?")
 
                 if (!isAuthenticated()) {
                     throw new Error('Invalid token');
