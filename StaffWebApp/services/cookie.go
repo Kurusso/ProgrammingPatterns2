@@ -87,5 +87,6 @@ func makeAccessTokenHeader(ctx context.Context, sessionId string) map[string]str
 	}
 	return map[string]string{
 		"Authorization": "Bearer " + token.String,
+		"Content-Type":  "application/json",
 	}
 }
