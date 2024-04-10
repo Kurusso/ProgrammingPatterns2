@@ -1,30 +1,44 @@
 ﻿using client_bank_backend.DTOs;
+using client_bank_backend.Heplers;
 using Microsoft.AspNetCore.Mvc;
-using UserService.Models.DTO;
 
 namespace client_bank_backend.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
-public class ProfileController:ControllerBase
+public class ProfileController : ControllerBase
 {
-    private readonly HttpClient _coreClient = new();
-    [HttpGet("{accountId}")]
-    public async Task<IActionResult> Profile(Guid accountId)
-    {
-        try
-        {
-            var requestUrl = $"{MagicConstants.GetUserProfileEndpoint}/{accountId}";
-            var response = await _coreClient.GetFromJsonAsync<UserDTO>(requestUrl);
-            
-            var modResponse = new UsernameDto(response.Username);
-            return Ok(modResponse);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return StatusCode(500, "an error occured, while getting accounts");
-        }
-    }
-}
-//https://localhost:7075/api/Profile/691d3f2d-ffd7-4cb9-88bc-f14612b24ce8
+    private readonly HttpClient _httpClient = new();
 
+        [HttpGet("clientinfo")]
+        public async Task<IActionResult> GetClientInfo()
+        {
+            var requestUri = new Uri(MagicConstants.GetUserProfileEndpoint);
+
+            // foreach (var header in Request.Headers)
+            // {
+            //     if (header.Key != "Origin" && header.Key != "Referer" && header.Key != "Host")
+            //     {
+            //         _httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+            //     }
+            // }
+
+            AuthHelper.CopyHeaders(Request,_httpClient);
+            
+            var response = await _httpClient.GetAsync(requestUri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var userDto = await response.Content.ReadFromJsonAsync<UserDTO>();
+                if (userDto != null)
+                {
+                    return Ok(userDto);
+                }
+            }
+
+            // Return the status code and message from the endpoint
+            var message = await response.Content.ReadAsStringAsync();
+            return StatusCode((int)response.StatusCode, message);
+        }
+
+}

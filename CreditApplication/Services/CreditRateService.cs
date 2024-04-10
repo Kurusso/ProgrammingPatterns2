@@ -1,7 +1,9 @@
 ﻿using CreditApplication.Models;
-using CreditApplication.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Common.Helpers;
+using Common.Models.Dto;
+using CreditRateDTO = CreditApplication.Models.DTOs.CreditRateDTO;
+
 namespace CreditApplication.Services
 {
 

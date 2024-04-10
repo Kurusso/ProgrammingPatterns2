@@ -2,6 +2,9 @@ import {useEffect} from "react";
 import {CreditData, CreditService} from "../../api/credit";
 import {useCredits} from "../../contexts/CreditContext";
 import {CreditItem, CreditItemProps} from "./CreditItem";
+import {isAuthenticated} from "../../api/auth";
+import {Simulate} from "react-dom/test-utils";
+import error = Simulate.error;
 
 export const Credits = () => {
 const {creditItems,setCreditItems}=useCredits();
@@ -9,17 +12,14 @@ const {creditItems,setCreditItems}=useCredits();
 useEffect(()=>{
     const fetchData=async ()=>{
         try {
-            const storedToken = localStorage.getItem('token');
-            if (storedToken) {
-                const parsedToken = JSON.parse(storedToken).token;
-                if (parsedToken) {
-                    const credits= await CreditService.getCredits(parsedToken);
-                    let CreditItemsData=mapCreditDataToItemProps(credits);
-                    setCreditItems(CreditItemsData);
-                    console.log('Fetched credits:', credits);
-                }
+
+            if (!isAuthenticated()) {
+                throw Error('No token found');
             } else {
-                console.log('No token found');
+                const credits = await CreditService.getCredits();
+                let CreditItemsData = mapCreditDataToItemProps(credits);
+                setCreditItems(CreditItemsData);
+                console.log('Fetched credits:', credits);
             }
         } catch (error) {
             console.error('Error fetching credits:', error);

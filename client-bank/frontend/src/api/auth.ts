@@ -1,78 +1,65 @@
-import {UserManager} from 'oidc-client-ts';
-import {AuthConfig} from "../utils/config/AuthConfig";
+import {UserManagerSettings, WebStorageStateStore} from 'oidc-client-ts';
+import {Role} from "../pages/Login";
 
 
-const userManager = new UserManager({
-    authority: 'https://localhost:7212', // Your authority server
-    client_id: 'ClientApplication', // Your client id
+export const config: UserManagerSettings = {
+    authority: "https://localhost:7212",
+    client_id: "ClientApplication",
+    redirect_uri: "https://localhost:3000/auth",
     client_secret: "901564A5-E7FE-42CB-B10D-61EF6A8F3655",
-    redirect_uri: 'http://localhost:auth/', // Your callback route
-    response_type: 'code',
-    scope: 'openid profile api1',
-});
+    response_type: "code",
+    scope: "openid profile api1",
+    post_logout_redirect_uri: "https://localhost:3000/auth",
+    userStore: new WebStorageStateStore({store: window.localStorage}),
+};
 
 
-export async function getUser() {
-    const user = await userManager.getUser();
-    return user;
+export function makeOauth2AuthUrl(role: Role): string {
+    // depending on role specifying callback url
+
+
+    let requestUrl = new URL(config.authority + "/auth");
+    let queryParams = new URLSearchParams();
+    queryParams.set("client_id", config.client_id);
+    if (config.response_type != null) {
+        queryParams.set("response_type", config.response_type);
+    }
+    queryParams.set("redirect_uri", config.redirect_uri);
+    // if (config.scope != null) {
+    //     queryParams.set("scope", config.scope);
+    // }
+    return requestUrl + "?" + queryParams.toString();
+
 }
 
-export async function isAuthenticated() {
-    let token = await getAccessToken();
 
+export function getAccessToken(): string {
+    let token = localStorage.getItem('token');
+
+    if (!token) {
+        console.error('Token not found');
+        throw new Error('Failed to get access_token');
+    }
+
+    // Remove the double quotes from the token
+    token = token.replace(/"/g, '');
+
+    token = `Bearer ${token}`
+    return token;
+}
+
+
+export function setAccessToken(token: string) {
+    localStorage.setItem('token', JSON.stringify(token));
+    console.log(`token set`)
+}
+
+export function delAccessToken() {
+    localStorage.removeItem('token')
+}
+
+export function isAuthenticated(): boolean {
+    const token = getAccessToken();
     return !!token;
 }
 
-export async function handleOAuthCallback(callbackUrl: string) {
-    try {
-        const user = await userManager.signinRedirectCallback(callbackUrl);
-        return user;
-    } catch (e) {
-        alert(e);
-        console.log(`error while handling oauth callback: ${e}`);
-    }
-}
-
-export async function sendOAuthRequest() {
-    return await userManager.signinRedirect();
-}
-
-// renews token using refresh token
-export async function renewToken() {
-    const user = await userManager.signinSilent();
-
-    return user;
-}
-
-export async function getAccessToken() {
-    const user = await getUser();
-    return user?.access_token;
-}
-
-export async function logout() {
-    await userManager.clearStaleState()
-    await userManager.signoutRedirect();
-}
-
-
-// export class AuthService {
-//     static async getToken(email: string, password: string): Promise<string> {
-//         try {
-//
-//             const response = await fetch(magicConsts.loginEndpoint, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify({
-//                     username: email,
-//                     password: password
-//                 }),
-//             });
-//
-//             return await response.json();
-//         } catch (error) {
-//             throw error;
-//         }
-//     }
-// }

@@ -6,6 +6,7 @@ using CreditApplication.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Runtime.CompilerServices;
+using CreditScoreUpdateReason = CreditApplication.Models.CreditScoreUpdateReason;
 
 namespace CreditApplication.Services
 {

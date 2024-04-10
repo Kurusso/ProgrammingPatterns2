@@ -1,56 +1,35 @@
-﻿using System.Text;
-using CoreApplication.Models.Enumeration;
+﻿using System.Transactions;
+using client_bank_backend.Heplers;
+using client_bank_backend.Services.RabbitMqServices;
+using Common.Models.Dto;
+using Common.Models.Enumeration;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace client_bank_backend.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
-public class OperationsController:ControllerBase
+public class OperationsController : ControllerBase
 {
-    private readonly HttpClient _coreClient = new();
-    
-    [HttpPost]
-    [Route("Deposit")]
-    public async Task<IActionResult> Deposit(Guid accountId, Guid userId, int money, Currency currency)
+    private readonly IRabbitMqService _rabbitMqOperationService;
+    private readonly HttpClient _httpClient = new();
+
+    public OperationsController(IRabbitMqService rabbitMqOperationService)
     {
-        try
-        {
-            var requestUrl = $"{MagicConstants.DepositEndpoint}?accountId={accountId}&userId={userId}&money={money}&currency={currency}";
-            var response =  await _coreClient.PostAsync(requestUrl,new StringContent("",Encoding.UTF8,"application/json"));
-
-            if (response.IsSuccessStatusCode)
-            {
-                return StatusCode(201);
-            }
-
-            var errorContent = await response.Content.ReadAsStringAsync();
-            return StatusCode((int)response.StatusCode, errorContent);
-
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return StatusCode( 500, "An error occurred while creating the account.");
-        }
+        _rabbitMqOperationService = rabbitMqOperationService;
     }
 
     [HttpPost]
-    [Route("Withdraw")]
-    public async Task<IActionResult> Withdraw(Guid accountId, Guid userId, int money, Currency currency)
+    [Route("Deposit")]
+    public async Task<IActionResult> Deposit(Guid accountId, int money, Currency currency)
     {
         try
         {
-            var requestUrl = $"{MagicConstants.WithdrawEndpoint}?accountId={accountId}&userId={userId}&money={money}&currency={currency}";
-            var response =  await _coreClient.PostAsync(requestUrl,new StringContent("",Encoding.UTF8,"application/json"));
-
-            if (response.IsSuccessStatusCode)
-            {
-                return StatusCode(201);
-            }
-
-            var errorContent = await response.Content.ReadAsStringAsync();
-            return StatusCode((int)response.StatusCode, errorContent);
-
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
+            await QueueOperation(accountId, currency, new Guid(userId), money, OperationType.Deposit, null);
+            return Ok();
         }
         catch (Exception e)
         {
@@ -58,7 +37,70 @@ public class OperationsController:ControllerBase
             return StatusCode(500, "An error occurred while creating the account.");
         }
     }
-    
-    
-    
+
+    [HttpPost]
+    [Route("Withdraw")]
+    public async Task<IActionResult> Withdraw(Guid accountId, int money, Currency currency)
+    {
+        try
+        {
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
+            await QueueOperation(accountId, currency, new Guid(userId), money, OperationType.Withdraw, null);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, "An error occurred while creating the account.");
+        }
+    }
+
+    [HttpPost]
+    [Route("transfer")]
+    public async Task<IActionResult> Transfer(Guid accountId, decimal money, Currency currency, Guid reciveAccountId)
+    {
+        try
+        {
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
+            await QueueOperation(accountId, currency, new Guid(userId), money, OperationType.TransferSend,
+                reciveAccountId);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private async Task QueueOperation(Guid accountId, Currency currency, Guid userId, decimal money,
+        OperationType operationType, Guid? reciveAccountId)
+    {
+        var trackingId = Guid.NewGuid();
+        // var tracker = new ScopedConfirmationMessageFeedbackTracker();
+        // tracker.Track(trackingId.ToString());
+        _rabbitMqOperationService.SendMessage(new OperationPostDTO
+        {
+            Id = trackingId,
+            AccountId = accountId,
+            Currency = currency,
+            UserId = userId,
+            MoneyAmmount = money,
+            RecieverAccount = reciveAccountId,
+            OperationType = operationType,
+        });
+        // await tracker.WaitFor(trackingId.ToString(), TimeSpan.FromSeconds(10));
+        // var message = tracker.Get(trackingId.ToString())!;
+        // if (message.Status != 200)
+        // {
+        //     if (message.Status == 400)
+        //     {
+        //         throw new InvalidOperationException(message.Message);
+        //     }
+        //
+        //     throw new TransactionException(message.Message);
+        // }
+    }
 }

@@ -1,42 +1,62 @@
-﻿
-using System.Text;
+﻿using System.Text;
 using client_bank_backend.DTOs;
-using CoreApplication.Models.Enumeration;
+using client_bank_backend.Heplers;
+using Common.Models.Dto;
+using Common.Models.Enumeration;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace client_bank_backend.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
-public class AccountController:ControllerBase
+public class AccountController : ControllerBase
 {
     private readonly HttpClient _coreClient = new();
 
 
-    [HttpGet("User/{userId}")]
-    public async Task<IActionResult> GetUserAccounts(Guid userId)
+    [HttpGet("User")]
+    public async Task<IActionResult> GetUserAccounts()
     {
         try
         {
+            var userId = await AuthHelper.Validate(_coreClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
+
             var requestUrl = $"{MagicConstants.GetAccountsEndpoint}{userId}";
-            var response = await _coreClient.GetFromJsonAsync<List<AccountDTO>>(requestUrl);
+            var responseAccounts = await _coreClient.GetAsync(requestUrl);
+            
+            if (!responseAccounts.IsSuccessStatusCode)
+                return StatusCode((int)responseAccounts.StatusCode);
+            
+            var accounts = await responseAccounts.Content.ReadFromJsonAsync<List<AccountDTO>>();
 
-            if (response != null)
-            {
-                return Ok(response);
-            }
+            var hiddenAccountsUrl = $"{MagicConstants.GetHiddenAccountsEndpoint}?userId={userId}";
+            var responseHiddenAccounts = await _coreClient.GetAsync(hiddenAccountsUrl);
 
-            return NotFound("Accounts wasn't found");
+            if (!responseHiddenAccounts.IsSuccessStatusCode)
+                return StatusCode((int)responseHiddenAccounts.StatusCode);
+            
+            var hiddenAccounts = await responseHiddenAccounts.Content.ReadFromJsonAsync<List<HiddenAccountDto>>();
+
+            var accountDataList = accounts.Select(account => new AccountDataDto(account, hiddenAccounts.Any(hiddenAccount => hiddenAccount.AccountId == account.Id))).ToList();
+            
+            return Ok(accountDataList);
+
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "an error occured, while getting accounts");
+            return StatusCode(500, "An error occurred while getting accounts. Please try again later.");
         }
     }
-    
+
     [HttpGet("GetInfo/{accountId}")]
-    public async Task<IActionResult> GetAccountInfo(Guid userId, Guid accountId)
+    public async Task<IActionResult> GetAccountInfo(Guid accountId)
     {
+        var userId = await AuthHelper.Validate(_coreClient, Request);
+        if (userId.IsNullOrEmpty()) return Unauthorized();
+
         try
         {
             var requestUrl = $"{MagicConstants.GetAccountEndpoint}{accountId}?userId={userId}";
@@ -51,17 +71,20 @@ public class AccountController:ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode( 500,"An error occurred while retrieving the account!");
+            return StatusCode(500, "An error occurred while retrieving the account!");
         }
     }
 
     [HttpPost("Create")]
-    public async Task<IActionResult> CreateAccount(Guid userId, Currency currency)
+    public async Task<IActionResult> CreateAccount(Currency currency)
     {
+        var userId = await AuthHelper.Validate(_coreClient, Request);
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl = $"{MagicConstants.CreateAccountEndpoint}?userId={userId}&currency={currency}";
-            var response = await _coreClient.PostAsync(requestUrl,new StringContent("",Encoding.UTF8,"application/json"));
+            var response =
+                await _coreClient.PostAsync(requestUrl, new StringContent("", Encoding.UTF8, "application/json"));
 
             if (response.IsSuccessStatusCode)
             {
@@ -70,7 +93,6 @@ public class AccountController:ControllerBase
 
             var errorContent = await response.Content.ReadAsStringAsync();
             return StatusCode((int)response.StatusCode, errorContent);
-
         }
         catch (Exception e)
         {
@@ -78,11 +100,13 @@ public class AccountController:ControllerBase
             return StatusCode(500, "An error occurred while creating the account.");
         }
     }
-    
+
     [HttpDelete]
     [Route("Close")]
-    public async Task<IActionResult> CloseAccount(Guid userId, Guid accountId)
+    public async Task<IActionResult> CloseAccount(Guid accountId)
     {
+        var userId = await AuthHelper.Validate(_coreClient, Request);
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl = $"{MagicConstants.CloseAccountEndpoint}?userId={userId}&accountId={accountId}";
@@ -91,19 +115,14 @@ public class AccountController:ControllerBase
             {
                 return StatusCode(204);
             }
+
             var errorContent = await response.Content.ReadAsStringAsync();
             return StatusCode((int)response.StatusCode, errorContent);
-            
         }
-        catch (HttpRequestException ex)
+        catch (Exception e)
         {
-            return Problem(statusCode: 503, detail: "Service Unavailable!");
-        }
-        catch (Exception ex)
-        {
-            return Problem(statusCode: 500, detail: "An unexpected error occurred!");
+            Console.WriteLine(e);
+            return StatusCode(500, "An error occurred while closing the account.");
         }
     }
-    
-
 }

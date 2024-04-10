@@ -1,7 +1,5 @@
-﻿using System.Net.Http.Headers;
-using client_bank_backend.DTOs;
+﻿using client_bank_backend.DTOs;
 using client_bank_backend.Hubs;
-using Microsoft.AspNetCore.Http.Connections.Client;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 
@@ -17,13 +15,16 @@ public class AccountHubService:IHostedService
         _bffAccountHubContext = bffAccountHubContext;
     }
 
+    
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _backendHubConnection = new HubConnectionBuilder()
             .WithUrl(MagicConstants.AccountHub)
             .Build();
 
-        _backendHubConnection.On<AccountDTO>("ReceiveAccount", (accountInfo) =>
+        _backendHubConnection.On<AccountDTO>("ReceiveAccount", 
+            
+            (accountInfo) =>
         {
             ForwardAccountInfoToClients(accountInfo);
         });
@@ -38,6 +39,10 @@ public class AccountHubService:IHostedService
 
     private void ForwardAccountInfoToClients(AccountDTO accountInfo)
     {
-        _bffAccountHubContext.Clients.All.SendAsync("ReceiveAccount", accountInfo);
+        // Get connections from map
+        if (BffAccountHub._userConnectionMap.TryGetValue(accountInfo.UserId.ToString(), out List<string> connectionsId)&&connectionsId.Any())
+        {
+            _bffAccountHubContext.Clients.Clients(connectionsId).SendAsync("ReceiveAccount", accountInfo);
+        }
     }
 }

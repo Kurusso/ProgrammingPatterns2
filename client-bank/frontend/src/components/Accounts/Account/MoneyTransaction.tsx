@@ -4,6 +4,7 @@ import React, {useState} from "react";
 import {Currency} from "../../../api/account";
 import {useParams} from "react-router-dom";
 import {TransactionService} from "../../../api/transaction";
+import {isAuthenticated} from "../../../api/auth";
 
 interface MoneyOperationProps {
     transactionType:TransactionType
@@ -26,19 +27,13 @@ export const MoneyTransaction: React.FC<MoneyOperationProps> = ({transactionType
     console.log(accountId)
     const HandleOperation = async () => {
 
-        const storedToken = localStorage.getItem('token');
-        if (!storedToken) {
-            throw new Error('No token found');
-        }
-
-        const parsedToken = JSON.parse(storedToken).token;
-        if (!parsedToken) {
+        if (!isAuthenticated()) {
             throw new Error('Invalid token');
         }
 
         if(!selectedCurrency||amount<=0||!accountId)
             return;
-        await TransactionService.performTransaction(accountId,amount,selectedCurrency,transactionType,parsedToken)
+        await TransactionService.performTransaction(accountId,amount,selectedCurrency,transactionType)
 
         await setAccount();
 

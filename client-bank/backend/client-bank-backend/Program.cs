@@ -1,11 +1,16 @@
 using client_bank_backend.Hubs;
 using client_bank_backend.Services;
+using client_bank_backend.Services.RabbitMqServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
 
 services.AddSingleton<IHostedService, AccountHubService>();
+services.AddScoped<IRabbitMqService, RabbitMQIntegrationService>();
+    //services.AddHostedService< RabbitMQFeedbackListener>();
+
+
 builder.Services.AddHttpClient();
 services.AddCors(options =>
 {
@@ -13,7 +18,7 @@ services.AddCors(options =>
         corsPolicyBuilder =>
         {
             corsPolicyBuilder
-                .WithOrigins("http://localhost:3000")
+                .WithOrigins("https://localhost:3000")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -34,9 +39,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
-app.UseAuthorization();
 app.UseCors();
+app.UseAuthorization();
+
 app.MapHub<BffAccountHub>("/AccountHub");
 app.MapControllers();
 

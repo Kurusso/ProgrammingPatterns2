@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
                 .AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials();
+                ;
         });
 });
 // builder.Services.AddScoped<ClientService, ClientService>();
@@ -53,7 +53,7 @@ app.InitRoles();
 
 app.UseMiddleware<MyMiddleware>();
 app.UseStaticFiles();
-
+app.UseCors();
 app.UseAuthentication();
 
 app.UseAuthorization();

@@ -2,6 +2,7 @@ import {useAccounts} from "../../contexts/AccountsContext";
 import {useEffect} from "react";
 import {AccountService} from "../../api/account";
 import {mapAccountDataToElementProps} from "../Accounts/Accounts";
+import {isAuthenticated} from "../../api/auth";
 
 interface AccountSelectProps {
     selectedAccount: string | null,
@@ -15,17 +16,11 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({selectedAccount, se
 
         const fetchData = async () => {
             try {
-                const storedToken = localStorage.getItem('token');
-                if (!storedToken) {
-                    throw new Error('No token found');
-                }
-
-                const parsedToken = JSON.parse(storedToken).token;
-                if (!parsedToken) {
+                if (!isAuthenticated()) {
                     throw new Error('Invalid token');
                 }
 
-                const accounts = await AccountService.getAccounts(parsedToken);//getAccounts
+                const accounts = await AccountService.getAccounts();//getAccounts
                 let AccountsElementsData = mapAccountDataToElementProps(accounts);
                 setAccountElements(AccountsElementsData);
             } catch (e) {
@@ -37,8 +32,9 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({selectedAccount, se
 
 
     return (<div>
-            <h4>Account to pay</h4>
-            <select className={"account-select"} value={selectedAccount || ''} onChange={(e) => setSelectedAccount(e.target.value)}>
+            <h5>Account to pay</h5>
+            <select className={"account-select"} value={selectedAccount || ''}
+                    onChange={(e) => setSelectedAccount(e.target.value)}>
                 <option value="">Select...</option>
                 {accountElements.map((account) => (
                     <option key={account.AccountId} value={account.AccountId}>{account.AccountId}</option>

@@ -1,4 +1,4 @@
-namespace UserService.Models.DTO;
+namespace client_bank_backend.DTOs;
 
 public class UserDTO
 {

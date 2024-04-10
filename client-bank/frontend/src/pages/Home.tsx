@@ -2,10 +2,14 @@ import {LogoutButton} from "../components/Buttons/LogoutButton";
 import {Accounts} from "../components/Accounts/Accounts";
 import {CreateAccount} from "../components/Accounts/CreateAccount";
 import {AccountsProvider} from "../contexts/AccountsContext";
-import {UsernameDisplay} from "../components/UserameDisplay";
+import {UsernameDisplay} from "../components/UsernameDisplay";
 import {Credits} from "../components/Credits/Credits";
 import {CreditProvider} from "../contexts/CreditContext";
 import {TakeCredit} from "../components/Credits/TakeCredit";
+import {TransferMoney} from "../components/Accounts/TransferMoney";
+import ThemeButton from "../components/Buttons/ThemeButton";
+import {UserPenaltiesButton} from "../components/Buttons/UserPenaltiesButton";
+
 export const Home = () => {
 
 
@@ -14,8 +18,12 @@ export const Home = () => {
             <h1>Home</h1>
             <UsernameDisplay/>
             <LogoutButton/>
+            <UserPenaltiesButton/>
+            <ThemeButton/>
+
             <AccountsProvider>
                 <CreateAccount/>
+                <TransferMoney/>
                 <Accounts/>
 
                 <CreditProvider>
@@ -25,4 +33,4 @@ export const Home = () => {
             </AccountsProvider>
         </div>
     );
-};
+}

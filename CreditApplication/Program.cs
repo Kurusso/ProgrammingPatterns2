@@ -27,11 +27,11 @@ services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
         configuration.GetConnectionString("DefaultConnection")
     )
 );
-services.AddMvc().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-});
+// services.AddMvc().AddJsonOptions(options =>
+// {
+//     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+//     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+// });
 services.AddHealthChecks();
 
 var app = builder.Build();

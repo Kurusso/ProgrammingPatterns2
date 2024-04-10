@@ -4,7 +4,7 @@ import {Currency} from "../api/account";
 import {LogoutButton} from "../components/Buttons/LogoutButton";
 import {TransactionHistory} from "../components/Accounts/Account/TransactionHistory";
 import {HomeButton} from "../components/Buttons/HomeButton";
-import {UsernameDisplay} from "../components/UserameDisplay";
+import {UsernameDisplay} from "../components/UsernameDisplay";
 import {MoneyTransaction, TransactionType} from "../components/Accounts/Account/MoneyTransaction";
 import {useAccountData} from "../other/UseAccountData";
 
@@ -40,4 +40,4 @@ export const Account = () => {
 
         </div>
     );
-};
+}

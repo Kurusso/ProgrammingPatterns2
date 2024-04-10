@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import {setAccessToken} from "../api/auth";
 
 interface AuthProviderProps {
     children: React.ReactNode;
@@ -18,9 +19,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
 
     const handleLogin = (token: string) => {
-        localStorage.setItem('token', JSON.stringify(token));
+        setAccessToken(token)
         setIsAuthenticated(true);
-        console.log(token);
     };
 
     return (

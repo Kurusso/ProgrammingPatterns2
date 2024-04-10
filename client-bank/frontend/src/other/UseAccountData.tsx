@@ -2,6 +2,7 @@ import {AccountData, AccountService} from "../api/account";
 import {useEffect, useState} from "react";
 import * as signalR from "@microsoft/signalr";
 import {magicConsts} from "../api/magicConst";
+import {getAccessToken, isAuthenticated} from "../api/auth";
 
 export const useAccountData = (accountId: string | undefined) => {
     const [accountData, setAccountData] = useState<AccountData>();
@@ -9,18 +10,13 @@ export const useAccountData = (accountId: string | undefined) => {
 
     const updateAccount = async () => {
         try {
-            const storedToken = localStorage.getItem('token');
-            if (!storedToken) {
-                throw new Error('No token found');
-            }
 
-            const parsedToken = JSON.parse(storedToken).token;
-            if (!parsedToken) {
+            if (!isAuthenticated()) {
                 throw new Error('Invalid token');
             }
 
             if (accountId != null) {
-                const account = await AccountService.getAccount(accountId, parsedToken);
+                const account = await AccountService.getAccount(accountId);
                 setAccountData(account);
             }
 
@@ -37,19 +33,8 @@ export const useAccountData = (accountId: string | undefined) => {
         const newConnection = new signalR.HubConnectionBuilder()
             .withUrl(`${magicConsts.AccountInfoHub}`, {
                 accessTokenFactory: () => {
-                    const storedToken = localStorage.getItem('token');
-                    if (!storedToken) {
-                        throw new Error('No token found');
-                    }
-
-                    const parsedToken = JSON.parse(storedToken).token;
-                    if (!parsedToken) {
-                        throw new Error('Invalid token');
-                    }
-
-                    return parsedToken;
+                    return getAccessToken();
                 }
-
             })
             .withAutomaticReconnect()
             .build();

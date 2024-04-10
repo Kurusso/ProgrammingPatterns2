@@ -1,8 +1,10 @@
 ﻿using System.Text;
-using CoreApplication.Models.Enumeration;
-using CreditApplication.Models.Dtos;
-using CreditApplication.Models.DTOs;
+using client_bank_backend.DTOs;
+using client_bank_backend.Heplers;
+using Common.Models.Dto;
+using Common.Models.Enumeration;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace client_bank_backend.Controllers;
@@ -11,21 +13,23 @@ namespace client_bank_backend.Controllers;
 [ApiController]
 public class CreditController : ControllerBase
 {
-    private readonly HttpClient _coreClient = new();
+    private readonly HttpClient _httpClient = new();
 
     [HttpPost]
     [Route("Take")]
     public async Task<IActionResult> TakeCredit(TakeCreditDTO credit)
     {
+        var userId = await AuthHelper.Validate(_httpClient, Request);
+        if (userId.IsNullOrEmpty()) return Unauthorized();
+        credit.UserId = new Guid(userId);
         try
         {
             var requestUrl = $"{MagicConstants.TakeCreditEndpoint}";
 
-            // Serialize the credit object to a JSON string
             var jsonContent = JsonConvert.SerializeObject(credit);
 
-            // Pass the JSON string into the StringContent constructor
-            var response = await _coreClient.PostAsync(requestUrl, new StringContent(jsonContent, Encoding.UTF8, "application/json"));
+            var response = await _httpClient.PostAsync(requestUrl,
+                new StringContent(jsonContent, Encoding.UTF8, "application/json"));
 
             if (response.IsSuccessStatusCode)
             {
@@ -45,14 +49,26 @@ public class CreditController : ControllerBase
 
     [HttpGet]
     [Route("GetUserCredits")]
-    public async Task<IActionResult> GetUserCredits(Guid userId)
+    public async Task<IActionResult> GetUserCredits()
     {
+        var userId = await AuthHelper.Validate(_httpClient, Request);
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl =
                 $"{MagicConstants.GetUserCreditsEndpoint}?userId={userId}"; //https://localhost:7186/api/Credit/GetUserCredits?userId=9985d7a3-caeb-40f3-8258-9a27d1548053
-            var response = await _coreClient.GetFromJsonAsync<List<CreditDTO>>(requestUrl);
-
+            var response = await _httpClient.GetAsync(requestUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseString = await response.Content.ReadAsStringAsync();
+                var userDto = await response.Content.ReadFromJsonAsync<List<CreditDTO>>();
+                if (userDto != null)
+                {
+                    return Ok(userDto);
+                }
+            }
+            
+            
             if (response != null)
             {
                 return Ok(response);
@@ -70,13 +86,15 @@ public class CreditController : ControllerBase
 
     [HttpGet]
     [Route("GetInfo")]
-    public async Task<IActionResult> GetCreditInfo(Guid id, Guid userId)
+    public async Task<IActionResult> GetCreditInfo(Guid id)
     {
+        var userId = await AuthHelper.Validate(_httpClient, Request);
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl =
                 $"{MagicConstants.GetCreditInfoEndpoint}?id={id}&userId={userId}"; //https://localhost:7186/api/Credit/GetInfo?id=590305df-657f-41d2-adfc-7720a3a61bab&userId=9985d7a3-caeb-40f3-8258-9a27d1548053
-            var response = await _coreClient.GetFromJsonAsync<CreditDTO>(requestUrl);
+            var response = await _httpClient.GetFromJsonAsync<CreditDTO>(requestUrl);
 
             if (response != null)
             {
@@ -94,16 +112,18 @@ public class CreditController : ControllerBase
 
     [HttpPost]
     [Route("Repay")]
-    public async Task<IActionResult> RepayCredit(Guid id, Guid userId, int moneyAmmount, Currency currency,
+    public async Task<IActionResult> RepayCredit(Guid id, decimal moneyAmmount, Currency currency,
         Guid? accountId = null)
     {
+        var userId = await AuthHelper.Validate(_httpClient, Request);
+        if (userId.IsNullOrEmpty()) return Unauthorized();
         try
         {
             var requestUrl =
                 $"{MagicConstants.RepayCreditEndpoint}?id={id}&userId={userId}&moneyAmmount={moneyAmmount}&currency={currency}&accountId={accountId}";
 
             var response =
-                await _coreClient.PostAsync(requestUrl, new StringContent("", Encoding.UTF8, "application/json"));
+                await _httpClient.PostAsync(requestUrl, new StringContent("", Encoding.UTF8, "application/json"));
 
             if (response.IsSuccessStatusCode)
             {
@@ -119,4 +139,30 @@ public class CreditController : ControllerBase
             return StatusCode(500, "An error occurred while taking credit.");
         }
     }
+    
+    [HttpGet]
+    [Route("GetUserCreditScore")]
+    public async Task<ActionResult<CreditScoreDTO>> GetUserCreditScore( bool withUpdateHistory = false)
+    {
+        try
+        {
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
+            var requestUrl =
+                $"{MagicConstants.GetUserCreditScoreEndpoint}?userId={userId}&withUpdateHistory={withUpdateHistory}";
+            var response = await _httpClient.GetAsync(requestUrl);
+
+            if (!response.IsSuccessStatusCode)
+                return StatusCode((int)response.StatusCode);
+
+            var score = await response.Content.ReadFromJsonAsync<CreditScoreDTO>();
+            return Ok(score);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return StatusCode(500, "An error occurred while getting the credit score. Please try again later.");
+        }
+    }
+    
 }

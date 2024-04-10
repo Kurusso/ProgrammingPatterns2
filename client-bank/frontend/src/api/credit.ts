@@ -2,6 +2,31 @@ import {
     magicConsts
 } from "./magicConst";
 import {Currency, Money} from "./account";
+import {getAccessToken} from "./auth";
+
+export interface CreditScoreDTO {
+    userId: string;
+    score: number;
+    updateHistory?: CreditScoreUpdateDTO[];
+}
+
+interface CreditScoreUpdateDTO {
+    creditScoreId: string;
+    dateTime: string; // or Date if you prefer
+    change: number;
+    reason: CreditScoreUpdateReason;
+    comment: string;
+}
+
+enum CreditScoreUpdateReason {
+    Other,
+    CreditTakeout,
+    CreditPayOff,
+    CreditPaymentMade,
+    CreditPaymentOverdue,
+    CreditPaymentOverduePayOff
+}
+
 
 export interface CreditRate {
     id: string;
@@ -10,20 +35,31 @@ export interface CreditRate {
 }
 
 export interface CreditData {
+    id: string;
     creditRate: CreditRate;
     fullMoneyAmount: Money;
-    id: string;
+    userId: string;
     monthPayAmount: Money;
     payingAccountId: string;
     remainingDebt: Money;
     unpaidDebt: Money;
-    userId: string;
+    penalties: Penalties[];
+}
+
+
+export interface Penalties {
+    isPaidOff: boolean;
+    creditId: string;
+    amount: Money;
+
 }
 
 export class CreditService {
-    static async getCredits(token: string) {
+    static async getCredits() {
         try {
-            const response = await fetch(`${magicConsts.getCreditsEndpoint}?userId=${token}`)
+            const response = await fetch(`${magicConsts.getCreditsEndpoint}`, {
+                headers: {'Authorization': getAccessToken(),}
+            })
             let data: CreditData[] = await response.json();
             console.log(data);
             return data
@@ -32,10 +68,11 @@ export class CreditService {
         }
     }
 
-    static async getCredit(token: string, creditId: string) {
+    static async getCredit(creditId: string) {
         try {
-            console.log("getting credit")
-            const response = await fetch(`${magicConsts.getCreditEndpoint}?id=${creditId}&userId=${token}`)
+            const response = await fetch(`${magicConsts.getCreditEndpoint}?id=${creditId}`, {
+                headers: {'Authorization': getAccessToken()}
+            })
             let data: CreditData = await response.json();
             console.log(data);
             return data
@@ -44,16 +81,16 @@ export class CreditService {
         }
     }
 
-    static async takeCredit(creditRateId: string, userId: string, accountId: string, currency: Currency, moneyAmount: number, monthPay: number) {
+    static async takeCredit(creditRateId: string, accountId: string, currency: Currency, moneyAmount: number, monthPay: number) {
         try {
             const response = await fetch(magicConsts.takeCreditEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': getAccessToken()
                 },
                 body: JSON.stringify({
                     creditRateId,
-                    userId,
                     accountId,
                     currency: Number(currency),
                     moneyAmount,
@@ -76,14 +113,15 @@ export class CreditService {
         }
     }
 
-    static async repayCredit(creditId: string, userId: string, moneyAmmount: number, currency: Currency, accountId: string) {
+    static async repayCredit(creditId: string, moneyAmmount: number, currency: Currency, accountId: string) {
         try {
             console.log()
 
-            const response = await fetch(`${magicConsts.repayCreditEndpoint}?id=${creditId}&userId=${userId}&moneyAmmount=${moneyAmmount}&currency=${currency}&accountId=${accountId}`, {
+            const response = await fetch(`${magicConsts.repayCreditEndpoint}?id=${creditId}&moneyAmmount=${moneyAmmount}&currency=${currency}&accountId=${accountId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': getAccessToken()
                 },
             })
 
@@ -94,13 +132,33 @@ export class CreditService {
 
     static async getCreditRates() {
         try {
-            const response = await fetch(magicConsts.getCreditRatesEndpoint)
+            const response = await fetch(magicConsts.getCreditRatesEndpoint, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': getAccessToken()
+                }
+            })
             let data: CreditRate[] = await response.json();
             console.log(data);
             return data
         } catch (error) {
             throw error;
         }
+    }
+
+    static async getUserCreditScore(withUpdateHistory: boolean = false) {
+        let requestUrl = `${magicConsts.GetUserCreditScoreEndpoint}?withUpdateHistory=${withUpdateHistory}`
+        const response = await fetch(requestUrl, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getAccessToken()
+            }});
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        console.log(response)
+        let data: CreditScoreDTO = await response.json()
+        return data;
     }
 
 }

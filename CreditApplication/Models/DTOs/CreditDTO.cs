@@ -1,6 +1,7 @@
 ﻿using Common.Models;
+using CreditApplication.Models.Dtos;
 
-namespace CreditApplication.Models.Dtos
+namespace CreditApplication.Models.DTOs
 {
     public class CreditDTO
     {
@@ -27,7 +28,7 @@ namespace CreditApplication.Models.Dtos
             RemainingDebt = credit.RemainingDebt;
             UserId = credit.UserId;
             PayingAccountId = credit.PayingAccountId;
-            CreditRate = new CreditRateDTO(credit.CreditRate);
+            CreditRate = new CreditApplication.Models.DTOs.CreditRateDTO(credit.CreditRate);
             FullMoneyAmount = credit.FullMoneyAmount;
             MonthPayAmount = credit.MonthPayAmount;
             Penalties = credit.Penalties?.Any() == true ? 

@@ -1,5 +1,7 @@
-﻿using CreditApplication.Models.Dtos;
+﻿using client_bank_backend.DTOs;
+using client_bank_backend.Heplers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace client_bank_backend.Controllers;
 
@@ -7,7 +9,7 @@ namespace client_bank_backend.Controllers;
 [ApiController]
 public class CreditRatesController:ControllerBase
 {
-    private readonly HttpClient _coreClient = new();
+    private readonly HttpClient _httpClient = new();
     
     
     
@@ -15,10 +17,13 @@ public class CreditRatesController:ControllerBase
     [Route("GetAll")]
     public async Task<IActionResult> GetCreditRates()
     {
+        var userId = await AuthHelper.Validate(_httpClient, Request);
+        if (userId.IsNullOrEmpty()) return Unauthorized();
+        
         try
         {
             var requestUrl = MagicConstants.GetCreditRatesEndpoint;//https://localhost:7186/api/CreditRates/GetAll
-            var response = await _coreClient.GetFromJsonAsync<List<CreditRateDTO>>(requestUrl);
+            var response = await _httpClient.GetFromJsonAsync<List<CreditRateDTO>>(requestUrl);
 
             if (response != null)
             {

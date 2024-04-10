@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -61,19 +62,22 @@ public class ClientsController(UsersService us) : Controller
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("info/{id:guid?}")]
     [Authorize(
-        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, 
+        AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme,
         Roles = IdentityConfigurator.ClientRole
     )]
-    public async Task<ActionResult<UserDTO>> ClientInfo(Guid id)
+    public async Task<ActionResult<UserDTO>> ClientInfo(Guid? id)
     {
-        if (!_userService.CanSeeUser(User, id))
+        
+        id ??= new Guid(User.FindFirstValue("sub"));
+        
+        if (!_userService.CanSeeUser(User, id.Value))
             return Problem("Forbidden", statusCode: 403);
-    
+
         try
         {
-            var client = await _userService.UserInfo(id);
+            var client = await _userService.UserInfo(id.Value);
             return Ok(client);
         }
         catch (BackendException be)

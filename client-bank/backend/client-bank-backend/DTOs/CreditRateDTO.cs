@@ -1,7 +1,4 @@
-﻿using Common.Models;
-
-
-namespace CreditApplication.Models.Dtos
+﻿namespace client_bank_backend.DTOs
 {
     public class CreditRateDTO
     {

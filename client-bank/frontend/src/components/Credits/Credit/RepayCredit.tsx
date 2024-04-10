@@ -4,6 +4,7 @@ import {CurrencySelect} from "../../Selects/CurrencySelect";
 import {useState} from "react";
 import {Currency} from "../../../api/account";
 import {AccountSelect} from "../../Selects/AccountSelect";
+import {isAuthenticated} from "../../../api/auth";
 
 interface RepayCreditProps{
     creditId:string,
@@ -17,13 +18,8 @@ export const RepayCredit:React.FC<RepayCreditProps> = ({creditId,accountId}) => 
     const [amount, setAmount] = useState<number>(0);
     const HandleCreditPayment =async () => {
         try {
-            const storedToken = localStorage.getItem('token');
-            if (!storedToken)
-                throw new Error('No token found');
 
-
-            const parsedToken = JSON.parse(storedToken).token;
-            if (!parsedToken)
+            if (!isAuthenticated())
                 throw new Error('Invalid token');
 
 
@@ -34,7 +30,7 @@ export const RepayCredit:React.FC<RepayCreditProps> = ({creditId,accountId}) => 
                 throw new Error('Account wasnt selected')
 
             console.log("paying for credit")
-            await CreditService.repayCredit(creditId,parsedToken,amount,selectedCurrency,selectedAccount);
+            await CreditService.repayCredit(creditId,amount,selectedCurrency,selectedAccount);
         }
         catch (e) {
 

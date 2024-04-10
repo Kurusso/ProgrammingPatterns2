@@ -1,19 +1,22 @@
 import React from 'react';
 import "../styles/Login.css";
-import { sendOAuthRequest} from "../api/auth";
+import {makeOauth2AuthUrl} from "../api/auth";
+import {useNavigate} from "react-router-dom";
 
-enum Role {
+export enum Role {
     Client,
     Staff
 }
 
 const Login: React.FC = () => {
 
-
+    const navigate = useNavigate();
     const RedirectToLoginPage = (role: Role) => {
-        sendOAuthRequest()
-    };
 
+        const url = makeOauth2AuthUrl(role);
+        console.log(url)
+        window.location.assign(url);
+    };
     return (
         <div className="login-container">
             <h2>Login</h2>
