@@ -15,7 +15,7 @@ namespace Common.Helpers
             [Currency.Ruble] = 0m
         };
 
-        private CurrencyValues() { }
+    private CurrencyValues() { }
 
         public void UpdateValues(decimal rubleToDollar, decimal euroToDollar, decimal dollarToDollar)
         {

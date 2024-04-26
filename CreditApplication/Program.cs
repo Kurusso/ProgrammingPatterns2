@@ -1,3 +1,4 @@
+using Common.Services;
 using CoreApplication.BackgroundJobs;
 using CreditApplication.Models;
 using CreditApplication.Quartz;
@@ -27,6 +28,11 @@ services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
         configuration.GetConnectionString("DefaultConnection")
     )
 );
+services.AddScoped<HttpClient>(options =>
+{
+    var messageHandler = new IdempotentAutoRetryHttpMessageHandler();
+    return new HttpClient(messageHandler);
+});
 // services.AddMvc().AddJsonOptions(options =>
 // {
 //     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Common.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using UserService.Helpers;
@@ -19,6 +20,12 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<AuthService, AuthService>();
 builder.Services.AddScoped<UsersService, UsersService>();
+builder.Services.AddScoped<HttpClient>(options =>
+{
+    var messageHandler = new IdempotentAutoRetryHttpMessageHandler();
+    return new HttpClient(messageHandler);
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -27,8 +34,7 @@ builder.Services.AddCors(options =>
             corsPolicyBuilder
                 .AllowAnyOrigin()
                 .AllowAnyHeader()
-                .AllowAnyMethod()
-                ;
+                .AllowAnyMethod();
         });
 });
 // builder.Services.AddScoped<ClientService, ClientService>();

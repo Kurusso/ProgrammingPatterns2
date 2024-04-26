@@ -11,7 +11,12 @@ namespace client_bank_backend.Controllers;
 [Route("api/penalty")]
 public class PenaltyController:ControllerBase
 {
-    private readonly HttpClient _httpClient = new();
+    private readonly HttpClient _httpClient;
+
+    public PenaltyController(HttpClient hc)
+    {
+        _httpClient = hc;
+    }
     
     [HttpGet]
     [Route("GetUserPenalties")]
