@@ -9,6 +9,7 @@ namespace CoreApplication.Services
         public Task<List<Guid>> GetBlockedUsers(); 
         public Task BlockUser(Guid userId);
         public Task UnblockUser(Guid userId);
+        public Task AddNotificationsToDevice(Guid userId, string deviceToken, string appId);
     }
     public class UserService : IUserService
     {
@@ -37,6 +38,23 @@ namespace CoreApplication.Services
                 throw new KeyNotFoundException($"User with {userId} id is not blocked");
             }
             _dbContext.BlockedUsers.Remove(user);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task AddNotificationsToDevice(Guid userId, string deviceToken, string appId)
+        {
+            var token = await _dbContext.DeviceTokens.FirstOrDefaultAsync(x=>x.UserId==userId && x.Token == deviceToken);
+            if (token != null)
+            {
+                throw new InvalidOperationException($"Notifications are on for this user {userId} for this device {deviceToken}!");
+            }
+            await _dbContext.DeviceTokens.AddAsync(new DeviceToken
+            {
+                Id = Guid.NewGuid(),
+                Token = deviceToken,
+                UserId = userId,
+                AppId = appId
+            });
             await _dbContext.SaveChangesAsync();
         }
     }

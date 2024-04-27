@@ -39,6 +39,23 @@ namespace CoreApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DeviceTokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Token = table.Column<string>(type: "text", nullable: false),
+                    AppId = table.Column<string>(type: "text", nullable: false),
+                    CreateDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifyDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeleteDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceTokens", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Operations",
                 columns: table => new
                 {
@@ -73,6 +90,9 @@ namespace CoreApplication.Migrations
         {
             migrationBuilder.DropTable(
                 name: "BlockedUsers");
+
+            migrationBuilder.DropTable(
+                name: "DeviceTokens");
 
             migrationBuilder.DropTable(
                 name: "Operations");
