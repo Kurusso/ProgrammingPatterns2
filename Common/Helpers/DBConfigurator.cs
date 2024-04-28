@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace UserService.Helpers;
+namespace Common.Helpers;
 
 
 public static class DBConfigurator
@@ -10,9 +13,9 @@ public static class DBConfigurator
         builder.Services.AddDbContext<T>(options =>
         {
             options.UseNpgsql(builder.Configuration.GetConnectionString(connectionString ?? "DefaultConnection"));
-            options.UseOpenIddict();
         });
     }
+
 
     public static void MigrateDBWhenNecessary<T>(this WebApplication app) where T : DbContext
     {

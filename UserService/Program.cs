@@ -1,8 +1,7 @@
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
+using Common.Helpers;
+using Common.Models;
 using Common.Services;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.EntityFrameworkCore;
 using UserService.Helpers;
 using UserService.Models;
 using UserService.Services;
@@ -15,7 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c => {
+    c.OperationFilter<ExposeIdempotentIdSwaggerFilter>();
+});
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<AuthService, AuthService>();
@@ -40,7 +41,13 @@ builder.Services.AddCors(options =>
 // builder.Services.AddScoped<ClientService, ClientService>();
 
 builder.AddIdentity();
-builder.AddDB<MainDbContext>("DbConnection");
+
+builder.Services.AddDbContext<MainDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
+    options.UseOpenIddict();
+});
+builder.AddIdempotenceDB("IdempotenceDbConnection");
 builder.AddOpenIddict();
 
 var app = builder.Build();
@@ -53,6 +60,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MigrateDBWhenNecessary<MainDbContext>();
+app.MigrateDBWhenNecessary<IdempotentDbContext>();
 app.AddOauthClients();
 app.InitRoles();
 
@@ -60,10 +68,11 @@ app.InitRoles();
 app.UseMiddleware<MyMiddleware>();
 app.UseStaticFiles();
 app.UseCors();
-app.UseAuthentication();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<IdempotentRequestsMiddleware>();
 app.MapControllers();
 app.MapDefaultControllerRoute();
 app.MapRazorPages();

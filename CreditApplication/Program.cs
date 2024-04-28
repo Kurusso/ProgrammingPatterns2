@@ -1,3 +1,5 @@
+using Common.Helpers;
+using Common.Models;
 using Common.Services;
 using CoreApplication.BackgroundJobs;
 using CreditApplication.Models;
@@ -23,11 +25,14 @@ services.AddScoped<ICreditPenaltyService, CreditPenaltyService>();
 services.AddScoped<ICreditScoreService, CreditScoreService>();
 services.AddScoped<IRabbitMqService, RabbitMQIntegrationService>();
 services.AddHostedService<RabbitMQFeedbackListener>();
-services.AddSwaggerGen();
+services.AddSwaggerGen(c => {
+    c.OperationFilter<ExposeIdempotentIdSwaggerFilter>();
+});
 services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
         configuration.GetConnectionString("DefaultConnection")
     )
 );
+builder.AddIdempotenceDB("IdempotenceDbConnection");
 services.AddScoped<HttpClient>(options =>
 {
     var messageHandler = new IdempotentAutoRetryHttpMessageHandler();
@@ -51,10 +56,14 @@ if (app.Environment.IsDevelopment())
 }
 // app.UseHttpsRedirection();
 
+app.MigrateDBWhenNecessary<IdempotentDbContext>();
+app.MigrateDBWhenNecessary<CreditDbContext>();
+
 app.UseAuthorization();
 
-app.MapControllers();
-
 app.MapHealthChecks("/health");
+
+app.UseMiddleware<IdempotentRequestsMiddleware>();
+app.MapControllers();
 
 app.Run();
