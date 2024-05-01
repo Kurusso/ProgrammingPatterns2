@@ -1,3 +1,4 @@
+using Common.Middleware;
 using CoreApplication.BackgroundJobs;
 using CoreApplication.Configurations;
 using CoreApplication.Hubs;
@@ -43,6 +44,7 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 app.UseRouting();
+app.UseErrorSimulatorMiddleware(configuration);
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<ClientOperationsHub>($"/client");//{configuration.GetSection("SignalRPath")}/client
@@ -52,6 +54,5 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapGet("/ws", app.Services.GetRequiredService<CustomWebSocketManager>().HandleWebSocket);
 });
-
 BankAccountInitializer.InitializeBankAccount( app.Services, configuration);
 app.Run();

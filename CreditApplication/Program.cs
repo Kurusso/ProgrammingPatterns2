@@ -6,6 +6,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json.Serialization;
+using Common.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -44,11 +45,10 @@ if (app.Environment.IsDevelopment())
 
 }
 // app.UseHttpsRedirection();
-
+app.UseErrorSimulatorMiddleware(configuration);
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.MapHealthChecks("/health");
-
 app.Run();

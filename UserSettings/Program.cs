@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UserSettings.Models;
-
+using Common.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 var services = builder.Services;
@@ -38,10 +38,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors();
-
+app.UseErrorSimulatorMiddleware(configuration);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
 

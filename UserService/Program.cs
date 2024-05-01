@@ -2,13 +2,14 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.Extensions.Configuration;
 using UserService.Helpers;
 using UserService.Models;
 using UserService.Services;
-
+using Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var configuration = builder.Configuration;
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -50,7 +51,7 @@ app.MigrateDBWhenNecessary<MainDbContext>();
 app.AddOauthClients();
 app.InitRoles();
 
-
+app.UseErrorSimulatorMiddleware(configuration);
 app.UseMiddleware<MyMiddleware>();
 app.UseStaticFiles();
 app.UseCors();
