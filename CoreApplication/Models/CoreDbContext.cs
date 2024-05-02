@@ -38,6 +38,7 @@ namespace CoreApplication.Models
         {
             base.OnModelCreating(builder);
             builder.ApplyMoneyValueConverter();
+            builder.ApplyGlobalFilters<IBaseEntity>(e => e.DeleteDateTime == null);
             builder.Entity<Account>().HasMany(m=>m.Operations).WithOne(t=>t.Account).HasForeignKey(t=>t.AccountId);
         }
 
