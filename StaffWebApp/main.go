@@ -51,6 +51,7 @@ func main() {
 
 	router := http.NewServeMux()
 	router.Handle("GET /Error", templ.Handler(components.ErrorPage()))
+	router.HandleFunc("GET /firebase-messaging-sw.js", controllers.HandleStatic("./static/firebase-messaging-sw.js"))
 	router.HandleFunc(controllers.LoginUrlPattern, controllers.LoginCallback)
 	router.Handle("/",
 		middleware.Auth(
