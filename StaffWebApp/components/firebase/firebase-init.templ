@@ -36,14 +36,24 @@ templ InitFirebase() {
 		const app = initializeApp(firebaseConfig);
 		const messaging = getMessaging(app);
 
-		console.log("after messaging")
 		const tokenOpts = {
 			vapidKey: 'BKejMViTMJPKUXghjd3wemwMjmgAkRTrkYloifcGYa40yyMDyLY2sDRlsadof05ShYW5Dg2lkQLxBp9IsnFyqQM'
 		};
-
 		console.log(tokenOpts)
-		getToken(messaging, tokenOpts).then((token) => {
-			console.log(token)
+		getToken(messaging, tokenOpts).then(async (token) => {
+			const storedToken = localStorage.getItem("deviceNotificationToken")
+			if (storedToken === token) { 
+				return
+			}
+	
+			const url = new URL("/api/preferences/notifications", document.location.origin)
+			url.searchParams.append('token', token)
+			const resp = await fetch(url.toString(), {method: "POST"})
+			if (!resp.ok) {
+				console.log("failed to subscribe to notifications")
+			} else {
+				localStorage.setItem("deviceNotificationToken", token)
+			}
 		})
 
 		onMessage(messaging, (payload) => {

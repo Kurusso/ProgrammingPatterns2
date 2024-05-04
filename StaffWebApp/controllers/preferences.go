@@ -25,3 +25,18 @@ func UpdateTheme(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 }
+
+const NotificationsSubscribePattern = "POST /api/preferences/notifications"
+
+func NotificationsSubscribe(w http.ResponseWriter, r *http.Request) {
+	key := r.URL.Query().Get("token")
+	userId := r.Context().Value("userId").(string)
+	err := services.NotificationsSubscribe(r.Context(), userId, key)
+	if err != nil {
+		logger.Default.Error("failed to subscribe to notifications: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}

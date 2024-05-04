@@ -48,6 +48,7 @@ func main() {
 	authRouter.HandleFunc(controllers.BlockStaffProfileUrlPattern, controllers.BlockStaffProfile)
 	authRouter.HandleFunc(controllers.BlockClientProfileUrlPattern, controllers.BlockClientProfile)
 	authRouter.HandleFunc(controllers.UpdateThemeUrlPattern, controllers.UpdateTheme)
+	authRouter.HandleFunc(controllers.NotificationsSubscribePattern, controllers.NotificationsSubscribe)
 
 	router := http.NewServeMux()
 	router.Handle("GET /Error", templ.Handler(components.ErrorPage()))

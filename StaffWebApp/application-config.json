@@ -4,5 +4,6 @@
     "CoreWsUrl": "ws://localhost:5274/ws",
     "UserApiUrl": "https://localhost:7212/api/",
     "AuthApiUrl": "https://localhost:7212/",
-    "DbConnectionString": "postgresql://postgres:906_Efyr_160FY@localhost:5432/StaffWebAppDb"
+    "DbConnectionString": "postgresql://postgres:postgres@localhost:5432/StaffWebAppDb",
+    "FirebaseAppId": "1:605380956040:web:949694ac4f2d05b8d9743d"
 }
