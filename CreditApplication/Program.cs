@@ -31,11 +31,7 @@ services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
     )
 );
 builder.AddIdempotenceDB("IdempotenceDbConnection");
-services.AddScoped<HttpClient>(options =>
-{
-    var messageHandler = new IdempotentAutoRetryHttpMessageHandler();
-    return new HttpClient(messageHandler);
-});
+builder.AddIdempotentAutoRetryHttpClient();
 // services.AddMvc().AddJsonOptions(options =>
 // {
 //     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

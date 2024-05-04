@@ -21,11 +21,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<AuthService, AuthService>();
 builder.Services.AddScoped<UsersService, UsersService>();
-builder.Services.AddScoped<HttpClient>(options =>
-{
-    var messageHandler = new IdempotentAutoRetryHttpMessageHandler();
-    return new HttpClient(messageHandler);
-});
+builder.AddIdempotentAutoRetryHttpClient();
 
 builder.Services.AddCors(options =>
 {

@@ -27,7 +27,7 @@ namespace CoreApplication.Models
         {
             _hubContext = hubContext;
             _customWebSocketManager = webSocketManager;
-            _firebaseClient = new HttpClient();
+            _firebaseClient = new HttpClient(); // здесь тоже внешний сервис, потому не из DI
             var firebase = configuration.GetSection("Firebase");
             _firebaseClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"key={firebase.GetValue<string>("ServerKey")}");
             _firebaseClient.DefaultRequestHeaders.TryAddWithoutValidation("Sender", $"id={firebase.GetValue<string>("SenderId")}");

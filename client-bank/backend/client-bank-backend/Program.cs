@@ -12,11 +12,7 @@ services.AddScoped<IRabbitMqService, RabbitMQIntegrationService>();
     //services.AddHostedService< RabbitMQFeedbackListener>();
 
 
-builder.Services.AddScoped<HttpClient>(options =>
-{
-    var messageHandler = new IdempotentAutoRetryHttpMessageHandler();
-    return new HttpClient(messageHandler);
-});
+builder.AddIdempotentAutoRetryHttpClient();
 
 services.AddCors(options =>
 {
