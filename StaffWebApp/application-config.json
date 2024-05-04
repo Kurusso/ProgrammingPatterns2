@@ -4,5 +4,5 @@
     "CoreWsUrl": "ws://localhost:5274/ws",
     "UserApiUrl": "https://localhost:7212/api/",
     "AuthApiUrl": "https://localhost:7212/",
-    "DbConnectionString": "postgresql://postgres:postgres@localhost:5432/StaffWebAppDb"
+    "DbConnectionString": "postgresql://postgres:906_Efyr_160FY@localhost:5432/StaffWebAppDb"
 }

@@ -3,6 +3,7 @@ import {getAccessToken} from "./auth";
 import {Currency, Money} from "./account";
 
 export interface Penalty {
+    Id:string
     isPaidOff: boolean;
     creditId: string;
     amount: Money; // You'll need to define a Money interface or type

@@ -35,6 +35,7 @@ namespace CoreApplication.Controllers
             }
         }
 
+
         [HttpDelete]
         [Route("Close")]
         public async Task<IActionResult> CloseAccount(Guid userId, Guid accountId)

@@ -1,14 +1,12 @@
 using Common.Helpers;
 using Common.Models;
+using Common.Middleware;
 using CoreApplication.BackgroundJobs;
 using CoreApplication.Configurations;
 using CoreApplication.Hubs;
 using CoreApplication.Initialization;
 using CoreApplication.Models;
 using CoreApplication.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +46,7 @@ app.MigrateDBWhenNecessary<CoreDbContext>();
 app.MigrateDBWhenNecessary<IdempotentDbContext>();
 
 app.UseRouting();
+app.UseErrorSimulatorMiddleware(configuration);
 app.UseAuthorization();
 app.MapHub<ClientOperationsHub>($"/client");//{configuration.GetSection("SignalRPath")}/client
 

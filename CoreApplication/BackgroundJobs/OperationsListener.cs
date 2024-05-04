@@ -20,9 +20,10 @@ namespace CoreApplication.BackgroundJobs
         private IModel _channel;
         private IModel _deliveryConfirmationChannel;
         private IServiceProvider _provider;
+        private IConfiguration _configuration;
         private Uri _rabbitMqConnection;
         private readonly RabbitMqConfigurations _rabbitMqConfigurations;
-        public OperationsListener(IServiceProvider provider, IOptions<RabbitMqConfigurations> rabbitMqConfigurations)
+        public OperationsListener(IServiceProvider provider, IOptions<RabbitMqConfigurations> rabbitMqConfigurations, IConfiguration configuration)
         {
 
             _rabbitMqConfigurations = rabbitMqConfigurations.Value;
@@ -34,6 +35,7 @@ namespace CoreApplication.BackgroundJobs
             _deliveryConfirmationChannel = _connection.CreateModel();
             _channel.QueueDeclare(queue: _rabbitMqConfigurations.QueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
             _deliveryConfirmationChannel.ExchangeDeclare(exchange: _rabbitMqConfigurations.SecondQueName, type: "direct", durable: false, autoDelete: false, arguments: null);
+            _configuration = configuration;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -45,6 +47,7 @@ namespace CoreApplication.BackgroundJobs
             {
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
                 var message = JsonConvert.DeserializeObject<OperationPostDTO>(content);
+
                 using (var scope = _provider.CreateScope())
                 {
                     var scopedService = scope.ServiceProvider.GetRequiredService<IMoneyOperationsService>();
@@ -52,23 +55,42 @@ namespace CoreApplication.BackgroundJobs
                     confirmationMessage.MessageTrackNumber = message?.Id.ToString() ?? ea.DeliveryTag.ToString();
                     try
                     {
-                        if (message != null)
+                        var errorConfigurations = _configuration.GetSection("ErrorSettings");
+
+                        var random = new Random().Next(100);
+                        var currentTime = DateTime.Now;
+                        double errorProbability = errorConfigurations.GetValue<int>("OddMinuteErrorChance");
+
+                        if (currentTime.Minute % 2 == 0)
+                        {
+                            errorProbability = errorConfigurations.GetValue<int>("EvenMinuteErrorChance");
+                        }
+
+                        if (random < errorProbability)
+                        {
+                            throw new Exception("Internal Server Error");
+                        }
+                        else
                         {
 
-                            switch (message.OperationType)
+                            if (message != null)
                             {
-                                case OperationType.Deposit:
-                                    await scopedService.Deposit(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId);
-                                    break;
-                                case OperationType.Withdraw:
-                                    await scopedService.Withdraw(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId);
-                                    break;
-                                case OperationType.TransferSend:
-                                    await scopedService.TransferMoney(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId, (Guid)message.RecieverAccount);
-                                    break;
+
+                                switch (message.OperationType)
+                                {
+                                    case OperationType.Deposit:
+                                        await scopedService.Deposit(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId);
+                                        break;
+                                    case OperationType.Withdraw:
+                                        await scopedService.Withdraw(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId);
+                                        break;
+                                    case OperationType.TransferSend:
+                                        await scopedService.TransferMoney(message.MoneyAmmount, message.Currency, message.AccountId, message.UserId, (Guid)message.RecieverAccount);
+                                        break;
+
+                                }
 
                             }
-
                         }
 
                         confirmationMessage.Message = "";
@@ -116,5 +138,6 @@ namespace CoreApplication.BackgroundJobs
             _connection.Close();
             base.Dispose();
         }
+
     }
 }

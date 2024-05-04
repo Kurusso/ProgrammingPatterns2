@@ -42,6 +42,8 @@ public static class MagicConstants
     public static readonly string GetUserPenaltiesEndpoint = BaseUrlCredit + "/api/Penalty/GetUserPenalties";
     public static readonly string GetCreditPenaltiesEndpoint = BaseUrlCredit + "/api/Penalty/GetCreditPenalties";
     public static readonly string RepayPenaltyEndpoint = BaseUrlCredit + "/api/Penalty/Repay";
+    
+    public static readonly string NotificationsEndpoint = BaseUrlCore + "/api/User/Notifications/";
 
     
     

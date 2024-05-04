@@ -33,7 +33,8 @@ module.exports = {
         }),
          new CopyWebpackPlugin({
              patterns: [
-                 { from: 'public', to: 'public' }
+                 { from: 'public', to: 'public' },
+                 { from: 'firebase-messaging-sw.js', to: '.' }
              ],
          })
     ],

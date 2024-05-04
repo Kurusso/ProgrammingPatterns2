@@ -5,10 +5,8 @@ using CoreApplication.BackgroundJobs;
 using CreditApplication.Models;
 using CreditApplication.Quartz;
 using CreditApplication.Services;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Text.Json.Serialization;
+using Common.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -58,8 +56,10 @@ if (app.Environment.IsDevelopment())
 
 app.MigrateDBWhenNecessary<IdempotentDbContext>();
 app.MigrateDBWhenNecessary<CreditDbContext>();
-
+app.UseErrorSimulatorMiddleware(configuration);
 app.UseAuthorization();
+
+
 
 app.MapHealthChecks("/health");
 
