@@ -9,6 +9,7 @@ import {TakeCredit} from "../components/Credits/TakeCredit";
 import {TransferMoney} from "../components/Accounts/TransferMoney";
 import ThemeButton from "../components/Buttons/ThemeButton";
 import {UserPenaltiesButton} from "../components/Buttons/UserPenaltiesButton";
+import "../components/Buttons/NotificationCheckbox"
 
 export const Home = () => {
 

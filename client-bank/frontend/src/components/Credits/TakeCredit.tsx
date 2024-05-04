@@ -75,7 +75,7 @@ export const TakeCredit = () => {
                 <h5>Credit rate</h5>
                 <select value={selectedCreditRate || ''} onChange={(e) => setSelectedCreditRate(e.target.value)}>
                     <option value="">Select...</option>
-                    {creditRates.map((creditRate) => (
+                    {Array.isArray(creditRates) &&creditRates.map((creditRate) => (
                         <option key={creditRate.id}
                                 value={creditRate.id}>{creditRate.name}: {creditRate.monthPercent * 100}%</option>
                     ))}

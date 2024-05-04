@@ -15,11 +15,11 @@ export const RepayPenalty = ({penalties}: {penalties: Penalty[]}) => {
     const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(null);
     const [penaltyMoneyToPay, setPenaltyMoneyToPay] = useState<number>(0);
 
-    return (
+    return (//TODO:<PenaltySelect  penalties={}/>
         <div>
             <h3>Repay penalty</h3>
             Penalty
-            <PenaltySelect />
+
             <AccountSelect selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount}/>
             <CurrencySelect selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency}/>
             <CurrencyInput amount={penaltyMoneyToPay} setAmount={setPenaltyMoneyToPay}/>
