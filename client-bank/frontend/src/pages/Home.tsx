@@ -9,7 +9,7 @@ import {TakeCredit} from "../components/Credits/TakeCredit";
 import {TransferMoney} from "../components/Accounts/TransferMoney";
 import ThemeButton from "../components/Buttons/ThemeButton";
 import {UserPenaltiesButton} from "../components/Buttons/UserPenaltiesButton";
-import "../components/Buttons/NotificationCheckbox"
+import {NotificationSwitch} from "../components/Buttons/NotificationSwitch";
 
 export const Home = () => {
 
@@ -21,7 +21,7 @@ export const Home = () => {
             <LogoutButton/>
             <UserPenaltiesButton/>
             <ThemeButton/>
-
+            <NotificationSwitch/>
             <AccountsProvider>
                 <CreateAccount/>
                 <TransferMoney/>
