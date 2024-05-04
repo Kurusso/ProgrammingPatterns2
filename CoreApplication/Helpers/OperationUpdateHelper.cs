@@ -7,11 +7,25 @@ using CoreApplication.Models.DTO;
 using Newtonsoft.Json;
 using System.Text.Json.Nodes;
 using System.Text;
+using Common.Models.Enumeration;
 namespace CoreApplication.Helpers
 {
 
     public static class OperationUpdateHelper
     {
+        private static string CurrencyIcon(Currency c) {
+            return c switch
+            {
+                Currency.Ruble => "₽",
+                Currency.Dollar => "$",
+                Currency.Euro => "€",
+                _ => "",
+            };
+        }
+        private static string FormatOperation(Operation op) {
+            return $"account {op.AccountId}.\n{op.MoneyAmmount.Amount}{CurrencyIcon(op.MoneyAmmount.Currency)}";
+        }
+
         public static async Task CatchOperationUpdate(ChangeTracker changeTracker, IHubContext<ClientOperationsHub> _hubContext, CoreDbContext context, CustomWebSocketManager webSocketManager, HttpClient firebaseClient, IConfiguration configuration)
         {
             var modifiedEntries = changeTracker.Entries()
@@ -34,7 +48,8 @@ namespace CoreApplication.Helpers
                 }
                 foreach (var device in staffDevicesForSend)
                 {
-                    await SendNotificationToDeviceAsync(device.Token, ((Operation)entity).OperationType.ToString(), JsonConvert.SerializeObject(new OperationWithUserIdDTO((Operation)entity)), firebaseClient, firebaseUrl);
+                    var notifBody = FormatOperation((Operation)entity);
+                    await SendNotificationToDeviceAsync(device.Token, ((Operation)entity).OperationType.ToString(), notifBody, firebaseClient, firebaseUrl);
                 }
             }
             accounts = accounts.Distinct().ToList();
