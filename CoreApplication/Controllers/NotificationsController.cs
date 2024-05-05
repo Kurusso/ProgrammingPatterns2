@@ -15,7 +15,7 @@ namespace CoreApplication.Controllers
             _userService = userService;
         }
         [HttpPost]
-        [Route("Notifications/{userId}")]
+        [Route("{userId}")]
         public async Task<IActionResult> AddNotificationsToDevice(Guid userId, DeviceTokenPostDTO token)
         {
             try
@@ -33,7 +33,7 @@ namespace CoreApplication.Controllers
             }
         }
         [HttpDelete]
-        [Route("Notifications/{userId}")]
+        [Route("{userId}")]
         public async Task<IActionResult> DeleteNotificationsFromDevice(Guid userId, string deviceToken)
         {
             try
@@ -51,7 +51,7 @@ namespace CoreApplication.Controllers
             }
         }
         [HttpGet]
-        [Route("Notifications/{userId}")]
+        [Route("{userId}")]
         public async Task<IActionResult> GetUserNotifications(Guid userId)
         {
             try
