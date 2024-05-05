@@ -11,7 +11,7 @@ using System.Net.Sockets;
 
 namespace Common.Extensions
 {
-    public static class ConfigurationExtensions
+    public static partial class ConfigurationExtensions
     {
         /// <summary>
         /// 
@@ -55,7 +55,7 @@ namespace Common.Extensions
             });
         }
 
-        public static void RegisterLogPublishingJobs(this WebApplicationBuilder builder, IConfiguration? configuration = null)
+        public static void RegisterLogPublishingJobs(this WebApplicationBuilder builder, QuartzConfigurator quartzConfigurer,  IConfiguration? configuration = null)
         {
             configuration ??= builder.Configuration;
             if (builder == null)
@@ -63,14 +63,13 @@ namespace Common.Extensions
                 throw new ArgumentNullException(nameof(builder));
             }
             int.TryParse(configuration["LogCollection:IntervalSeconds"], out var interval);
-            builder.Services.AddQuartz(q =>
-            {
-                q.UseMicrosoftDependencyInjectionJobFactory();
 
+            quartzConfigurer.Append(q =>
+            {                
                 q.AddJob<LogPublishingJob>(opts => opts.WithIdentity(nameof(LogPublishingJob)));
                 q.AddTrigger(opts => opts
-                .ForJob(nameof(LogPublishingJob))
-                .WithIdentity($"{nameof(LogPublishingJob)}Trigger", $"{nameof(LogPublishingJob)}Group")
+                    .ForJob(nameof(LogPublishingJob))
+                    .WithIdentity($"{nameof(LogPublishingJob)}Trigger", $"{nameof(LogPublishingJob)}Group")
                 .StartNow()
                 .WithSimpleSchedule(x => x
                 .WithIntervalInSeconds(interval)
@@ -78,14 +77,21 @@ namespace Common.Extensions
             });
 
             //Multiple registration resolved by ASP.Net Core in favor of the last call, however all cases are registered and tracked.
+            //builder.Services.AddQuartzHostedService(x => x.WaitForJobsToComplete = true);
+        }
+
+        public static void AddQuartzConfigured(this WebApplicationBuilder builder, QuartzConfigurator configurator)
+        {
+            builder.Services.AddQuartz(configurator.Configure);
             builder.Services.AddQuartzHostedService(x => x.WaitForJobsToComplete = true);
         }
+
         public static void UseTracingMiddleware(this WebApplication app)
         {
             app.UseMiddleware<TracingMiddleware>();
         }
 
-        public static void AddInternalHttpClient<TClient, TImplementation>(this WebApplicationBuilder builder) 
+        public static void AddInternalHttpClient<TClient, TImplementation>(this WebApplicationBuilder builder)
             where TClient : class
             where TImplementation : class, TClient
         {
@@ -94,8 +100,8 @@ namespace Common.Extensions
                 //client.BaseAddress = new Uri("");
             };
             builder.Services.AddHttpClient<TClient, TImplementation>(configureAction);
-                //.AddPolicyHandler(HttpPolicyExtensions.);
+            //.AddPolicyHandler(HttpPolicyExtensions.);
 
-        }        
+        }
     }
 }

@@ -13,10 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var services = builder.Services;
 var configuration = builder.Configuration;
-
+var quartzConfigurator = new QuartzConfigurator();
 builder.AddLogCollection();
-builder.RegisterBackgroundJobs(configuration);
-builder.RegisterLogPublishingJobs(configuration);
+builder.RegisterBackgroundJobs(configuration, quartzConfigurator);
+builder.RegisterLogPublishingJobs(quartzConfigurator);
+builder.AddQuartzConfigured(quartzConfigurator);
 services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddScoped<ICreditService, CreditService>();

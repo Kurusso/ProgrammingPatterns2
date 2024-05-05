@@ -16,7 +16,6 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.AddLogCollection();
-builder.RegisterLogPublishingJobs();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -53,7 +52,10 @@ builder.Services.AddDbContext<MainDbContext>(options =>
 });
 builder.AddIdempotenceDB("IdempotenceDbConnection");
 builder.AddOpenIddict();
-builder.RegisterLogPublishingJobs();
+
+var quartzConfigurator = new QuartzConfigurator();
+builder.RegisterLogPublishingJobs(quartzConfigurator);
+builder.AddQuartzConfigured(quartzConfigurator);
 
 var app = builder.Build();
 
