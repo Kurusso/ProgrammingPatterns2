@@ -2,6 +2,7 @@
 {
     public class DeviceTokenDTO: DeviceTokenPostDTO
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
+
     }
 }
