@@ -15,9 +15,10 @@ export const PenaltySelect: React.FC<PenaltySelectProps> = ({selectedPenalty, se
                     onChange={(e) => setSelectedPenalty(e.target.value)}>
                 <option value="">Select...</option>
                 {penalties.map((penalty) => (
-                    <option key={penalty.creditId} value={penalty.amount.amount}>{penalty.isPaidOff}</option>
+                    <option key={penalty.creditId} value={penalty.creditId}>{penalty.creditId}</option>
                 ))}
             </select>
         </div>
     );
 };
+//{TotalDebt ? `Debt to pay: ${TotalDebt.amount} ${Currency[TotalDebt.currency]}` : null}

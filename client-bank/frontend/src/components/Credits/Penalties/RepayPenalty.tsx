@@ -15,11 +15,33 @@ export const RepayPenalty = ({penalties}: {penalties: Penalty[]}) => {
     const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(null);
     const [penaltyMoneyToPay, setPenaltyMoneyToPay] = useState<number>(0);
 
-    return (//TODO:<PenaltySelect  penalties={}/>
+    function HandleRepayingPenalty() {
+        try {
+            if (!isAuthenticated())
+                throw new Error('not Authenticated')
+
+            if (!selectedPenalty)
+                throw new Error('Penalty not selected')
+            if (!selectedAccount)
+                throw new Error('Account not selected')
+            if(!selectedCurrency)
+                throw new Error('Currency not selected')
+            if(!penaltyMoneyToPay || penaltyMoneyToPay<=0)
+                throw new Error('Incorrect money')
+
+            creditPenalties.RepayPenalty(selectedPenalty, penaltyMoneyToPay, selectedCurrency, selectedAccount);
+
+
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    return (
         <div>
             <h3>Repay penalty</h3>
             Penalty
-
+            <PenaltySelect />
             <AccountSelect selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount}/>
             <CurrencySelect selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency}/>
             <CurrencyInput amount={penaltyMoneyToPay} setAmount={setPenaltyMoneyToPay}/>

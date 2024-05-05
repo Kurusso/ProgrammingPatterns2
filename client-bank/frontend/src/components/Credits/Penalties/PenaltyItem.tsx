@@ -1,5 +1,6 @@
 export const PenaltyItem = () => {
     return (
-        <></>
+        <>
+        </>
     );
 };
