@@ -1,6 +1,7 @@
 using Common.Helpers;
 using Common.Models;
 using Common.Services;
+using Common.Extensions;
 using CoreApplication.BackgroundJobs;
 using CreditApplication.Models;
 using CreditApplication.Quartz;
@@ -13,7 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
+builder.AddLogCollection();
 builder.RegisterBackgroundJobs(configuration);
+builder.RegisterLogPublishingJobs(configuration);
 services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddScoped<ICreditService, CreditService>();
@@ -49,6 +52,8 @@ if (app.Environment.IsDevelopment())
 
 }
 // app.UseHttpsRedirection();
+
+app.UseTracingMiddleware();
 
 app.MigrateDBWhenNecessary<IdempotentDbContext>();
 app.MigrateDBWhenNecessary<CreditDbContext>();

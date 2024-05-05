@@ -1,3 +1,8 @@
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using Common.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Common.Helpers;
 using Common.Models;
 using Common.Services;
@@ -9,6 +14,8 @@ using Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+
+builder.AddLogCollection();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -45,6 +52,7 @@ builder.Services.AddDbContext<MainDbContext>(options =>
 });
 builder.AddIdempotenceDB("IdempotenceDbConnection");
 builder.AddOpenIddict();
+builder.RegisterLogPublishingJobs();
 
 var app = builder.Build();
 
