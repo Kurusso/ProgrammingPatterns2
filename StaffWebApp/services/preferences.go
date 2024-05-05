@@ -31,7 +31,7 @@ func InitPreferences(ctx context.Context, userId string) error {
 }
 
 func NotificationsSubscribe(ctx context.Context, userId string, token string) error {
-	url, err := url.JoinPath(config.Default.CoreApiUrl, "User/Notifications/", userId)
+	url, err := url.JoinPath(config.Default.CoreApiUrl, "Notifications/", userId)
 	if err != nil {
 		return fmt.Errorf("failed to make url: %v", err)
 	}
