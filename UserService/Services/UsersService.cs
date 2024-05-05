@@ -11,12 +11,10 @@ namespace UserService.Services;
 
 public class UsersService(
     MainDbContext dbc, 
-    UserManager<User> um,
-    RoleManager<Role> rm
+    UserManager<User> um
 ) {
     private readonly MainDbContext _dbcontext = dbc;
     private readonly UserManager<User> _userManager = um;
-    private readonly RoleManager<Role> _roleManager = rm;
     const int pageSize = 10;
 
     public async Task<Guid> Register(string username, string password, IEnumerable<string> roles)

@@ -9,8 +9,12 @@ namespace client_bank_backend.Controllers;
 [ApiController]
 public class CreditRatesController:ControllerBase
 {
-    private readonly HttpClient _httpClient = new();
+    private readonly HttpClient _httpClient;
     
+    public CreditRatesController(HttpClient hc)
+    {
+        _httpClient = hc;
+    }
     
     
     [HttpGet]

@@ -28,12 +28,17 @@ namespace CreditApplication.Services
         private readonly Guid _bankBaseAccount;
         private readonly IUserService _userService;
         private readonly IRabbitMqService _rabbitMqOperationService;
-        public CreditPenaltyService(IConfiguration configuration, CreditDbContext context, IUserService userService, IRabbitMqService rabbitMqOperationService)
-        {
+        public CreditPenaltyService(
+            IConfiguration configuration,
+            CreditDbContext context,
+            IUserService userService,
+            IRabbitMqService rabbitMqOperationService,
+            HttpClient httpClient
+        ) {
             var coreSection = configuration.GetSection("CoreApplication");
             _context = context;
             Guid.TryParse(coreSection["BaseAccountId"], out _bankBaseAccount);
-            _coreClient = new HttpClient();
+            _coreClient = httpClient;
             _userService = userService;
             _rabbitMqOperationService = rabbitMqOperationService;
         }

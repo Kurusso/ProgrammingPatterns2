@@ -1,3 +1,5 @@
+using Common.Helpers;
+using Common.Models;
 using Common.Middleware;
 using CoreApplication.BackgroundJobs;
 using CoreApplication.Configurations;
@@ -5,9 +7,6 @@ using CoreApplication.Hubs;
 using CoreApplication.Initialization;
 using CoreApplication.Models;
 using CoreApplication.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,15 +19,15 @@ services.AddEndpointsApiExplorer();
 services.AddScoped<IAccountService, AccountService>();
 services.AddScoped<IMoneyOperationsService, MoneyOperationsService>();
 services.AddScoped<IUserService, UserService>();
-services.AddSwaggerGen();
+services.AddSwaggerGen(c => {
+    c.OperationFilter<ExposeIdempotentIdSwaggerFilter>();
+});
 services.AddSignalR();
 services.AddSingleton<CustomWebSocketManager>();
 services.AddHostedService<OperationsListener>();
-services.AddDbContext<CoreDbContext>(options =>
-    options.UseNpgsql(
-        configuration.GetConnectionString("DefaultConnection")
-    )
-);
+
+builder.AddDB<CoreDbContext>("DefaultConnection");
+builder.AddIdempotenceDB("IdempotenceDbConnection");
 
 var notificationSettings = builder.Configuration.GetSection("RabbitMqConfigurations").Get<RabbitMqConfigurations>();
 builder.Services.Configure<RabbitMqConfigurations>(builder.Configuration.GetSection("RabbitMqConfigurations"));
@@ -43,10 +42,12 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection();
+app.MigrateDBWhenNecessary<CoreDbContext>();
+app.MigrateDBWhenNecessary<IdempotentDbContext>();
+
 app.UseRouting();
 app.UseErrorSimulatorMiddleware(configuration);
 app.UseAuthorization();
-app.MapControllers();
 app.MapHub<ClientOperationsHub>($"/client");//{configuration.GetSection("SignalRPath")}/client
 
 app.UseWebSockets();
@@ -54,5 +55,9 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapGet("/ws", app.Services.GetRequiredService<CustomWebSocketManager>().HandleWebSocket);
 });
+
+app.UseMiddleware<IdempotentRequestsMiddleware>();
+app.MapControllers();
+
 BankAccountInitializer.InitializeBankAccount( app.Services, configuration);
 app.Run();

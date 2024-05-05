@@ -48,9 +48,11 @@ func main() {
 	authRouter.HandleFunc(controllers.BlockStaffProfileUrlPattern, controllers.BlockStaffProfile)
 	authRouter.HandleFunc(controllers.BlockClientProfileUrlPattern, controllers.BlockClientProfile)
 	authRouter.HandleFunc(controllers.UpdateThemeUrlPattern, controllers.UpdateTheme)
+	authRouter.HandleFunc(controllers.NotificationsSubscribePattern, controllers.NotificationsSubscribe)
 
 	router := http.NewServeMux()
 	router.Handle("GET /Error", templ.Handler(components.ErrorPage()))
+	router.HandleFunc("GET /firebase-messaging-sw.js", controllers.HandleStatic("./static/firebase-messaging-sw.js"))
 	router.HandleFunc(controllers.LoginUrlPattern, controllers.LoginCallback)
 	router.Handle("/",
 		middleware.Auth(

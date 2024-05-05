@@ -15,6 +15,7 @@ type ApplicationConfig struct {
 	UserApiUrl         string
 	AuthApiUrl         string
 	DbConnectionString string
+	FirebaseAppId      string
 }
 
 func ReadConfig(path string) error {

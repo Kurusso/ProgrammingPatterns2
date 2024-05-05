@@ -22,6 +22,7 @@ func ListUserAccounts(w http.ResponseWriter, r *http.Request) {
 	accounts, err := services.LoadUserAccounts(r.Context(), id)
 	if err != nil {
 		logger.Default.Error("failed to load user accounts: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

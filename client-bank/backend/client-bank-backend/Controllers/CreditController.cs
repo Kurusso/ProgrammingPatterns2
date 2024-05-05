@@ -13,7 +13,12 @@ namespace client_bank_backend.Controllers;
 [ApiController]
 public class CreditController : ControllerBase
 {
-    private readonly HttpClient _httpClient = new();
+    private readonly HttpClient _httpClient;
+
+    public CreditController(HttpClient hc)
+    {
+        _httpClient = hc;
+    }
 
     [HttpPost]
     [Route("Take")]

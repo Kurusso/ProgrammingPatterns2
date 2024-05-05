@@ -13,20 +13,13 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 namespace UserService.Services;
 
 public class AuthService(
-    IOpenIddictApplicationManager appm,
     UserManager<User> um,
-    SignInManager<User> sim,
-    IOpenIddictAuthorizationManager am,
-    IOpenIddictScopeManager sm
+    SignInManager<User> sim
 ) {
 
 
-    private readonly IOpenIddictApplicationManager _applicationManager = appm;
     private readonly UserManager<User> _userManager = um;
     private readonly SignInManager<User> _signInManager = sim;
-    private readonly IOpenIddictAuthorizationManager _authorizationManager = am;
-    private readonly IOpenIddictScopeManager _scopeManager = sm;
-
 
     public async Task<ClaimsPrincipal> GetToken(OpenIddictRequest? request, AuthenticateResult authResult) {
         if (request == null) {

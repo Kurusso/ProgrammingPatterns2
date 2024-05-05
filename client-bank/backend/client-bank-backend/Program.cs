@@ -1,6 +1,7 @@
 using client_bank_backend.Hubs;
 using client_bank_backend.Services;
 using client_bank_backend.Services.RabbitMqServices;
+using Common.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,8 @@ services.AddScoped<IRabbitMqService, RabbitMQIntegrationService>();
     //services.AddHostedService< RabbitMQFeedbackListener>();
 
 
-builder.Services.AddHttpClient();
+builder.AddIdempotentAutoRetryHttpClient();
+
 services.AddCors(options =>
 {
     options.AddDefaultPolicy(

@@ -1,10 +1,10 @@
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OpenIddict.Validation.AspNetCore;
 using UserService.Helpers;
+using UserService.Models;
 using UserService.Models.DTO;
 using UserService.Services;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
@@ -110,5 +110,12 @@ public class ClientsController(UsersService us) : Controller
         {
             return Problem("Unknown server error", statusCode: 500);
         }
+    }
+
+    [HttpGet("TEST")]
+    public ActionResult Test()
+    {
+        var now = DateTime.Now;
+        return Ok($"{now.Hour}:{now.Minute}:{now.Second}");
     }
 }

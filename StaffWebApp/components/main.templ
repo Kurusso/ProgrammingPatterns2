@@ -1,5 +1,8 @@
 package components
 
+import "staff-web-app/components/firebase"
+
+
 type Tab int
 
 const (
@@ -21,6 +24,17 @@ script changeThemeHandler() {
 
 }
 
+script requestNotifications() {
+	Notification.requestPermission().then((permission) => {
+		console.log(permission);
+		const requestButton = document.getElementById("notif-request-btn");
+		if (permission === 'granted') {
+			requestButton.classList.add("visually-hidden");
+			console.log('Notification permission granted.');
+		}
+	})
+}
+
 templ navbar(currentTab Tab) {
 	<nav class="navbar container-fluid border-bottom">
 		<ul class="nav nav-tabs flex-grow-1 border-bottom-0">
@@ -34,6 +48,9 @@ templ navbar(currentTab Tab) {
 				<a class={ "nav-link", templ.KV("active", currentTab==Credits) } href="/Credits">Credits</a>
 			</li>
 		</ul>
+		<button id="notif-request-btn" class="visually-hidden btn btn-outline-warning me-3" onclick={ requestNotifications() }>
+			Включить уведомления
+		</button>
 		<div class="form-switch me-5">
 			<input
 				class="form-check-input"
@@ -47,6 +64,13 @@ templ navbar(currentTab Tab) {
 			<label class="form-check-label text-nowrap" for="themeSwitch">Темная тема</label>
 		</div>
 	</nav>
+	<script>
+		console.log(Notification.permission)
+		if (Notification.permission !== 'granted') {
+			const requestButton = document.getElementById("notif-request-btn")
+			requestButton.classList.remove("visually-hidden")
+		}
+	</script>
 }
 
 templ errorHandling() {
@@ -68,6 +92,14 @@ templ errorHandling() {
 				Произошла ошибка, попробуйте позже
 			</div>
 		</div>
+		<div class="toast notificationToast" role="alert">
+			<div class="toast-header">
+				<strong class="me-auto title"></strong>
+				<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+			</div>
+			<div class="toast-body body">
+			</div>
+		</div>
 	</div>
 }
 
@@ -84,6 +116,7 @@ templ MainPageWrapper(currentTab Tab) {
 			<title>Сотрудник</title>
 		</head>
 		<body data-bs-theme={ ctx.Value("theme").(string) }>
+			@firebase.InitFirebase()
 			@navbar(currentTab)
 			<div class="container mt-5">
 				{ children... }

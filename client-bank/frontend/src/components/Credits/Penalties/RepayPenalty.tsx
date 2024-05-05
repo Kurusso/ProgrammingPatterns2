@@ -4,11 +4,11 @@ import {CurrencyInput} from "../../Input/CurrencyInput";
 import {PenaltySelect} from "../../Selects/PenaltySelect";
 import {useState} from "react";
 import {Currency} from "../../../api/account";
-import {Penalty} from "../../../api/creditPenalties";
+import {creditPenalties, Penalty} from "../../../api/creditPenalties";
+import {isAuthenticated} from "../../../api/auth";
 
 
-
-export const RepayPenalty = ({penalties}: {penalties: Penalty[]}) => {
+export const RepayPenalty = ({penalties}: { penalties: Penalty[] }) => {
     const [selectedPenalty, setSelectedPenalty] = useState<string | null>(null);
 
     const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -41,7 +41,7 @@ export const RepayPenalty = ({penalties}: {penalties: Penalty[]}) => {
         <div>
             <h3>Repay penalty</h3>
             Penalty
-            <PenaltySelect />
+
             <AccountSelect selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount}/>
             <CurrencySelect selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency}/>
             <CurrencyInput amount={penaltyMoneyToPay} setAmount={setPenaltyMoneyToPay}/>

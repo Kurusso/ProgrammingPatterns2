@@ -13,7 +13,7 @@ public class MyMiddleware
         _logger = logFactory.CreateLogger("MyMiddleware");
     }
 
-    public async Task Invoke(HttpContext httpContext)
+    public async Task InvokeAsync(HttpContext httpContext)
     {
         _logger.LogWarning(httpContext.Request.Headers.ToString());
         foreach (var header in httpContext.Request.Headers) {

@@ -1,4 +1,5 @@
-﻿using client_bank_backend.Heplers;
+﻿using System.Runtime.CompilerServices;
+using client_bank_backend.Heplers;
 using Common.Models.Dto;
 using Common.Models.Enumeration;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,11 @@ namespace client_bank_backend.Controllers;
 [Route("api/settings")]
 public class UserSettings : ControllerBase
 {
-    private readonly HttpClient _httpClient = new HttpClient();
+    private readonly HttpClient _httpClient;
+    public UserSettings(HttpClient hc)
+    {
+        _httpClient = hc;
+    }
 
 
     [HttpPut("Visibility")]

@@ -1,11 +1,11 @@
+using Common.Helpers;
+using Common.Models;
+using Common.Services;
 using CoreApplication.BackgroundJobs;
 using CreditApplication.Models;
 using CreditApplication.Quartz;
 using CreditApplication.Services;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Text.Json.Serialization;
 using Common.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,11 +23,15 @@ services.AddScoped<ICreditPenaltyService, CreditPenaltyService>();
 services.AddScoped<ICreditScoreService, CreditScoreService>();
 services.AddScoped<IRabbitMqService, RabbitMQIntegrationService>();
 services.AddHostedService<RabbitMQFeedbackListener>();
-services.AddSwaggerGen();
+services.AddSwaggerGen(c => {
+    c.OperationFilter<ExposeIdempotentIdSwaggerFilter>();
+});
 services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
         configuration.GetConnectionString("DefaultConnection")
     )
 );
+builder.AddIdempotenceDB("IdempotenceDbConnection");
+builder.AddIdempotentAutoRetryHttpClient();
 // services.AddMvc().AddJsonOptions(options =>
 // {
 //     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -45,10 +49,17 @@ if (app.Environment.IsDevelopment())
 
 }
 // app.UseHttpsRedirection();
+
+app.MigrateDBWhenNecessary<IdempotentDbContext>();
+app.MigrateDBWhenNecessary<CreditDbContext>();
 app.UseErrorSimulatorMiddleware(configuration);
 app.UseAuthorization();
 
-app.MapControllers();
+
 
 app.MapHealthChecks("/health");
+
+app.UseMiddleware<IdempotentRequestsMiddleware>();
+app.MapControllers();
+
 app.Run();

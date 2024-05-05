@@ -13,11 +13,12 @@ namespace client_bank_backend.Controllers;
 public class OperationsController : ControllerBase
 {
     private readonly IRabbitMqService _rabbitMqOperationService;
-    private readonly HttpClient _httpClient = new();
+    private readonly HttpClient _httpClient;
 
-    public OperationsController(IRabbitMqService rabbitMqOperationService)
+    public OperationsController(IRabbitMqService rabbitMqOperationService, HttpClient hc)
     {
         _rabbitMqOperationService = rabbitMqOperationService;
+        _httpClient = hc;
     }
 
     [HttpPost]

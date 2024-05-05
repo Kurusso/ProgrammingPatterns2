@@ -10,8 +10,12 @@ namespace client_bank_backend.Controllers;
 [ApiController]
 public class NotificationsController:ControllerBase
 {
-    private readonly HttpClient _httpClient = new();
-    
+    private readonly HttpClient _httpClient;
+    public NotificationsController(HttpClient hc)
+    {
+        _httpClient = hc;
+    }
+
     [HttpPost]
     public async Task<IActionResult> AddNotificationsToDeviceBff( DeviceTokenPostDTO token)
     {

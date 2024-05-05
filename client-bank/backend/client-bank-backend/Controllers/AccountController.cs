@@ -12,7 +12,13 @@ namespace client_bank_backend.Controllers;
 [ApiController]
 public class AccountController : ControllerBase
 {
-    private readonly HttpClient _coreClient = new();
+    private readonly HttpClient _coreClient;
+
+    public AccountController(HttpClient hc)
+    {
+        _coreClient = hc;
+    }
+
 
 
     [HttpGet("User")]

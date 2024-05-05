@@ -11,11 +11,11 @@ namespace Common.Helpers
         private readonly Dictionary<Currency, decimal> CurrencyDictionary = new Dictionary<Currency, decimal>
         {
             [Currency.Dollar] = 1m,
-            [Currency.Euro] = 0m,
-            [Currency.Ruble] = 0m
+            [Currency.Euro] = 1m,
+            [Currency.Ruble] = 90m
         };
 
-        private CurrencyValues() { }
+    private CurrencyValues() { }
 
         public void UpdateValues(decimal rubleToDollar, decimal euroToDollar, decimal dollarToDollar)
         {

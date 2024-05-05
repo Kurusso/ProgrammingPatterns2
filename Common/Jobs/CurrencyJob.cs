@@ -18,7 +18,7 @@ namespace Common.BackgroundJobs
             var coreSection = configuration.GetSection("CurrencyApi");
             _getCurrency = coreSection["GetCurrency"];
             _token = coreSection["Token"];
-            _httpClient = new HttpClient();
+            _httpClient = new HttpClient(); // здесь к внешней API, используем обычный HttpClient
         }
         public async Task Execute(IJobExecutionContext context)
         {
