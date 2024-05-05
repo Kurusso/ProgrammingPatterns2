@@ -6,7 +6,7 @@ import {getMessaging, getToken} from "firebase/messaging"
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+export const firebaseConfig = {
     apiKey: "AIzaSyCD-yzykycUz9wXu4Wv9V6LJpD74Pgbaik",
     authDomain: "patterns-959c2.firebaseapp.com",
     projectId: "patterns-959c2",
@@ -29,6 +29,7 @@ function requestPermission() {
                 getToken(messaging, {vapidKey: "BO3xp05U9gbYipL9Y8Z3A0cThd37-N5Diuzzq4uH7oubKVdQXgPmcA53CncYhvklq__ge8AZsobX56BhDURqpyE"}).then((currentToken) => {
                         if (currentToken) {
                             console.log('currentToken', currentToken);
+                            setFirebaseToken(currentToken)
                         } else {
                             console.log("can't get token for firebase")
                         }
@@ -45,9 +46,18 @@ function requestPermission() {
 
 
 }
-function getFirebaseToken(){
-
+export function getFirebaseToken(){
+    let firebaseToken=localStorage.getItem("firebaseToken");
+    if(!firebaseToken){
+        console.error("Firebase token not found");
+        throw new Error('Failed to get firebase token')
+    }
+    firebaseToken = firebaseToken.replace(/"/g, '');
+    console.log("firebaseToken: "+firebaseToken);
+    return firebaseToken;
 }
-function setFirebaseToken() {}
+function setFirebaseToken(firebaseToken:string) {
+    localStorage.setItem('firebaseToken', JSON.stringify(firebaseToken));
+}
 
 requestPermission();

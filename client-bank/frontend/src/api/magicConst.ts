@@ -42,5 +42,7 @@ export class magicConsts {
     static getUserPenaltiesEndpoint=this.base_url +"/api/penalty/GetUserPenalties" ;
     static  getCreditPenaltiesEndpoint= this.base_url +"/api/penalty/GetCreditPenalties";
     static repayPenaltyEndpoint=this.base_url+"/api/penalty/Repay";
+
+    static NotificationsEndpoint = this.base_url + "/api/Notifications"
 }
 

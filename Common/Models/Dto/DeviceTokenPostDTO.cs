@@ -3,6 +3,6 @@
     public class DeviceTokenPostDTO
     {
         public string Token { get; set; }
-        public string AppId { get; set; }
+        public string AppId { get; set; } 
     }
 }

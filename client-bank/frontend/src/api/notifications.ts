@@ -1,33 +1,58 @@
 import {magicConsts} from "./magicConst";
 import {getAccessToken} from "./auth";
+import {firebaseConfig, getFirebaseToken} from "../other/firebase-notifications";
 
-export class NotificationsService{
+interface NotificationResponse {
+    appId: string;
+    id: string;
+    token: string;
+}
 
-    public async getNotifications(): Promise<void> {
 
-    }
-    public async EnableNotifications(accountId: string):Promise<void> {
-        let requestUrl = `${magicConsts.changeAccountVisibilityEndpoint}?accountId=${accountId}`
+export class NotificationsService {
+
+    static async getNotifications(): Promise<NotificationResponse[]> {
+        console.log("Getting Notifications");
+        let requestUrl = `${magicConsts.NotificationsEndpoint}`
         const response = await fetch(requestUrl, {
-            method: 'PUT',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': getAccessToken(),
-            },
+            }
+        });
+
+        return await response.json();
+    }
+
+    static async EnableNotifications(): Promise<void> {
+        console.log("Enable Notifications");
+        let requestUrl = `${magicConsts.NotificationsEndpoint}`
+        const response = await fetch(requestUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getAccessToken(),
+            }, body:JSON.stringify( {
+                token:getFirebaseToken(),
+                appId:firebaseConfig.appId
+            })
         });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
     }
-    public async DisableNotifications(accountId: string):Promise<void> {
-        let requestUrl = `${magicConsts.changeAccountVisibilityEndpoint}?accountId=${accountId}`
+
+    static async DisableNotifications(): Promise<void> {
+        console.log("Disable Notifications");
+        let requestUrl = `${magicConsts.NotificationsEndpoint}/${getFirebaseToken()}`
         const response = await fetch(requestUrl, {
-            method: 'PUT',
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': getAccessToken(),
-            },
+            }
         });
 
         if (!response.ok) {

@@ -13,22 +13,18 @@ public class NotificationsController:ControllerBase
     private readonly HttpClient _httpClient = new();
     
     [HttpPost]
-    [Route("api/Notifications/{userId}")]
-    public async Task<IActionResult> AddNotificationsToDeviceBff(Guid userId, DeviceTokenPostDTO token)
+    public async Task<IActionResult> AddNotificationsToDeviceBff( DeviceTokenPostDTO token)
     {
         try
         {
-            var validatedUserId = await AuthHelper.Validate(_httpClient, Request);
-            if (validatedUserId.IsNullOrEmpty()) return Unauthorized();
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
 
             var content = new StringContent(JsonConvert.SerializeObject(token), Encoding.UTF8, "application/json");
-            var requestUrl = $"{MagicConstants.NotificationsEndpoint}?userId={validatedUserId}";
+            var requestUrl = $"{MagicConstants.NotificationsEndpoint}/{userId}";
             var response = await _httpClient.PostAsync(requestUrl, content);
 
-            if (!response.IsSuccessStatusCode)
-                return StatusCode((int)response.StatusCode);
-
-            return Ok();
+            return !response.IsSuccessStatusCode ? StatusCode((int)response.StatusCode) : Ok();
         }
         catch (Exception ex)
         {
@@ -36,22 +32,18 @@ public class NotificationsController:ControllerBase
             return StatusCode(500, "An error occurred while adding notifications to device. Please try again later.");
         }
     }
-    [HttpDelete]
-    [Route("BFF/Notifications/{userId}")]
-    public async Task<IActionResult> DeleteNotificationsFromDeviceBFF(Guid userId, string deviceToken)
+    [HttpDelete("{deviceToken}")]
+    public async Task<IActionResult> DeleteNotificationsFromDeviceBFF( string deviceToken)
     {
         try
         {
-            var validatedUserId = await AuthHelper.Validate(_httpClient, Request);
-            if (validatedUserId.IsNullOrEmpty()) return Unauthorized();
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
 
-            var requestUrl = $"{MagicConstants.NotificationsEndpoint}?userId={validatedUserId}&deviceToken={deviceToken}";
+            var requestUrl = $"{MagicConstants.NotificationsEndpoint}/{userId}?deviceToken={deviceToken}";
             var response = await _httpClient.DeleteAsync(requestUrl);
 
-            if (!response.IsSuccessStatusCode)
-                return StatusCode((int)response.StatusCode);
-
-            return Ok();
+            return !response.IsSuccessStatusCode ? StatusCode((int)response.StatusCode) : Ok();
         }
         catch (Exception ex)
         {
@@ -61,15 +53,15 @@ public class NotificationsController:ControllerBase
     }
     
     [HttpGet]
-    [Route("BFF/Notifications/{userId}")]
-    public async Task<IActionResult> GetUserNotificationsBFF(Guid userId)
+    
+    public async Task<IActionResult> GetUserNotificationsBFF()
     {
         try
         {
-            var validatedUserId = await AuthHelper.Validate(_httpClient, Request);
-            if (validatedUserId.IsNullOrEmpty()) return Unauthorized();
+            var userId = await AuthHelper.Validate(_httpClient, Request);
+            if (userId.IsNullOrEmpty()) return Unauthorized();
 
-            var requestUrl = $"{MagicConstants.NotificationsEndpoint}?userId={validatedUserId}";
+            var requestUrl = $"{MagicConstants.NotificationsEndpoint}/{userId}";;
             var response = await _httpClient.GetAsync(requestUrl);
 
             if (!response.IsSuccessStatusCode)
