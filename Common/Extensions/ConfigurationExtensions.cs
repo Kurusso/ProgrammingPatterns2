@@ -51,7 +51,8 @@ namespace Common.Extensions
                                                  rollingInterval: RollingInterval.Minute
                 //rollOnFileSizeLimit: true,
                 //fileSizeLimitBytes: 60000
-                );
+                )
+                .WriteTo.Console();
             });
         }
 
@@ -80,9 +81,9 @@ namespace Common.Extensions
             //builder.Services.AddQuartzHostedService(x => x.WaitForJobsToComplete = true);
         }
 
-        public static void AddQuartzConfigured(this WebApplicationBuilder builder, QuartzConfigurator configurator)
+        public static void AddQuartzConfigured(this WebApplicationBuilder builder, QuartzConfigurator configurer)
         {
-            builder.Services.AddQuartz(configurator.Configure);
+            builder.Services.AddQuartz(configurer.Configure);
             builder.Services.AddQuartzHostedService(x => x.WaitForJobsToComplete = true);
         }
 
