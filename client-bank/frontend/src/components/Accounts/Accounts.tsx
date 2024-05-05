@@ -12,20 +12,21 @@ export const Accounts = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-
                 if (!isAuthenticated())
                     return;
 
                 const accounts = await AccountService.getAccounts();
+                if (!Array.isArray(accounts)) {
+                    throw new Error('Expected accounts to be an array');
+                }
                 let AccountsElementsData = mapAccountDataToElementProps(accounts);
                 setAccountElements(AccountsElementsData);
                 console.log('Fetched accounts:', accounts);
-
-
             } catch (error) {
                 console.error('Error fetching accounts:', error);
             }
         };
+
 
         fetchData()
 

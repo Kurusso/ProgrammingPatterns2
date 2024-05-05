@@ -1,11 +1,10 @@
 
 import {initializeApp} from "firebase/app";
-import {getMessaging, getToken} from "firebase/messaging"
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import {getMessaging, getToken,onMessage} from "firebase/messaging"
+import {Currency, OperationType} from "../api/account";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+
 export const firebaseConfig = {
     apiKey: "AIzaSyCD-yzykycUz9wXu4Wv9V6LJpD74Pgbaik",
     authDomain: "patterns-959c2.firebaseapp.com",
@@ -35,6 +34,25 @@ function requestPermission() {
                         }
                     }
                 );
+
+                // Handle incoming messages
+                onMessage(messaging, (payload) => {
+                    console.log('Message received. ', payload.notification?.body);
+                    // Customize notification here
+                    const data = JSON.parse(<string>payload.notification?.body);
+                    const {UserId, Id, AccountId, OperationType: operationTypeMessage, MoneyAmmount, MoneyAmmountInAccountCurrency, CreationTime} = data;
+
+                    const operationType = OperationType[operationTypeMessage as keyof typeof OperationType];
+
+                    const notificationTitle = `New Operation ${operationType }`;
+                    const notificationOptions = {
+                        body: `Money Transfer: ${MoneyAmmount.Amount} ${Currency[MoneyAmmount.Currency]}\n`
+                    };
+
+                    if (Notification.permission === "granted") {
+                        var notification = new Notification(notificationTitle, notificationOptions);
+                    }
+                });
             } else {
                 console.log("Do not have permission")
             }
@@ -43,9 +61,14 @@ function requestPermission() {
     } else {
         console.log('This browser does not support notifications.');
     }
-
-
 }
+
+
+
+
+
+
+
 export function getFirebaseToken(){
     let firebaseToken=localStorage.getItem("firebaseToken");
     if(!firebaseToken){
@@ -61,3 +84,5 @@ function setFirebaseToken(firebaseToken:string) {
 }
 
 requestPermission();
+
+
