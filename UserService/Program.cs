@@ -16,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.AddLogCollection();
+builder.RegisterLogPublishingJobs();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -57,6 +58,7 @@ builder.RegisterLogPublishingJobs();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseTracingMiddleware();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

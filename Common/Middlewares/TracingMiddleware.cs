@@ -8,19 +8,18 @@ using System.Diagnostics;
 
 namespace Common.Middlewares
 {
-    public class TracingMiddleware : ITracingMiddleware
+    public class TracingMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<TracingMiddleware> _logger;
-        private readonly DbContext _dbContext;
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
         private const int ReadChunkBufferLength = 4096;
 
-        public TracingMiddleware(RequestDelegate next, ILogger<TracingMiddleware> logger, DbContext dbContext)
+        public TracingMiddleware(RequestDelegate next, ILogger<TracingMiddleware> logger)
         {
             _next = next;
             _logger = logger;
-            _dbContext = dbContext;
+            _recyclableMemoryStreamManager = new();
         }
 
         public async Task InvokeAsync(HttpContext context)

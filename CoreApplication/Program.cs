@@ -16,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 builder.AddLogCollection();
+builder.RegisterLogPublishingJobs();
 services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddScoped<IAccountService, AccountService>();
