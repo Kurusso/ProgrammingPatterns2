@@ -34,6 +34,7 @@ builder.AddIdempotenceDB("IdempotenceDbConnection");
 
 var notificationSettings = builder.Configuration.GetSection("RabbitMqConfigurations").Get<RabbitMqConfigurations>();
 builder.Services.Configure<RabbitMqConfigurations>(builder.Configuration.GetSection("RabbitMqConfigurations"));
+builder.Services.AddHttpClient();
 builder.RegisterBackgroundJobs(configuration, quartzConfigurator);
 builder.RegisterLogPublishingJobs(quartzConfigurator);
 builder.AddQuartzConfigured(quartzConfigurator);

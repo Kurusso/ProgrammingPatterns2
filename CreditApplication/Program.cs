@@ -35,6 +35,7 @@ services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
     )
 );
 builder.AddIdempotenceDB("IdempotenceDbConnection");
+builder.Services.AddHttpClient();
 builder.AddIdempotentAutoRetryHttpClient();
 // services.AddMvc().AddJsonOptions(options =>
 // {

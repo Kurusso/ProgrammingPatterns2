@@ -28,6 +28,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<AuthService, AuthService>();
 builder.Services.AddScoped<UsersService, UsersService>();
+builder.Services.AddHttpClient();
 builder.AddIdempotentAutoRetryHttpClient();
 
 builder.Services.AddCors(options =>
