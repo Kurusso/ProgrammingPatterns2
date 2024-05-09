@@ -1,6 +1,7 @@
 using Common.Helpers;
 using Common.Models;
 using Common.Services;
+using Common.Extensions;
 using CoreApplication.BackgroundJobs;
 using CreditApplication.Models;
 using CreditApplication.Quartz;
@@ -12,8 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var services = builder.Services;
 var configuration = builder.Configuration;
-
-builder.RegisterBackgroundJobs(configuration);
+var quartzConfigurator = new QuartzConfigurator();
+builder.AddLogCollection();
+builder.RegisterBackgroundJobs(configuration, quartzConfigurator);
+builder.RegisterLogPublishingJobs(quartzConfigurator);
+builder.AddQuartzConfigured(quartzConfigurator);
 services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddScoped<ICreditService, CreditService>();
@@ -31,6 +35,7 @@ services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
     )
 );
 builder.AddIdempotenceDB("IdempotenceDbConnection");
+builder.Services.AddHttpClient();
 builder.AddIdempotentAutoRetryHttpClient();
 // services.AddMvc().AddJsonOptions(options =>
 // {
@@ -49,6 +54,8 @@ if (app.Environment.IsDevelopment())
 
 }
 // app.UseHttpsRedirection();
+
+app.UseTracingMiddleware();
 
 app.MigrateDBWhenNecessary<IdempotentDbContext>();
 app.MigrateDBWhenNecessary<CreditDbContext>();

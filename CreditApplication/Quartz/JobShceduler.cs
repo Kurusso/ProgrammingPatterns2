@@ -1,4 +1,5 @@
 ﻿using Common.BackgroundJobs;
+using Common.Extensions;
 using CreditApplication.Quartz.Jobs;
 using Quartz;
 
@@ -6,7 +7,7 @@ namespace CreditApplication.Quartz
 {
     public static class JobShceduler
     {
-        public static void RegisterBackgroundJobs(this WebApplicationBuilder? builder, IConfiguration serviceProvider)
+        public static void RegisterBackgroundJobs(this WebApplicationBuilder? builder, IConfiguration serviceProvider, QuartzConfigurator quartzConfigurer)
         {
             if (builder == null)
             {
@@ -18,10 +19,8 @@ namespace CreditApplication.Quartz
             var interval = CreditJobInfo["IntervalInMinutes"];
             TimeSpan timeDateTimeFormat = TimeSpan.Parse(time);
             int _interval = int.Parse(interval);
-            builder.Services.AddQuartz(q =>
+            quartzConfigurer.Append(q =>
             {
-                q.UseMicrosoftDependencyInjectionJobFactory();
-
                 q.AddJob<CreditJob>(opts => opts.WithIdentity(nameof(CreditJob)));
                 q.AddTrigger(opts => opts
                 .ForJob(nameof(CreditJob))
@@ -30,17 +29,13 @@ namespace CreditApplication.Quartz
                 .WithSimpleSchedule(x => x
                     .WithIntervalInMinutes(_interval)
                     .RepeatForever()));
-
-               
             });
 
             var quartzSection2 = serviceProvider.GetSection("CurrencyJob");
             var interval2 = quartzSection["IntervalInMinutes"];
             int _interval2 = int.Parse(interval);
-            builder.Services.AddQuartz(q =>
+            quartzConfigurer.Append(q =>
             {
-                q.UseMicrosoftDependencyInjectionJobFactory();
-
                 q.AddJob<CurrencyJob>(opts => opts.WithIdentity(nameof(CurrencyJob)));
                 q.AddTrigger(opts => opts
                 .ForJob(nameof(CurrencyJob))
@@ -49,9 +44,7 @@ namespace CreditApplication.Quartz
                 .WithSimpleSchedule(x => x
                     .WithIntervalInMinutes(_interval2)
                     .RepeatForever()));
-
             });
-            builder.Services.AddQuartzHostedService(x => x.WaitForJobsToComplete = true);
         }
     }
 }

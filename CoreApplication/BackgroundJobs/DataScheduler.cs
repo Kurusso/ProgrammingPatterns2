@@ -1,4 +1,5 @@
 ﻿using Common.BackgroundJobs;
+using Common.Extensions;
 using Quartz;
 
 namespace CoreApplication.BackgroundJobs
@@ -6,8 +7,7 @@ namespace CoreApplication.BackgroundJobs
     public static class DataScheduler
     {
 
-
-        public static void RegisterBackgroundJobs(this WebApplicationBuilder? builder, IConfiguration serviceProvider)
+        public static void RegisterBackgroundJobs(this WebApplicationBuilder? builder, IConfiguration serviceProvider, QuartzConfigurator quartzConfigurer)
         {
             if (builder == null)
             {
@@ -16,10 +16,8 @@ namespace CoreApplication.BackgroundJobs
             var quartzSection = serviceProvider.GetSection("CurrencyJob");
             var interval = quartzSection["IntervalInMinutes"];
             int _interval = int.Parse(interval);
-            builder.Services.AddQuartz(q =>
+            quartzConfigurer.Append(q =>
             {
-                q.UseMicrosoftDependencyInjectionJobFactory();
-
                 q.AddJob<CurrencyJob>(opts => opts.WithIdentity(nameof(CurrencyJob)));
                 q.AddTrigger(opts => opts
                 .ForJob(nameof(CurrencyJob))
@@ -28,10 +26,7 @@ namespace CoreApplication.BackgroundJobs
                 .WithSimpleSchedule(x => x
                     .WithIntervalInMinutes(_interval)
                     .RepeatForever()));
-
             });
-
-            builder.Services.AddQuartzHostedService(x => x.WaitForJobsToComplete = true);
         }
     }
 }

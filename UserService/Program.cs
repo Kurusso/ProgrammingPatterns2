@@ -1,3 +1,8 @@
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using Common.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Common.Helpers;
 using Common.Models;
 using Common.Services;
@@ -9,6 +14,8 @@ using Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+
+builder.AddLogCollection();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -21,6 +28,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<AuthService, AuthService>();
 builder.Services.AddScoped<UsersService, UsersService>();
+builder.Services.AddHttpClient();
 builder.AddIdempotentAutoRetryHttpClient();
 
 builder.Services.AddCors(options =>
@@ -46,9 +54,14 @@ builder.Services.AddDbContext<MainDbContext>(options =>
 builder.AddIdempotenceDB("IdempotenceDbConnection");
 builder.AddOpenIddict();
 
+var quartzConfigurator = new QuartzConfigurator();
+builder.RegisterLogPublishingJobs(quartzConfigurator);
+builder.AddQuartzConfigured(quartzConfigurator);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseTracingMiddleware();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
