@@ -1,18 +1,26 @@
 using client_bank_backend.Hubs;
 using client_bank_backend.Services;
 using client_bank_backend.Services.RabbitMqServices;
+using Common.Extensions;
+using Common.Helpers;
+using Common.Helpers.StartupServiceConfigurator;
 using Common.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var quartzConfigurator = new QuartzConfigurator();
 
 var services = builder.Services;
 
 services.AddSingleton<IHostedService, AccountHubService>();
 services.AddScoped<IRabbitMqService, RabbitMQIntegrationService>();
-    //services.AddHostedService< RabbitMQFeedbackListener>();
+//services.AddHostedService< RabbitMQFeedbackListener>();
 
+builder.AddLogCollection();
+builder.RegisterLogPublishingJobs(quartzConfigurator);
+builder.AddQuartzConfigured(quartzConfigurator);
 
-builder.AddIdempotentAutoRetryHttpClient();
+builder.RegisterInternalHttpClientDeps();
+builder.AddIdempotentAutoRetryHttpClient<TracingHttpClient>();
 
 services.AddCors(options =>
 {
@@ -43,6 +51,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 app.UseAuthorization();
+app.UseTracingMiddleware();
 
 app.MapHub<BffAccountHub>("/AccountHub");
 app.MapControllers();
