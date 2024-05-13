@@ -3,6 +3,7 @@ using Common.Jobs;
 using Common.Middlewares;
 using Common.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -97,6 +98,15 @@ namespace Common.Extensions
         public static void RegisterInternalHttpClientDeps(this WebApplicationBuilder builder)
         {
             builder.Services.AddHttpContextAccessor();
+            builder.Services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            builder.Services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
         }
     }
 }

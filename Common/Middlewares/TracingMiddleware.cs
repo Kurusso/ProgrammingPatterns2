@@ -67,7 +67,7 @@ namespace Common.Middlewares
 
                 _logger.LogInformation($"Http Response Information:{Environment.NewLine}"
                                        + $"TraceId:{traceIdentifier} "
-                                       + $"Execution time: {stopwatch.ElapsedMilliseconds}ms"
+                                       + $"Execution time: {stopwatch.ElapsedMilliseconds}ms "
                                        + $"Schema:{context.Request.Scheme} "
                                        + $"Host: {context.Request.Host} "
                                        + $"Path: {context.Request.Path} "
@@ -84,7 +84,7 @@ namespace Common.Middlewares
             {
                 request.Body.CopyTo(requestStream);
                 _logger.LogInformation($"Http Request Information:{Environment.NewLine}"
-                                       + $"TraceId:{traceId}"
+                                       + $"TraceId:{traceId} "
                                        + $"Schema:{request.Scheme} "
                                        + $"Host: {request.Host} "
                                        + $"Path: {request.Path} "
