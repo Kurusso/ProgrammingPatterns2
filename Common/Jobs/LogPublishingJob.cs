@@ -49,8 +49,8 @@ namespace Common.Jobs
                     if (_logQueue.TryDequeue(out var file))
                     {
                         var body = await File.ReadAllTextAsync(file);
-                        var content = new StringContent(body);
-                        content.Headers.ContentType = MediaTypeHeaderValue.Parse("text/plain");
+                        var jsonBody = JsonConvert.SerializeObject(body); // Convert the body to JSON
+                        var content = new StringContent(jsonBody, Encoding.UTF8, "application/json"); // Change the content type to application/json
 
                         var response = await _httpClient.PostAsync(_publishLogs, content);
                         File.Delete(file);
