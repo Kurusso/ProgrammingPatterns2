@@ -8,6 +8,7 @@ using CreditApplication.Quartz;
 using CreditApplication.Services;
 using Microsoft.EntityFrameworkCore;
 using Common.Middleware;
+using Common.Helpers.StartupServiceConfigurator;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -35,8 +36,8 @@ services.AddDbContext<CreditDbContext>(options =>  options.UseNpgsql(
     )
 );
 builder.AddIdempotenceDB("IdempotenceDbConnection");
-builder.Services.AddHttpClient();
-builder.AddIdempotentAutoRetryHttpClient();
+builder.RegisterInternalHttpClientDeps();
+builder.AddIdempotentAutoRetryHttpClient<TracingHttpClient>();
 // services.AddMvc().AddJsonOptions(options =>
 // {
 //     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

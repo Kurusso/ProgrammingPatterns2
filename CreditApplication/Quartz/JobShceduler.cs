@@ -1,5 +1,5 @@
 ﻿using Common.BackgroundJobs;
-using Common.Extensions;
+using Common.Helpers.StartupServiceConfigurator;
 using CreditApplication.Quartz.Jobs;
 using Quartz;
 

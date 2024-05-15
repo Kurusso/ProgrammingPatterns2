@@ -105,13 +105,17 @@ public class CircuitBreaker {
 
 public static class IdempotentAutoRetryHttpClient
 {
-    public static void AddIdempotentAutoRetryHttpClient(this WebApplicationBuilder builder)
+    public static void AddIdempotentAutoRetryHttpClient(this WebApplicationBuilder builder) => AddIdempotentAutoRetryHttpClient<HttpClient>(builder);
+    public static void AddIdempotentAutoRetryHttpClient<THttpClient>(this WebApplicationBuilder builder) where THttpClient : HttpClient
     {
         var breaker = new CircuitBreaker(60);
-        builder.Services.AddScoped<HttpClient>(options =>
+        builder.Services.AddHttpClient<THttpClient>((services, client) =>
         {
-            var messageHandler = new IdempotentAutoRetryHttpMessageHandler(breaker);
-            return new HttpClient(messageHandler);
-        });
+
+        })
+        .ConfigurePrimaryHttpMessageHandler((services) =>
+        {
+            return new IdempotentAutoRetryHttpMessageHandler(breaker);
+        });        
     }
 }

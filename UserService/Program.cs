@@ -11,9 +11,11 @@ using UserService.Helpers;
 using UserService.Models;
 using UserService.Services;
 using Common.Middleware;
+using Common.Helpers.StartupServiceConfigurator;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+var quartzConfigurator = new QuartzConfigurator();
 
 builder.AddLogCollection();
 // Add services to the container.
@@ -28,8 +30,8 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<AuthService, AuthService>();
 builder.Services.AddScoped<UsersService, UsersService>();
-builder.Services.AddHttpClient();
-builder.AddIdempotentAutoRetryHttpClient();
+builder.RegisterInternalHttpClientDeps();
+builder.AddIdempotentAutoRetryHttpClient<TracingHttpClient>();
 
 builder.Services.AddCors(options =>
 {
@@ -54,7 +56,6 @@ builder.Services.AddDbContext<MainDbContext>(options =>
 builder.AddIdempotenceDB("IdempotenceDbConnection");
 builder.AddOpenIddict();
 
-var quartzConfigurator = new QuartzConfigurator();
 builder.RegisterLogPublishingJobs(quartzConfigurator);
 builder.AddQuartzConfigured(quartzConfigurator);
 

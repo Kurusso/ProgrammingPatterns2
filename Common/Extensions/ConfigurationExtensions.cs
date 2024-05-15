@@ -1,6 +1,9 @@
-﻿using Common.Jobs;
+﻿using Common.Helpers.StartupServiceConfigurator;
+using Common.Jobs;
 using Common.Middlewares;
+using Common.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -56,7 +59,7 @@ namespace Common.Extensions
             });
         }
 
-        public static void RegisterLogPublishingJobs(this WebApplicationBuilder builder, QuartzConfigurator quartzConfigurer,  IConfiguration? configuration = null)
+        public static void RegisterLogPublishingJobs(this WebApplicationBuilder builder, QuartzConfigurator quartzConfigurer, IConfiguration? configuration = null)
         {
             configuration ??= builder.Configuration;
             if (builder == null)
@@ -66,7 +69,7 @@ namespace Common.Extensions
             int.TryParse(configuration["LogCollection:IntervalSeconds"], out var interval);
 
             quartzConfigurer.Append(q =>
-            {                
+            {
                 q.AddJob<LogPublishingJob>(opts => opts.WithIdentity(nameof(LogPublishingJob)));
                 q.AddTrigger(opts => opts
                     .ForJob(nameof(LogPublishingJob))
@@ -92,17 +95,18 @@ namespace Common.Extensions
             app.UseMiddleware<TracingMiddleware>();
         }
 
-        public static void AddInternalHttpClient<TClient, TImplementation>(this WebApplicationBuilder builder)
-            where TClient : class
-            where TImplementation : class, TClient
+        public static void RegisterInternalHttpClientDeps(this WebApplicationBuilder builder)
         {
-            var configureAction = (HttpClient client) =>
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.Configure<KestrelServerOptions>(options =>
             {
-                //client.BaseAddress = new Uri("");
-            };
-            builder.Services.AddHttpClient<TClient, TImplementation>(configureAction);
-            //.AddPolicyHandler(HttpPolicyExtensions.);
+                options.AllowSynchronousIO = true;
+            });
 
+            builder.Services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
         }
     }
 }
