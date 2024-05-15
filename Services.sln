@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "client-bank-backend", "clie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserSettings", "UserSettings\UserSettings.csproj", "{E9698D8C-7DAA-4FE2-A082-AC4BC924B173}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogStorage", "LogStorage\LogStorage.csproj", "{CCCEAFE5-6023-4D03-A827-90E1F579E8CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{E9698D8C-7DAA-4FE2-A082-AC4BC924B173}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9698D8C-7DAA-4FE2-A082-AC4BC924B173}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9698D8C-7DAA-4FE2-A082-AC4BC924B173}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCCEAFE5-6023-4D03-A827-90E1F579E8CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCCEAFE5-6023-4D03-A827-90E1F579E8CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCEAFE5-6023-4D03-A827-90E1F579E8CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCCEAFE5-6023-4D03-A827-90E1F579E8CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
