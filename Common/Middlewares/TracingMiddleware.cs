@@ -1,10 +1,10 @@
 ﻿using Common.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
+using Newtonsoft.Json;
 using System.Diagnostics;
-using System.IO;
+using System.Text.Json;
 
 
 namespace Common.Middlewares
@@ -64,7 +64,7 @@ namespace Common.Middlewares
                                        + $"Host: {context.Request.Host} "
                                        + $"Path: {context.Request.Path} "
                                        + $"QueryString: {context.Request.QueryString} "
-                                       + $"Response Body: {ReadStreamInChunks(responseStream)}");
+                                       + $"Response Body: {TryDeserializeJsonContent(ReadStreamInChunks(responseStream))}");
 
 
                 responseStream.Seek(0, SeekOrigin.Begin);
@@ -86,8 +86,20 @@ namespace Common.Middlewares
                                        + $"Host: {request.Host} "
                                        + $"Path: {request.Path} "
                                        + $"QueryString: {request.QueryString} "
-                                       + $"Request Body: {ReadStreamInChunks(requestStream)}");
+                                       + $"Request Body: {TryDeserializeJsonContent(ReadStreamInChunks(requestStream))}");
 
+            }
+        }
+
+        private static object TryDeserializeJsonContent(string str) {
+            try
+            {
+                var obj = JsonConvert.DeserializeObject(str);
+                return obj ?? str;
+            }
+            catch (Exception)
+            {
+                return str;
             }
         }
 
@@ -108,7 +120,7 @@ namespace Common.Middlewares
 
                 result = textWriter.ToString();
             }
-
+            
             return result;
         }
     }
