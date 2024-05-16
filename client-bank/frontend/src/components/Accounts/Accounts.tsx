@@ -52,6 +52,11 @@ export const Accounts = () => {
 };
 
 export function mapAccountDataToElementProps(accountDataArray: AccountData[]): AccountItemProps[] {
+    if (!Array.isArray(accountDataArray)) {
+        console.error('Error: accountDataArray is not an array');
+        return [];
+    }
+
     return accountDataArray.map(accountData => {
         const {id, money,isHidden} = accountData;
         const {amount, currency} = money;
@@ -63,6 +68,4 @@ export function mapAccountDataToElementProps(accountDataArray: AccountData[]): A
             IsHidden:isHidden
         };
     });
-
-
 }
