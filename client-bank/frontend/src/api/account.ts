@@ -9,7 +9,9 @@ export enum Currency {
 
 export enum OperationType {
     Deposit,
-    Withdraw
+    Withdraw,
+    TransferGet,
+    TransferSend,
 }
 
 export interface Money {
