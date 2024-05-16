@@ -2,6 +2,7 @@
 using Common.Jobs;
 using Common.Middlewares;
 using Common.Services;
+using Destructurama;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
@@ -55,7 +56,8 @@ namespace Common.Extensions
                 //rollOnFileSizeLimit: true,
                 //fileSizeLimitBytes: 60000
                 )
-                .WriteTo.Console();
+                .WriteTo.Console()
+                .Destructure.JsonNetTypes();
             });
         }
 

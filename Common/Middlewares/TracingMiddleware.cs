@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Serilog;
 using System.Diagnostics;
 using System.Text.Json;
 
@@ -64,7 +66,7 @@ namespace Common.Middlewares
                                        + $"Host: {context.Request.Host} "
                                        + $"Path: {context.Request.Path} "
                                        + $"QueryString: {context.Request.QueryString} "
-                                       + $"Response Body: {TryDeserializeJsonContent(ReadStreamInChunks(responseStream))}");
+                                       + "Response Body: {@Object}", TryDeserializeJsonContent(ReadStreamInChunks(responseStream)));
 
 
                 responseStream.Seek(0, SeekOrigin.Begin);
@@ -86,7 +88,7 @@ namespace Common.Middlewares
                                        + $"Host: {request.Host} "
                                        + $"Path: {request.Path} "
                                        + $"QueryString: {request.QueryString} "
-                                       + $"Request Body: {TryDeserializeJsonContent(ReadStreamInChunks(requestStream))}");
+                                       + "Request Body: {@Object}", TryDeserializeJsonContent(ReadStreamInChunks(requestStream)));
 
             }
         }
@@ -94,7 +96,7 @@ namespace Common.Middlewares
         private static object TryDeserializeJsonContent(string str) {
             try
             {
-                var obj = JsonConvert.DeserializeObject(str);
+                var obj = JsonConvert.DeserializeObject<dynamic>(str);
                 return obj ?? str;
             }
             catch (Exception)
