@@ -1,5 +1,7 @@
 using System.Net;
+using Common.Helpers;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,7 +32,8 @@ public class IdempotentAutoRetryHttpMessageHandler : DelegatingHandler
         HttpResponseMessage resp;
         int retryWaitTime = 0;
         int retries = -1;
-        do {
+        do
+        {
             await Task.Delay(retryWaitTime, cancellationToken);
             resp = await _breaker.ProxyRequest(async () => await base.SendAsync(request, cancellationToken));
             retries++;
@@ -42,7 +45,8 @@ public class IdempotentAutoRetryHttpMessageHandler : DelegatingHandler
 }
 
 
-public class CircuitBreaker {
+public class CircuitBreaker
+{
     private readonly Queue<Tuple<long, bool>> lastRequestsQ = new();
     private float successRate = 1;
     private readonly long historyTime;
@@ -54,28 +58,30 @@ public class CircuitBreaker {
 
 
 
-    private void updateRequestStatus(bool success) {
+    private void updateRequestStatus(bool success)
+    {
         lock (lastRequestsQ)
         {
-            var now =  DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             float goodRequestsCount = lastRequestsQ.Count * successRate;
-            
-            lastRequestsQ.Enqueue(new (now, success));
+
+            lastRequestsQ.Enqueue(new(now, success));
             if (success)
                 goodRequestsCount++;
-            
+
             successRate = goodRequestsCount / lastRequestsQ.Count;
         }
 
     }
 
-    private float GetSucessRate() {
+    private float GetSucessRate()
+    {
         lock (lastRequestsQ)
         {
-            var now =  DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             Tuple<long, bool> oldRequest;
             float goodRequestsCount = lastRequestsQ.Count * successRate;
-            
+
             // delete old requests
             while (lastRequestsQ.TryPeek(out oldRequest) && oldRequest.Item1 < (now - historyTime))
             {
@@ -91,8 +97,10 @@ public class CircuitBreaker {
         }
     }
 
-    public async Task<HttpResponseMessage> ProxyRequest(Func<Task<HttpResponseMessage>> requestFunc) {
-        if (lastRequestsQ.Count > 5 && GetSucessRate() <= 0.3) {
+    public async Task<HttpResponseMessage> ProxyRequest(Func<Task<HttpResponseMessage>> requestFunc)
+    {
+        if (lastRequestsQ.Count > 5 && GetSucessRate() <= 0.3)
+        {
             Console.WriteLine("Circuit breaker rejected request");
             HttpResponseMessage responseDummy = new(HttpStatusCode.ServiceUnavailable);
             return responseDummy;
@@ -108,14 +116,14 @@ public static class IdempotentAutoRetryHttpClient
     public static void AddIdempotentAutoRetryHttpClient(this WebApplicationBuilder builder) => AddIdempotentAutoRetryHttpClient<HttpClient>(builder);
     public static void AddIdempotentAutoRetryHttpClient<THttpClient>(this WebApplicationBuilder builder) where THttpClient : HttpClient
     {
-        var breaker = new CircuitBreaker(60);
-        builder.Services.AddHttpClient<THttpClient>((services, client) =>
+        builder.Services.AddHttpClient<TracingHttpClient>();
+        // var breaker = new CircuitBreaker(60);
+        // builder.Services.AddLogging();
+        builder.Services.AddSingleton<CircuitBreaker>((_) =>
         {
-
-        })
-        .ConfigurePrimaryHttpMessageHandler((services) =>
-        {
-            return new IdempotentAutoRetryHttpMessageHandler(breaker);
-        });        
+            return new CircuitBreaker(60);
+        });
+        builder.Services.AddScoped<HttpMessageHandler, IdempotentAutoRetryHttpMessageHandler>();
+        builder.Services.AddScoped<HttpClient, TracingHttpClient>();
     }
 }

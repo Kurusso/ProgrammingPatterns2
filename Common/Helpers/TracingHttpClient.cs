@@ -12,20 +12,15 @@ namespace Common.Helpers
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger _logger;
-        public TracingHttpClient(HttpMessageHandler handler, IHttpContextAccessor httpContextAccessor, ILogger logger) : base(handler)
+        public TracingHttpClient(HttpMessageHandler handler, IHttpContextAccessor httpContextAccessor) : base(handler)
         {
             _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
         }
 
         public override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             string? traceId = _httpContextAccessor?.HttpContext?.Request.Headers["Trace-Id"];
-            if(traceId is null)
-            {
-                _logger.LogWarning("TraceId could not be supplied for request {Request}", request);
-            }
-            else
+            if(traceId is not null)
             {
                 request.Headers.Add("Trace-Id", traceId);
             }
