@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
 using System.Diagnostics;
+using System.IO;
 
 
 namespace Common.Middlewares
@@ -24,7 +25,7 @@ namespace Common.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            context.Request.EnableBuffering();
+            context.Request.EnableBuffering();            
             if (!Guid.TryParse(context.Request.Headers["TraceId"], out var traceIdentifier))
             {
                 traceIdentifier = Guid.NewGuid();
@@ -42,29 +43,20 @@ namespace Common.Middlewares
                 Metadata = endpoint?.Metadata?.ToString() ?? string.Empty
             };
 
-
-            LogRequest(context.Request, model, traceIdentifier);
+            LogRequest(context.Request, model, traceIdentifier);            
 
             stopwatch.Start();
             var originalBody = context.Response.Body;
             using (var responseStream = _recyclableMemoryStreamManager.GetStream())
             {
                 context.Response.Body = responseStream;
-                try
-                {
-                    await _next.Invoke(context);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Uncaught service exception");
-                }
+
+                await _next.Invoke(context);
 
                 stopwatch.Stop();
                 model.StatusCode = (System.Net.HttpStatusCode)context.Response.StatusCode;
 
                 responseStream.Seek(0, SeekOrigin.Begin);
-                await responseStream.CopyToAsync(originalBody);
-
                 _logger.LogInformation($"Http Response Information:{Environment.NewLine}"
                                        + $"TraceId:{traceIdentifier} "
                                        + $"Execution time: {stopwatch.ElapsedMilliseconds}ms "
@@ -73,6 +65,10 @@ namespace Common.Middlewares
                                        + $"Path: {context.Request.Path} "
                                        + $"QueryString: {context.Request.QueryString} "
                                        + $"Response Body: {ReadStreamInChunks(responseStream)}");
+
+
+                responseStream.Seek(0, SeekOrigin.Begin);
+                await responseStream.CopyToAsync(originalBody);
             }
 
             context.Response.Body = originalBody;
@@ -83,6 +79,7 @@ namespace Common.Middlewares
             using (var requestStream = _recyclableMemoryStreamManager.GetStream())
             {
                 request.Body.CopyTo(requestStream);
+                request.Body.Seek(0, SeekOrigin.Begin);
                 _logger.LogInformation($"Http Request Information:{Environment.NewLine}"
                                        + $"TraceId:{traceId} "
                                        + $"Schema:{request.Scheme} "
@@ -99,7 +96,7 @@ namespace Common.Middlewares
             stream.Seek(0, SeekOrigin.Begin);
             string result;
             using (var textWriter = new StringWriter())
-            using (var reader = new StreamReader(stream))
+            using (var reader = new StreamReader(stream, leaveOpen: true))
             {
                 var readChunk = new char[ReadChunkBufferLength];
                 int readChunkLength;
