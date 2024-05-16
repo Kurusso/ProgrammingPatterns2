@@ -11,7 +11,7 @@ public class IdempotentAutoRetryHttpMessageHandler : DelegatingHandler
 {
     private readonly CircuitBreaker _breaker;
     private readonly int maxRetries = 5;
-    private readonly int retryWaitDelta = 5;
+    private readonly int retryWaitDelta = 5000;
     public IdempotentAutoRetryHttpMessageHandler(CircuitBreaker breaker)
     {
         base.InnerHandler = new HttpClientHandler();

@@ -56,7 +56,7 @@ app.MigrateDBWhenNecessary<CoreDbContext>();
 app.MigrateDBWhenNecessary<IdempotentDbContext>();
 
 app.UseRouting();
-
+app.UseErrorSimulatorMiddleware(configuration);
 app.UseAuthorization();
 
 app.MapHub<ClientOperationsHub>($"/client");//{configuration.GetSection("SignalRPath")}/client
@@ -66,7 +66,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapGet("/ws", app.Services.GetRequiredService<CustomWebSocketManager>().HandleWebSocket);
 });
 
-app.UseErrorSimulatorMiddleware(configuration);
+
 
 app.UseMiddleware<IdempotentRequestsMiddleware>();
 app.MapControllers();
