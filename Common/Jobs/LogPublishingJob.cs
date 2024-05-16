@@ -53,6 +53,7 @@ namespace Common.Jobs
                         var content = new StringContent(jsonBody, Encoding.UTF8, "application/json"); // Change the content type to application/json
 
                         var response = await _httpClient.PostAsync(_publishLogs, content);
+                        response.EnsureSuccessStatusCode();
                         File.Delete(file);
                     }
                 }
