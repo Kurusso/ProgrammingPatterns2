@@ -53,6 +53,7 @@ namespace Common.Jobs
                         content.Headers.ContentType = MediaTypeHeaderValue.Parse("text/plain");
 
                         var response = await _httpClient.PostAsync(_publishLogs, content);
+                        response.EnsureSuccessStatusCode();
                         File.Delete(file);
                     }
                 }
