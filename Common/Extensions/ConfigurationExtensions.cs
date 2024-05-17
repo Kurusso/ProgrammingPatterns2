@@ -55,7 +55,7 @@ namespace Common.Extensions
                                                  rollingInterval: RollingInterval.Minute
                 //rollOnFileSizeLimit: true,
                 //fileSizeLimitBytes: 60000
-                )
+                ).Enrich.WithProperty("Service", System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name)
                 .WriteTo.Console()
                 .Destructure.JsonNetTypes();
             });
