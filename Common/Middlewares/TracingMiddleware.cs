@@ -59,14 +59,21 @@ namespace Common.Middlewares
                 model.StatusCode = (System.Net.HttpStatusCode)context.Response.StatusCode;
 
                 responseStream.Seek(0, SeekOrigin.Begin);
-                _logger.LogInformation($"Http Response Information:{Environment.NewLine}"
-                                       + $"TraceId:{traceIdentifier} "
-                                       + $"Execution time: {stopwatch.ElapsedMilliseconds}ms "
-                                       + $"Schema:{context.Request.Scheme} "
-                                       + $"Host: {context.Request.Host} "
-                                       + $"Path: {context.Request.Path} "
-                                       + $"QueryString: {context.Request.QueryString} "
-                                       + "Response Body: {@Object}", TryDeserializeJsonContent(ReadStreamInChunks(responseStream)));
+                _logger.LogInformation("End processing HTTP request after {@ElapsedMilliseconds}ms - {@StatusCode}"+Environment.NewLine
+                                       + "TraceId: {@TraceId}"+Environment.NewLine
+                                       + "Schema: {@Schema}" + Environment.NewLine
+                                       + "Host: {@Host}" + Environment.NewLine
+                                       + "Path: {@Path}" + Environment.NewLine
+                                       + "QueryString: {@QueryString} " + Environment.NewLine
+                                       + "Response Body: {@Body}", 
+                                       stopwatch.ElapsedMilliseconds, 
+                                       context.Response.StatusCode, 
+                                       traceIdentifier,
+                                       context.Request.Scheme,
+                                       context.Request.Host,
+                                       context.Request.Path.Value,
+                                       context.Request.QueryString.Value,
+                                       TryDeserializeJsonContent(ReadStreamInChunks(responseStream)));
 
 
                 responseStream.Seek(0, SeekOrigin.Begin);
@@ -82,14 +89,19 @@ namespace Common.Middlewares
             {
                 request.Body.CopyTo(requestStream);
                 request.Body.Seek(0, SeekOrigin.Begin);
-                _logger.LogInformation($"Http Request Information:{Environment.NewLine}"
-                                       + $"TraceId:{traceId} "
-                                       + $"Schema:{request.Scheme} "
-                                       + $"Host: {request.Host} "
-                                       + $"Path: {request.Path} "
-                                       + $"QueryString: {request.QueryString} "
-                                       + "Request Body: {@Object}", TryDeserializeJsonContent(ReadStreamInChunks(requestStream)));
-
+                _logger.LogInformation("HTTP Request information:" + Environment.NewLine
+                                       + "TraceId: {@TraceId}" + Environment.NewLine
+                                       + "Schema: {@Schema}" + Environment.NewLine
+                                       + "Host: {@Host}" + Environment.NewLine
+                                       + "Path: {@Path}" + Environment.NewLine
+                                       + "QueryString: {@QueryString} " + Environment.NewLine
+                                       + "Response Body: {@Body}",
+                                       traceId,
+                                       request.Scheme,
+                                       request.Host,
+                                       request.Path.Value,
+                                       request.QueryString.Value,
+                                       TryDeserializeJsonContent(ReadStreamInChunks(requestStream)));
             }
         }
 

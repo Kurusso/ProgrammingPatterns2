@@ -19,10 +19,10 @@ namespace Common.Helpers
 
         public override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            string? traceId = _httpContextAccessor?.HttpContext?.Request.Headers["Trace-Id"];
+            string? traceId = _httpContextAccessor?.HttpContext?.Request.Headers["TraceId"];
             if(traceId is not null)
             {
-                request.Headers.Add("Trace-Id", traceId);
+                request.Headers.Add("TraceId", traceId);
             }
 
             return await base.SendAsync(request, cancellationToken);
